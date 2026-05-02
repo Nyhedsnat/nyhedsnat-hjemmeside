@@ -116,7 +116,7 @@
 					{#each [
 						'Kun halvdelen af redaktionen kører ud ad gangen',
 						'To redaktioner kører sammen',
-						'Ledere skal ikke selv koordinere transporten'
+						'Ledere kører kun ca. til hver anden hændelse'
 					] as item}
 						<li class="flex items-center gap-3 text-star-white/80">
 							<span class="text-gold-400">•</span>
@@ -125,7 +125,7 @@
 					{/each}
 				</ul>
 				<p class="text-star-white/60 mt-6 italic">
-					Det betyder, at lederne ikke sidder i bilen hele natten, men har god tid i redaktionen.
+					Så lederne har god tid til andre ting end at sidde bag et rat.
 				</p>
 			</section>
 
