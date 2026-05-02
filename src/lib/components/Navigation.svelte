@@ -49,18 +49,18 @@
 	<!-- Main header with large logo -->
 	<div class="border-b border-gold-500/20 bg-night-900/90 backdrop-blur-md">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div class="flex items-center justify-between pt-4 pb-1 md:pt-5 md:pb-2">
+			<div class="flex items-center justify-between py-3 md:py-4">
 				<!-- Large Logo Area (double-click for streamers!) -->
 				<a href="/" class="group flex items-center gap-3" onclick={closeMobileMenu} ondblclick={handleLogoDoubleClick}>
 					<img
 						src="/svg/logo.svg"
 						alt="NyhedsNat Logo"
-						class="h-16 w-auto drop-shadow-lg transition-transform duration-300 group-hover:scale-105 sm:h-20 md:h-24 lg:h-28"
+						class="h-14 w-auto drop-shadow-lg transition-transform duration-300 group-hover:scale-105 sm:h-16 md:h-20 lg:h-24"
 					/>
 				</a>
 
 				<!-- Desktop Navigation -->
-				<nav class="hidden items-center gap-6 md:flex lg:gap-10">
+				<nav class="hidden items-center gap-4 md:flex lg:gap-7">
 					{#each navLinks as link}
 						<a href={link.href} class={getDesktopLinkClass(link.href)}>
 							{link.label}

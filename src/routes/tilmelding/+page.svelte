@@ -18,7 +18,7 @@
 <script lang="ts">
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
-	const signupOpen = true;
+	const signupOpen = false;
 	const signupOpensText = '1. juli 2026';
 
 	const nyhedsnatSignupDeadline = '25. oktober 2026';
