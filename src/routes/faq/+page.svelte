@@ -1,3 +1,20 @@
+<svelte:head>
+	<title>FAQ – NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere." />
+	<link rel="canonical" href="https://nyhedsnat.dk/faq" />
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/faq" />
+	<meta property="og:title" content="FAQ – NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="FAQ – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
+</svelte:head>
+
 <script lang="ts">
 	const faqs = [
 		{
@@ -116,11 +133,6 @@ Det gør dem genkendelige og sjove at arbejde med, samtidig med at de er tydelig
 		openIndex = openIndex === index ? null : index;
 	}
 </script>
-
-<svelte:head>
-	<title>FAQ - NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Ofte stillede spørgsmål om Nyhedsnat i Landsdel 4" />
-</svelte:head>
 
 <div class="min-h-screen px-4 py-12">
 	<div class="mx-auto max-w-4xl">

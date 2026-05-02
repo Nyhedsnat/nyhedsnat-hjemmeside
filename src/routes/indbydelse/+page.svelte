@@ -1,6 +1,18 @@
 <svelte:head>
-	<title>Indbydelse - NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Download indbydelser til Nyhedsnat i Landsdel 4" />
+	<title>Indbydelse – NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Download og del indbydelser til NyhedsNat i Landsdel 4 – til seniorvæbnere, væbnere og ledere i kredsen." />
+	<link rel="canonical" href="https://nyhedsnat.dk/indbydelse" />
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/indbydelse" />
+	<meta property="og:title" content="Indbydelse – NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Download og del indbydelser til NyhedsNat i Landsdel 4 – til seniorvæbnere, væbnere og ledere i kredsen." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Indbydelse – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Download og del indbydelser til NyhedsNat i Landsdel 4 – til seniorvæbnere, væbnere og ledere i kredsen." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">

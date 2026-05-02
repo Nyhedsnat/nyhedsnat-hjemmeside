@@ -1,6 +1,18 @@
 <svelte:head>
-	<title>Tilmelding - NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Tilmeld jeres redaktion til Nyhedsnat i Landsdel 4" />
+	<title>Tilmelding – NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 6.–7. november 2026. Tilmelding sker samlet for hele redaktionen." />
+	<link rel="canonical" href="https://nyhedsnat.dk/tilmelding" />
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/tilmelding" />
+	<meta property="og:title" content="Tilmelding – NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 6.–7. november 2026. Tilmelding sker samlet for hele redaktionen." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Tilmelding – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 6.–7. november 2026. Tilmelding sker samlet for hele redaktionen." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">

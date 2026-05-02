@@ -2,11 +2,35 @@
 </script>
 
 <svelte:head>
-	<title>NyhedsNat i Landsdel 4 - 6.-7. november 2026</title>
-	<meta
-		name="description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever events og laver aviser."
-	/>
+	<title>NyhedsNat i Landsdel 4 – 6.–7. november 2026</title>
+	<meta name="description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever events og laver aviser." />
+	<link rel="canonical" href="https://nyhedsnat.dk/" />
+	<!-- Open Graph -->
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/" />
+	<meta property="og:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
+	<meta property="og:description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever events og laver aviser." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
+	<meta name="twitter:description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever events og laver aviser." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<!-- JSON-LD Event -->
+	{@html `<script type="application/ld+json">${JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "Event",
+		"name": "NyhedsNat i Landsdel 4",
+		"description": "Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever events og laver aviser.",
+		"startDate": "2026-11-06T18:00:00+01:00",
+		"endDate": "2026-11-07T10:00:00+01:00",
+		"eventStatus": "https://schema.org/EventScheduled",
+		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+		"organizer": { "@type": "Organization", "name": "FDF Landsdel 4", "url": "https://nyhedsnat.dk" },
+		"url": "https://nyhedsnat.dk"
+	})}<\/script>`}
 </svelte:head>
 
 <!-- Hero Section -->

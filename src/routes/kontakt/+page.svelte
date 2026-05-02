@@ -1,6 +1,18 @@
 <svelte:head>
-	<title>Kontakt - NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Kontakt udvalget bag Nyhedsnat i Landsdel 4" />
+	<title>Kontakt – NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
+	<link rel="canonical" href="https://nyhedsnat.dk/kontakt" />
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/kontakt" />
+	<meta property="og:title" content="Kontakt – NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Kontakt – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">

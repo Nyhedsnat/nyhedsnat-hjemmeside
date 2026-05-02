@@ -1,6 +1,18 @@
 <svelte:head>
-	<title>Praktisk info - NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Praktisk information for deltagere og ledere til Nyhedsnat i Landsdel 4" />
+	<title>Praktisk info – NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 – overnatning, transport, madpakke, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<link rel="canonical" href="https://nyhedsnat.dk/praktisk" />
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://nyhedsnat.dk/praktisk" />
+	<meta property="og:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Praktisk information til NyhedsNat i Landsdel 4 – overnatning, transport, madpakke, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Praktisk information til NyhedsNat i Landsdel 4 – overnatning, transport, madpakke, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">
