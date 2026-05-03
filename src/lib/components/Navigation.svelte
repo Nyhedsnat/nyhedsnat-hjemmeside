@@ -77,7 +77,12 @@
 					<nav class="ml-auto flex items-center gap-4 lg:gap-7">
 						{#each navLinks.filter((link) => link.href !== '/redaktion') as link}
 							<a href={link.href} class={getDesktopLinkClass(link.href)}>
-								{link.label}
+								{#if link.href === '/tilmelding'}
+									<span class="lg:hidden">Tilmelding</span>
+									<span class="hidden lg:inline">{link.label}</span>
+								{:else}
+									{link.label}
+								{/if}
 							</a>
 						{/each}
 					</nav>
