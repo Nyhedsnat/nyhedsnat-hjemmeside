@@ -4,10 +4,9 @@
 
 <div class="space-y-10 text-star-white/80">
 	<section class="space-y-4">
-		<h2 class="text-xl font-bold text-star-white">Redigering af sider</h2>
+		<h2 class="text-xl font-bold text-star-white">Redigering af billeder</h2>
 		<div class="space-y-2 text-star-white/75">
-			<p>Her laver I selve indholdet i avisen – artikler, billeder og layout.</p>
-			<p>Det er her det meste af jeres tid bliver brugt.</p>
+			<p>Hvis du vil redigere et billede er her nogen værktøjer du kan bruge til det.</p>
 		</div>
 		<p class="text-sm font-semibold text-gold-400">Hvad vælger jeg? Hvis I er i tvivl, så brug Canva. Det er nok til næsten alt.</p>
 		<div class="grid gap-4 sm:grid-cols-2">
@@ -59,7 +58,7 @@
 		<h2 class="text-xl font-bold text-star-white">Video / reels</h2>
 		<div class="space-y-2 text-star-white/75">
 			<p>I skal lave et reel fra en hændelse.</p>
-			<p>Det vigtigste er, at den er optaget og klippet – ikke at den er perfekt.</p>
+			<p>Det vigtigste er, at den er optaget og klippet ikke at den er perfekt.</p>
 		</div>
 		<p class="text-sm font-semibold text-gold-400">Hvad vælger jeg? Brug CapCut hvis I er i tvivl. Det er nemmest.</p>
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
