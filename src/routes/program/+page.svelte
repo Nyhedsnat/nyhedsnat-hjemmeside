@@ -70,7 +70,7 @@
 		<div class="card-dark rounded-2xl p-8 text-center">
 			<h2 class="text-2xl font-bold text-star-white mb-4">En hel nat med oplevelser</h2>
 			<p class="text-star-white/60 mb-6">
-				Fra ankomst fredag aften til kåring lørdag formiddag – fyldt med hændelser, kreativitet og fællesskab.
+				Fra ankomst fredag aften til kåring lørdag formiddag er der maks gang i den og masser af avisskriveri.
 			</p>
 			<JoinButton href="/tilmelding">Tilmeld jer nu</JoinButton>
 		</div>

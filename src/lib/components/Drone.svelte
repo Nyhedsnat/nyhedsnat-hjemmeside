@@ -5,6 +5,10 @@
 	let direction = $state<'ltr' | 'rtl'>('ltr');
 	let startY = $state(20);
 	let duration = $state(8);
+	let scared = $state(false);
+	let scaredX = $state(0);
+	let scaredY = $state(0);
+	let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	onMount(() => {
 		// Random initial delay between 3-15 seconds
@@ -15,11 +19,13 @@
 			startY = Math.random() * 35 + 10; // 10-45% from top
 			direction = Math.random() > 0.5 ? 'ltr' : 'rtl'; // 50/50 chance
 			duration = Math.random() * 7 + 2; // 2-9 seconds (25% to 100% of max speed)
+			scared = false;
 
 			visible = true;
 
 			// Hide after animation completes
-			setTimeout(() => {
+			if (hideTimeout) clearTimeout(hideTimeout);
+			hideTimeout = setTimeout(() => {
 				visible = false;
 			}, duration * 1000 + 200);
 		};
@@ -34,13 +40,36 @@
 			}, 120000);
 		}, initialDelay);
 	});
+
+	function handleDroneClick(e: MouseEvent) {
+		if (!visible || scared) return;
+		if (hideTimeout) {
+			clearTimeout(hideTimeout);
+			hideTimeout = null;
+		}
+		scaredX = e.clientX;
+		scaredY = e.clientY;
+		scared = true;
+
+		setTimeout(() => {
+			visible = false;
+			scared = false;
+		}, 3400);
+	}
 </script>
 
 {#if visible}
 	<div
 		class="drone-container {direction}"
-		style="--start-y: {startY}%; --duration: {duration}s;"
+		class:scared={scared}
+		style="--start-y: {startY}%; --duration: {duration}s; --scared-x: {scaredX}px; --scared-y: {scaredY}px;"
 	>
+		<button
+			class="drone-hit"
+			onclick={handleDroneClick}
+			onpointerdown={(e) => handleDroneClick(e as unknown as MouseEvent)}
+			aria-label="Scare drone"
+		>
 		<svg
 			class="drone"
 			xmlns="http://www.w3.org/2000/svg"
@@ -132,6 +161,7 @@
 				<circle class="drone-cls-4" cx="157.73" cy="26.77" r="2.1" />
 			</g>
 		</svg>
+		</button>
 	</div>
 {/if}
 
@@ -139,8 +169,17 @@
 	.drone-container {
 		position: fixed;
 		top: var(--start-y, 20%);
-		z-index: 1;
-		pointer-events: none;
+		z-index: 45;
+		pointer-events: auto;
+	}
+
+	.drone-hit {
+		background: none;
+		border: none;
+		padding: 12px;
+		margin: -12px;
+		cursor: pointer;
+		pointer-events: auto;
 	}
 
 	/* Left to right flight */
@@ -229,6 +268,41 @@
 
 	.drone-container.rtl .drone {
 		animation: tilt-rtl 1.5s ease-in-out infinite;
+	}
+
+	.drone-container.scared {
+		left: var(--scared-x);
+		top: var(--scared-y);
+		animation: scared-fly-away 3.4s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+	}
+
+	.drone-container.scared .drone {
+		animation: scared-turn 0.35s ease-out, scared-shake 0.22s ease-out 2;
+	}
+
+	@keyframes scared-turn {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(180deg); }
+	}
+
+	@keyframes scared-shake {
+		0%, 100% { filter: drop-shadow(0 0 4px rgba(255, 60, 60, 0.6)); }
+		50% { filter: drop-shadow(0 0 10px rgba(255, 40, 40, 0.95)); }
+	}
+
+	@keyframes scared-fly-away {
+		0% {
+			transform: translate(-50%, -50%) scale(1);
+			opacity: 1;
+		}
+		85% {
+			transform: translate(-50%, calc(100vh - var(--scared-y) - 28px)) scale(0.82);
+			opacity: 1;
+		}
+		100% {
+			transform: translate(-50%, calc(100vh - var(--scared-y) - 20px)) scale(0.78);
+			opacity: 0;
+		}
 	}
 
 	@keyframes tilt-rtl {

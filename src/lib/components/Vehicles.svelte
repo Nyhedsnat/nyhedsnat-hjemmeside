@@ -128,6 +128,7 @@
 				alt=""
 				class="vehicle"
 				style="height: {height}px;"
+				draggable="false"
 			/>
 		</button>
 	</div>
@@ -169,6 +170,9 @@
 	.vehicle {
 		width: auto;
 		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	/* Use generous offsets to ensure vehicles are fully off-screen */

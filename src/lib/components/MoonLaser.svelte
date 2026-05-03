@@ -10,6 +10,7 @@
 	let isHolding = false; // Internal tracking (not reactive)
 	let showCharging = $state(false); // Visual charging state (reactive)
 	let laserTimeout: ReturnType<typeof setTimeout> | null = null;
+	let isCheese = $state(false);
 
 	function handleMouseDown(e: MouseEvent | TouchEvent) {
 		// Prevent double-firing from touch + mouse events
@@ -108,6 +109,11 @@
 			clearTimeout(holdTimer);
 			holdTimer = null;
 		}
+	}
+
+	function handleMoonDoubleClick(e: MouseEvent) {
+		e.preventDefault();
+		isCheese = !isCheese;
 	}
 
 	// Load tsParticles from CDN
@@ -785,13 +791,21 @@
 	onmousedown={handleMouseDown}
 	onmouseup={handleMouseUp}
 	onmouseleave={handleMouseLeave}
+	ondblclick={handleMoonDoubleClick}
 	ontouchstart={(e) => { e.preventDefault(); handleMouseDown(e); }}
 	ontouchend={(e) => { e.preventDefault(); handleMouseUp(e); }}
 	ontouchcancel={handleTouchCancel}
 	aria-label="Moon (click to zap, hold 10s for destruction)"
 >
 	<div class="moon-glow" class:laser-charging={laserActive} class:holding={showCharging}></div>
-	<img src="/svg/background/moon.svg" alt="" class="moon" class:laser-active={laserActive} class:holding={showCharging} />
+	<img
+		src={isCheese ? '/svg/background/cheese.svg' : '/svg/background/moon.svg'}
+		alt=""
+		class="moon"
+		class:laser-active={laserActive}
+		class:holding={showCharging}
+		draggable="false"
+	/>
 </button>
 
 <style>
@@ -804,6 +818,8 @@
 		border: none;
 		padding: 0;
 		cursor: pointer;
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.moon {
@@ -812,6 +828,10 @@
 		position: relative;
 		z-index: 1;
 		transition: filter 0.3s;
+		user-select: none;
+		-webkit-user-drag: none;
+		-webkit-user-select: none;
+		pointer-events: none;
 	}
 
 	.moon.laser-active {

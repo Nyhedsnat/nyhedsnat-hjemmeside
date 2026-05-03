@@ -49,6 +49,7 @@
 			alt=""
 			class="bus"
 			aria-hidden="true"
+			draggable="false"
 		/>
 	</div>
 {/if}
@@ -82,6 +83,9 @@
 		width: 180px;
 		height: auto;
 		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	@keyframes drive-ltr {

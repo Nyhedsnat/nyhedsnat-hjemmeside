@@ -76,6 +76,7 @@
 				alt=""
 				class="convoy-car"
 				aria-hidden="true"
+				draggable="false"
 			/>
 		{/each}
 	</div>
@@ -114,6 +115,9 @@
 		height: 45px;
 		width: auto;
 		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	/* Offset needs to hide full convoy: 10 cars × ~100px + 9 gaps × 40px ≈ 1400px */

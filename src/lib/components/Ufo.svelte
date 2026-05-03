@@ -5,7 +5,113 @@
 	let startX = $state(50);
 	let duration = $state(15);
 
+	let swarmActive = $state(false);
+	let swarmLeaving = $state(false);
+	let swarm = $state<Array<{ id: number; x: number; y: number; vx: number; vy: number; ox: number; oy: number }>>([]);
+	let mouseX = 0;
+	let mouseY = 0;
+	let rafId: number | null = null;
+	let swarmTimeout: ReturnType<typeof setTimeout> | null = null;
+	let leaveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	function startSwarm() {
+		if (swarmActive) return;
+		swarmActive = true;
+		swarmLeaving = false;
+		swarm = Array.from({ length: 15 }, (_, i) => ({
+			id: i,
+			x: Math.random() * window.innerWidth,
+			y: -40 - Math.random() * 220,
+			vx: (Math.random() - 0.5) * 1.2,
+			vy: 1.5 + Math.random() * 1.4,
+			ox: (Math.random() - 0.5) * 170,
+			oy: (Math.random() - 0.5) * 120
+		}));
+
+		swarmTimeout = setTimeout(() => {
+			swarmLeaving = true;
+			leaveTimeout = setTimeout(() => {
+				swarmActive = false;
+				swarmLeaving = false;
+				swarm = [];
+			}, 1200);
+		}, 15000);
+	}
+
+	function updateSwarm(t: number) {
+		if (!swarmActive) return;
+
+		const minSpacing = 48; // 2x mini UFO width (24px)
+		const updated = [...swarm];
+
+		for (let i = 0; i < updated.length; i++) {
+			const u = updated[i];
+
+			if (swarmLeaving) {
+				const a = (i / 15) * Math.PI * 2;
+				u.vx += Math.cos(a) * 1.9;
+				u.vy += Math.sin(a) * 1.9 - 0.8;
+				u.x += u.vx;
+				u.y += u.vy;
+				continue;
+			}
+
+			// Autonomous pursuit (chase target, don't stick to cursor)
+			const tx = mouseX + Math.cos(t / 160 + i) * 16;
+			const ty = mouseY + Math.sin(t / 130 + i * 0.7) * 12;
+			const dx = tx - u.x;
+			const dy = ty - u.y;
+			const dist = Math.max(1, Math.hypot(dx, dy));
+			const nx = dx / dist;
+			const ny = dy / dist;
+
+			const accel = dist > 220 ? 0.55 : 0.34;
+			u.vx += nx * accel + Math.cos(t / 90 + i * 1.6) * 0.08;
+			u.vy += ny * accel + Math.sin(t / 85 + i * 1.3) * 0.08;
+
+			// Separation: keep at least minSpacing from other UFOs
+			let sepX = 0;
+			let sepY = 0;
+			for (let j = 0; j < updated.length; j++) {
+				if (i === j) continue;
+				const o = updated[j];
+				const ddx = u.x - o.x;
+				const ddy = u.y - o.y;
+				const d = Math.hypot(ddx, ddy);
+				if (d > 0 && d < minSpacing) {
+					const push = (minSpacing - d) / minSpacing;
+					sepX += (ddx / d) * push;
+					sepY += (ddy / d) * push;
+				}
+			}
+			u.vx += sepX * 0.9;
+			u.vy += sepY * 0.9;
+
+			u.vx *= 0.9;
+			u.vy *= 0.9;
+
+			const speed = Math.hypot(u.vx, u.vy);
+			const maxSpeed = 7.5;
+			if (speed > maxSpeed) {
+				u.vx = (u.vx / speed) * maxSpeed;
+				u.vy = (u.vy / speed) * maxSpeed;
+			}
+
+			u.x += u.vx;
+			u.y += u.vy;
+		}
+
+		swarm = updated;
+	}
+
 	onMount(() => {
+		mouseX = window.innerWidth / 2;
+		mouseY = window.innerHeight / 2;
+		const onPointerMove = (e: PointerEvent) => {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		};
+		window.addEventListener('pointermove', onPointerMove, { passive: true });
 		// Random initial delay between 20-60 seconds
 		const initialDelay = Math.random() * 40000 + 20000;
 
@@ -32,6 +138,19 @@
 				startFlight();
 			}, 120000);
 		}, initialDelay);
+
+		const loop = (time: number) => {
+			updateSwarm(time);
+			rafId = requestAnimationFrame(loop);
+		};
+		rafId = requestAnimationFrame(loop);
+
+		return () => {
+			window.removeEventListener('pointermove', onPointerMove);
+			if (rafId) cancelAnimationFrame(rafId);
+			if (swarmTimeout) clearTimeout(swarmTimeout);
+			if (leaveTimeout) clearTimeout(leaveTimeout);
+		};
 	});
 </script>
 
@@ -39,6 +158,10 @@
 	<div
 		class="ufo-container"
 		style="--start-x: {startX}%; --duration: {duration}s;"
+		onclick={startSwarm}
+		role="button"
+		tabindex="0"
+		onkeydown={(e) => e.key === 'Enter' && startSwarm()}
 	>
 		<!-- Rainbow glow behind UFO -->
 		<div class="rainbow-glow"></div>
@@ -87,15 +210,26 @@
 	</div>
 {/if}
 
+{#if swarmActive}
+	<div class="swarm-layer" aria-hidden="true">
+		{#each swarm as s (s.id)}
+			<div class="swarm-ufo {swarmLeaving ? 'leaving' : ''}" style="left:{s.x}px; top:{s.y}px;">
+				<div class="mini-ufo"></div>
+			</div>
+		{/each}
+	</div>
+{/if}
+
 <style>
 	.ufo-container {
 		position: fixed;
 		left: var(--start-x, 50%);
 		top: -80px;
-		z-index: 1;
-		pointer-events: none;
+		z-index: 30;
+		pointer-events: auto;
 		transform: translateX(-50%);
 		animation: ufo-flight var(--duration, 15s) ease-in-out forwards;
+		cursor: pointer;
 	}
 
 	.ufo {
@@ -220,6 +354,44 @@
 	/* Slight wobble for UFO body */
 	.ufo {
 		animation: ufo-wobble 3s ease-in-out infinite;
+	}
+
+	.swarm-layer {
+		position: fixed;
+		inset: 0;
+		z-index: 60;
+		pointer-events: none;
+	}
+
+	.swarm-ufo {
+		position: fixed;
+		transform: translate(-50%, -50%);
+	}
+
+	.mini-ufo {
+		width: 24px;
+		height: 12px;
+		border-radius: 999px;
+		background: linear-gradient(180deg, #9fdcff 0%, #3c465c 45%, #1c2230 100%);
+		box-shadow: 0 0 10px rgba(123, 140, 255, 0.8);
+		position: relative;
+		animation: mini-wobble 0.45s ease-in-out infinite;
+	}
+
+	.mini-ufo::before {
+		content: '';
+		position: absolute;
+		top: -5px;
+		left: 7px;
+		width: 10px;
+		height: 7px;
+		border-radius: 999px;
+		background: rgba(159, 220, 255, 0.9);
+	}
+
+	@keyframes mini-wobble {
+		0%, 100% { transform: rotate(-6deg) scale(1); }
+		50% { transform: rotate(6deg) scale(1.08); }
 	}
 
 	@keyframes ufo-wobble {
