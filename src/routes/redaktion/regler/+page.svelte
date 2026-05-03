@@ -207,7 +207,7 @@
 					<span class="text-gold-400">👨‍⚖️</span>
 				</div>
 				<div class="text-star-white/80">
-					<strong class="text-star-white">Bedste avis</strong> kåres af en jury
+					<strong class="text-star-white">Bedste avis</strong> kåres udelukkende af en juryen
 				</div>
 			</li>
 			<li class="flex items-start gap-4">
@@ -217,8 +217,9 @@
 					<span class="text-gold-400">🗳️</span>
 				</div>
 				<div class="text-star-white/80">
+				
 					<strong class="text-star-white">Bedste pressefoto</strong> og
-					<strong class="text-star-white">bedste reel</strong> kåres ved afstemning blandt deltagerne
+					<strong class="text-star-white">bedste reel</strong> kåres på baggrund af både juryens point og deltagernes afstemning, som vægter lige meget.
 				</div>
 			</li>
 		</ul>
