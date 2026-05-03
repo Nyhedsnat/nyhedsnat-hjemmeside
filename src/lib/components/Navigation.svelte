@@ -35,21 +35,34 @@
 
 	function getDesktopLinkClass(href: string): string {
 		const base = 'nav-link hover:text-gold-400 transition-colors font-medium text-lg';
+		if (href === '/redaktion') {
+			const workspace =
+				'inline-flex items-center gap-2 rounded-lg border border-gold-500/25 px-3 py-1.5 hover:border-gold-500/45 hover:bg-night-700/35';
+			return isActive(href)
+				? `${base} ${workspace} text-gold-400 active`
+				: `${base} ${workspace} text-star-white/80`;
+		}
 		return isActive(href) ? `${base} text-gold-400 active` : `${base} text-star-white/80`;
 	}
 
 	function getMobileLinkClass(href: string): string {
 		const base =
 			'block px-4 py-3 rounded-lg hover:text-gold-400 hover:bg-night-700/50 transition-all font-medium text-lg';
+		if (href === '/redaktion') {
+			const workspace = 'border border-gold-500/25 hover:border-gold-500/45';
+			return isActive(href)
+				? `${base} ${workspace} text-gold-400 bg-night-700/50`
+				: `${base} ${workspace} text-star-white/80`;
+		}
 		return isActive(href) ? `${base} text-gold-400 bg-night-700/50` : `${base} text-star-white/80`;
 	}
 </script>
 
 <header class="fixed top-0 right-0 left-0 z-50">
 	<!-- Main header with large logo -->
-	<div class="border-b border-gold-500/20 bg-night-900/90 backdrop-blur-md">
+	<div class="relative border-b border-gold-500/20 bg-night-900/90 backdrop-blur-md">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-			<div class="flex items-center justify-between py-3 md:py-4">
+			<div class="flex items-center py-3 md:py-4 md:pr-32 lg:pr-40">
 				<!-- Large Logo Area (double-click for streamers!) -->
 				<a href="/" class="group flex items-center gap-3" onclick={closeMobileMenu} ondblclick={handleLogoDoubleClick}>
 					<img
@@ -60,18 +73,21 @@
 				</a>
 
 				<!-- Desktop Navigation -->
-				<nav class="hidden items-center gap-4 md:flex lg:gap-7">
-					{#each navLinks as link}
-						<a href={link.href} class={getDesktopLinkClass(link.href)}>
-							{link.label}
-						</a>
-					{/each}
-				</nav>
+				<div class="hidden min-w-0 flex-1 items-center md:flex">
+					<nav class="ml-auto flex items-center gap-4 lg:gap-7">
+						{#each navLinks.filter((link) => link.href !== '/redaktion') as link}
+							<a href={link.href} class={getDesktopLinkClass(link.href)}>
+								{link.label}
+							</a>
+						{/each}
+					</nav>
+				</div>
+
 
 				<!-- Mobile Menu Button -->
 				<button
 					onclick={toggleMobileMenu}
-					class="flex flex-col gap-1.5 rounded-lg p-3 transition-colors hover:bg-night-700/50 md:hidden"
+					class="ml-auto flex flex-col gap-1.5 rounded-lg p-3 transition-colors hover:bg-night-700/50 md:hidden"
 					aria-label="Toggle menu"
 					aria-expanded={mobileMenuOpen}
 				>
@@ -93,6 +109,14 @@
 				</button>
 			</div>
 		</div>
+		<div class="pointer-events-none absolute inset-y-0 right-10 hidden items-center md:flex lg:right-14">
+			{#each navLinks.filter((link) => link.href === '/redaktion') as link}
+				<a href={link.href} class={`${getDesktopLinkClass(link.href)} pointer-events-auto`}>
+					<span aria-hidden="true">📰</span>
+					{link.label}
+				</a>
+			{/each}
+		</div>
 	</div>
 
 	<!-- Mobile Navigation Dropdown -->
@@ -101,11 +125,20 @@
 			class="animate-slideDown border-b border-gold-500/20 bg-night-800/95 backdrop-blur-md md:hidden"
 		>
 			<nav class="space-y-2 px-4 py-4">
-				{#each navLinks as link}
+				{#each navLinks.filter((link) => link.href !== '/redaktion') as link}
 					<a href={link.href} onclick={closeMobileMenu} class={getMobileLinkClass(link.href)}>
 						{link.label}
 					</a>
 				{/each}
+
+				<div class="mt-3 border-t border-gold-500/20 pt-3">
+					{#each navLinks.filter((link) => link.href === '/redaktion') as link}
+						<a href={link.href} onclick={closeMobileMenu} class={getMobileLinkClass(link.href)}>
+							<span class="mr-2" aria-hidden="true">📰</span>
+							{link.label}
+						</a>
+					{/each}
+				</div>
 			</nav>
 		</div>
 	{/if}
