@@ -4,7 +4,10 @@
 
 <svelte:head>
 	<title>NyhedsNat i Landsdel 4 – 6.–7. november 2026</title>
-	<meta name="description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser." />
+	<meta
+		name="description"
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/" />
 	<!-- Open Graph -->
 	<meta property="og:site_name" content="NyhedsNat" />
@@ -12,54 +15,62 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://nyhedsnat.dk/" />
 	<meta property="og:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
-	<meta property="og:description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser." />
+	<meta
+		property="og:description"
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+	/>
 	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
 	<!-- Twitter Card -->
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
-	<meta name="twitter:description" content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser." />
+	<meta
+		name="twitter:description"
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+	/>
 	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 	<!-- JSON-LD Event -->
 	{@html `<script type="application/ld+json">${JSON.stringify({
-		"@context": "https://schema.org",
-		"@type": "Event",
-		"name": "NyhedsNat i Landsdel 4",
-		"description": "Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser.",
-		"startDate": "2026-11-06T18:00:00+01:00",
-		"endDate": "2026-11-07T10:00:00+01:00",
-		"eventStatus": "https://schema.org/EventScheduled",
-		"eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-		"organizer": { "@type": "Organization", "name": "FDF Landsdel 4", "url": "https://nyhedsnat.dk" },
-		"url": "https://nyhedsnat.dk"
+		'@context': 'https://schema.org',
+		'@type': 'Event',
+		name: 'NyhedsNat i Landsdel 4',
+		description:
+			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser.',
+		startDate: '2026-11-06T18:00:00+01:00',
+		endDate: '2026-11-07T10:00:00+01:00',
+		eventStatus: 'https://schema.org/EventScheduled',
+		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+		organizer: { '@type': 'Organization', name: 'FDF Landsdel 4', url: 'https://nyhedsnat.dk' },
+		url: 'https://nyhedsnat.dk'
 	})}<\/script>`}
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative min-h-[70vh] flex items-center justify-center px-4 overflow-hidden">
+<section class="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-4">
 	<!-- Decorative elements -->
 	<div class="absolute inset-0 flex items-center justify-center opacity-10">
 		<div
-			class="w-[600px] h-[600px] rounded-full bg-gradient-to-br from-gold-500/30 to-transparent blur-3xl"
+			class="h-[600px] w-[600px] rounded-full bg-gradient-to-br from-gold-500/30 to-transparent blur-3xl"
 		></div>
 	</div>
 
-	<div class="relative z-10 text-center max-w-4xl mx-auto">
+	<div class="relative z-10 mx-auto max-w-4xl text-center">
 		<!-- Main heading -->
-		<h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+		<h1 class="mb-4 text-4xl font-bold md:text-6xl lg:text-7xl">
 			<span class="text-gradient-gold">NyhedsNat</span>
 			<br />
-			<span class="text-star-white text-3xl md:text-4xl lg:text-5xl">i Landsdel 4</span>
+			<span class="text-3xl text-star-white md:text-4xl lg:text-5xl">i Landsdel 4</span>
 		</h1>
 
 		<!-- Date badge -->
-		<div class="inline-block px-6 py-3 bg-gold-500/20 border border-gold-500/40 rounded-full mb-8">
-			<span class="text-gold-400 font-bold text-xl md:text-2xl">6.-7. november 2026</span>
+		<div class="mb-8 inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
+			<span class="text-xl font-bold text-gold-400 md:text-2xl">6.-7. november 2026</span>
 		</div>
 
 		<!-- Subtitle -->
-		<p class="text-lg md:text-xl text-star-white/80 mb-10 max-w-3xl mx-auto leading-relaxed">
+		<p class="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-star-white/80 md:text-xl">
 			NyhedsNat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i Landsdel 4. Over
-			en nat samles deltagere i redaktioner, oplever hændelser og laver aviser i en fælles legeramme.
+			en nat samles deltagere i redaktioner, oplever hændelser og laver aviser i en fælles
+			legeramme.
 		</p>
 
 		<!-- CTA Button -->
@@ -68,23 +79,22 @@
 </section>
 
 <!-- About Section -->
-<section class="pt-8 pb-12 px-4">
-	<div class="max-w-4xl mx-auto">
+<section class="px-4 pt-8 pb-12">
+	<div class="mx-auto max-w-4xl">
 		<div class="card-dark rounded-3xl p-8 md:p-12">
-			<h2 class="text-2xl md:text-3xl font-bold text-star-white mb-6">
+			<h2 class="mb-6 text-2xl font-bold text-star-white md:text-3xl">
 				Hvad er <span class="text-gradient-gold">Nyhedsnat</span>?
 			</h2>
 
-			<div class="space-y-6 text-star-white/70 text-lg leading-relaxed">
+			<div class="space-y-6 text-lg leading-relaxed text-star-white/70">
 				<p>
-					Seniorerne skaber og spiller hændelser. Væbnere og seniorvæbnere oplever dem, stiller
-					spørgsmål og formidler, hvad der er sket. Journalistrollen er en ramme for leg, fantasi og
-					fælles oplevelser – ikke en øvelse i rigtigt journalistisk arbejde.
+					Seniorer skaber og spiller hændelserne. Væbnere og seniorvæbnere er indelt i redaktioner oplever dem og fortæller
+					historien videre i deres aviser.
 				</p>
 
 				<p>
-					Nyhedsnat foregår indendørs, med fælles base, overnatning i gymnastiksal og en klar
-					deadline om morgenen.
+					Arrangementet foregår indendørs med fælles base, overnatning i gymnastiksal og afslutning
+					næste morgen.
 				</p>
 			</div>
 		</div>
@@ -92,16 +102,22 @@
 </section>
 
 <!-- Senior Planning Weekend Section -->
-<section class="py-12 px-4">
-	<div class="max-w-4xl mx-auto">
+<section class="px-4 py-12">
+	<div class="mx-auto max-w-4xl">
 		<div class="card-dark rounded-3xl p-8 md:p-10">
-			<h2 class="text-2xl md:text-3xl font-bold text-star-white mb-4">
+			<h2 class="mb-4 text-2xl font-bold text-star-white md:text-3xl">
 				Planlæg <span class="text-gradient-gold">NyhedsNat</span> som senior
 			</h2>
-			<div class="space-y-4 text-star-white/70 text-lg leading-relaxed mb-7">
+			<div class="mb-7 space-y-4 text-lg leading-relaxed text-star-white/70">
 				<p>Alle hændelser planlægges af seniorer.</p>
-				<p>Vil du være med til at skabe oplevelsen, kan du deltage i planlægningsweekenden den 25.–27. september.</p>
-				<p>Weekenden er både et kursus og en workshop, hvor vi udvikler hændelser, arbejder med roller og tester idéer.</p>
+				<p>
+					Vil du være med til at skabe oplevelsen, kan du deltage i planlægningsweekenden den
+					25.–27. september.
+				</p>
+				<p>
+					Weekenden er både et kursus og en workshop, hvor vi udvikler hændelser, arbejder med
+					roller og tester idéer.
+				</p>
 			</div>
 			<JoinButton href="/faq" variant="secondary">Læs mere om at være senior</JoinButton>
 		</div>
@@ -109,20 +125,15 @@
 </section>
 
 <!-- Features Section -->
-<section class="py-12 px-4">
-	<div class="max-w-6xl mx-auto">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<section class="px-4 py-12">
+	<div class="mx-auto max-w-6xl">
+		<div class="grid grid-cols-1 gap-8 md:grid-cols-3">
 			<!-- Feature Card 1 -->
-			<div class="card-dark rounded-2xl p-8 hover:scale-105 transition-all duration-300 group">
+			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
 				>
-					<svg
-						class="w-8 h-8 text-gold-400"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
+					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -131,7 +142,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-xl font-bold text-star-white mb-3">Lav avis</h3>
+				<h3 class="mb-3 text-xl font-bold text-star-white">Lav avis</h3>
 				<p class="text-star-white/60">
 					Redaktionerne skaber aviser med artikler, billeder, videoer og kreativt indhold gennem
 					hele natten.
@@ -139,16 +150,11 @@
 			</div>
 
 			<!-- Feature Card 2 -->
-			<div class="card-dark rounded-2xl p-8 hover:scale-105 transition-all duration-300 group">
+			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
 				>
-					<svg
-						class="w-8 h-8 text-gold-400"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
+					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -157,23 +163,18 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-xl font-bold text-star-white mb-3">Oplev hændelser</h3>
+				<h3 class="mb-3 text-xl font-bold text-star-white">Oplev hændelser</h3>
 				<p class="text-star-white/60">
 					Seniorerne skaber spændende, dramatiske og sjove hændelser, som redaktionerne skal dække.
 				</p>
 			</div>
 
 			<!-- Feature Card 3 -->
-			<div class="card-dark rounded-2xl p-8 hover:scale-105 transition-all duration-300 group">
+			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="w-16 h-16 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
 				>
-					<svg
-						class="w-8 h-8 text-gold-400"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
+					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -182,7 +183,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-xl font-bold text-star-white mb-3">Fællesskab</h3>
+				<h3 class="mb-3 text-xl font-bold text-star-white">Fællesskab</h3>
 				<p class="text-star-white/60">
 					En nat med leg, fantasi og fælles oplevelser sammen med andre fra Landsdel 4.
 				</p>
@@ -192,14 +193,14 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-12 px-4">
-	<div class="max-w-4xl mx-auto text-center">
+<section class="px-4 py-12">
+	<div class="mx-auto max-w-4xl text-center">
 		<div class="card-dark rounded-3xl p-10 md:p-16">
-			<h2 class="text-3xl md:text-4xl font-bold text-star-white mb-6">Klar til Nyhedsnat?</h2>
-			<p class="text-xl text-star-white/60 mb-10">
+			<h2 class="mb-6 text-3xl font-bold text-star-white md:text-4xl">Klar til Nyhedsnat?</h2>
+			<p class="mb-10 text-xl text-star-white/60">
 				Tilmeld jeres redaktion og vær med til årets mest spændende nat.
 			</p>
-			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+			<div class="flex flex-col justify-center gap-4 sm:flex-row">
 				<JoinButton href="/tilmelding">Tilmeld jer nu</JoinButton>
 				<JoinButton href="/praktisk" variant="secondary">Læs mere</JoinButton>
 			</div>
