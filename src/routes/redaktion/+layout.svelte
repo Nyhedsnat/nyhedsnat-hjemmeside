@@ -31,15 +31,8 @@
 	const header = $derived(getHeader(page.url.pathname));
 </script>
 
-<div class="min-h-screen px-4 py-12">
+<div class="min-h-screen px-4 py-10 md:py-11">
 	<div class="mx-auto max-w-6xl">
-		<div class="mb-12 text-center md:mb-16">
-			<h1 class="mb-6 text-4xl font-bold text-star-white md:text-5xl lg:text-6xl">
-				<span class="text-gradient-gold">{header.title}</span>
-			</h1>
-			<p class="mx-auto max-w-2xl text-xl text-star-white/60">{header.subtitle}</p>
-		</div>
-
 		<div class="grid items-start gap-6 md:grid-cols-[260px_1fr]">
 			<div class="md:hidden">
 				<button
@@ -85,6 +78,11 @@
 			</aside>
 
 			<main class="card-dark rounded-2xl p-8 md:p-10">
+				<div class="mb-8">
+					<p class="mb-2 text-sm font-semibold uppercase tracking-wider text-gold-400/80">Lav avis</p>
+					<h1 class="mb-3 text-3xl font-semibold tracking-tight text-star-white md:text-4xl">{header.title}</h1>
+					<p class="max-w-2xl text-lg text-star-white/60">{header.subtitle}</p>
+				</div>
 				<slot />
 			</main>
 		</div>
