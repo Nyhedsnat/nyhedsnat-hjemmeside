@@ -15,6 +15,33 @@ Derudover arbejder vi på at samle en gruppe seniorer, som er med til at planlæ
 De seniorer, der tilmelder sig og møder op på dagen, er med til at afvikle hændelser, få roller og skabe oplevelser for deltagerne. Alle bidrager, men på forskellige niveauer af ansvar.
 
 Har du som senior lyst til at være med i planlægningen på forhånd, så hører vi meget gerne fra dig via info@nyhedsnat.dk`
+				},
+
+				{
+					question: 'Hvad er konceptet i Nyhedsnat?',
+					answer: `Nyhedsnat er en fælles leg, hvor deltagerne træder ind i en journalistisk verden.
+
+Væbnere og seniorvæbnere er journalister, som rykker ud til hændelser, stiller spørgsmål og formidler, hvad der er sket. Seniorerne spiller roller og skaber de hændelser, som redaktionerne skal dække.
+
+Det betyder, at hele arrangementet foregår som en levende fortælling, hvor deltagerne både oplever og skaber indhold undervejs.
+
+Journalistikken er ikke et mål i sig selv, men en ramme, der giver legen retning og gør det muligt at arbejde sammen om en fælles opgave.`
+				},
+				{
+					question: 'Er det rollespil, konkurrence eller noget helt tredje?',
+					answer: `Det er en blanding.
+
+Der er elementer af rollespil, fordi seniorerne spiller roller, og deltagerne indgår i en fælles fortælling.
+
+Der er elementer af konkurrence, fordi redaktionerne laver aviser og kan vinde priser.
+
+Men først og fremmest er det en leg, hvor det vigtigste er at deltage, have det sjovt og lege med.`
+				},
+				{
+					question: 'Er hændelser virkelige?',
+					answer: `Nej. Alle hændelser er fiktive, men ofte inspireret af aktuelle begivenheder.
+
+Det gør dem genkendelige og sjove at arbejde med, samtidig med at de er tydeligt adskilt fra virkeligheden.`
 				}
 			]
 		},
@@ -45,12 +72,6 @@ Seniordeltagere kan blive bedt om selv at medbringe kostume.`
 Nogle seniorer er udvalgt på forhånd til at planlægge hændelser. Andre seniorer får roller tildelt på dagen og indgår i hændelsesafviklingen.
 
 Seniorerne leger andre mennesker – og væbnere og seniorvæbnere leger journalister.`
-				},
-				{
-					question: 'Er hændelser virkelige?',
-					answer: `Nej. Alle hændelser er fiktive, men ofte inspireret af aktuelle begivenheder.
-
-Det gør dem genkendelige og sjove at arbejde med, samtidig med at de er tydeligt adskilt fra virkeligheden.`
 				}
 			]
 		},
