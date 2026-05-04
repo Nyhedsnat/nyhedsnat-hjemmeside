@@ -44,7 +44,7 @@
 					{ time: '04:00', title: 'Deadline for Aflevering af aviser, reel og pressefoto', icon: '📰' },
 					{ time: '', title: 'Sove', icon: '😴' },
 					{ time: '08:30', title: 'Morgenmad', icon: '🥐' },
-					{ time: '09:30 - 10:00', title: 'Afstemning om pressefoto, og reel Oprydning og video fra events', icon: '🧹' },
+					{ time: '09:30 - 10:00', title: 'Oprydning samt afstemning om pressefoto, og reel', icon: '🧹' },
 					{ time: '10:00', title: 'Kåring af vindere', icon: '🏆' },
 					{ time: '11:00', title: 'Tak for i dag', icon: '👋' }
 				] as item, i}
