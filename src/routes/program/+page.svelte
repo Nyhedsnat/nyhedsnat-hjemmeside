@@ -42,7 +42,7 @@
 					{ time: '01:00', title: 'Natmad', icon: '🍕' },
 					{ time: '', title: 'Sove eller arbejde på aviser', icon: '😴' },
 					{ time: '04:00', title: 'Deadline for Aflevering af aviser, reel og pressefoto', icon: '📰' },
-					{ time: '', title: 'Sove eller arbejde på aviser', icon: '😴' },
+					{ time: '', title: 'Sove', icon: '😴' },
 					{ time: '08:30', title: 'Morgenmad', icon: '🥐' },
 					{ time: '09:30 - 10:00', title: 'Afstemning om pressefoto, og reel Oprydning og video fra events', icon: '🧹' },
 					{ time: '10:00', title: 'Kåring af vindere', icon: '🏆' },
