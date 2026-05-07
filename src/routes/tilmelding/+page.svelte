@@ -54,7 +54,7 @@
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningSignupOpen ? '' : 'border-red-400/40'}">
 			<div class="flex items-start justify-between gap-4 mb-4">
-				<h2 class="text-2xl font-bold text-star-white">Tilmelding til planlægningsweekenden for seniorer</h2>
+				<h2 class="text-2xl font-bold text-star-white">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
 				{#if !planningSignupOpen}
 					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<span>🔒</span> Lukket
@@ -62,12 +62,12 @@
 				{/if}
 			</div>
 
-			<p class="text-star-white/70 mb-4">Planlægningsweekenden er for seniorer, der vil planlægge hændelser.</p>
+			<p class="text-star-white/70 mb-4">Arrangøruddannelse & planlægningsweekend for seniorer er for seniorer, der vil planlægge hændelser.</p>
 			<p class="text-star-white/70 mb-6">Her deltager man i planlægningen og er med til at udvikle hændelser.</p>
 
 			{#if planningSignupOpen}
 				{#if signupOpen}
-					<JoinButton href="/kontakt" variant="secondary" className="mb-4">Tilmeld dig planlægningsweekenden</JoinButton>
+					<JoinButton href="/kontakt" variant="secondary" className="mb-4">Tilmeld dig Arrangøruddannelse & planlægningsweekend for seniorer</JoinButton>
 				{:else}
 					<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
 						Tilmeldingen åbner {signupOpensText}
@@ -76,7 +76,7 @@
 				<p class="text-star-white/65">Tilmeldingsfrist: {planningSignupDeadlineText}</p>
 			{:else}
 				<div class="rounded-xl border-2 border-red-400/60 bg-red-500/10 p-5">
-					<p class="text-red-300 font-bold text-lg">Tilmeldingen til planlægningsweekenden er lukket.</p>
+					<p class="text-red-300 font-bold text-lg">Tilmeldingen til Arrangøruddannelse & planlægningsweekend for seniorer er lukket.</p>
 					<p class="text-red-200/80 text-sm mt-1">Kontakt udvalget, hvis du har spørgsmål.</p>
 				</div>
 			{/if}
@@ -103,7 +103,7 @@
 				<div class="card-dark rounded-2xl p-8 flex flex-col">
 					<h2 class="text-2xl font-bold text-star-white mb-4">Indbydelse til seniorer</h2>
 					<p class="text-star-white/60 mb-4">
-						PDF med fokus på seniorernes rolle i Nyhedsnat, hændelser, roller og planlægningsweekend.
+						PDF med fokus på seniorernes rolle i Nyhedsnat, hændelser, roller og Arrangøruddannelse & planlægningsweekend for seniorer.
 					</p>
 					<a href="/files/Indbydelse_senior.pdf" download class="text-gold-400 underline underline-offset-4 hover:text-gold-300">
 						Hent indbydelse (PDF)

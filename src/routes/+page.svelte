@@ -111,7 +111,7 @@
 			<div class="mb-7 space-y-4 text-lg leading-relaxed text-star-white/70">
 				<p>Alle hændelser planlægges af seniorer.</p>
 				<p>
-					Vil du være med til at skabe oplevelsen, kan du deltage i planlægningsweekenden den
+					Vil du være med til at skabe oplevelsen, kan du deltage i Arrangøruddannelse & planlægningsweekend for seniorer den
 					25.–27. september.
 				</p>
 				<p>

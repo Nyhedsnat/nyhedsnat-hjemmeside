@@ -56,9 +56,9 @@ Som senior kan man enten være med til planlægningen eller udelukkende deltage 
 Det vil sige, at der er to måder at være senior på:
 
 Planlægger
-Som planlægger deltager man i planlægningsweekenden og er med til at udvikle hændelser.
-Planlægningsweekenden er både et kursus og en workshop, hvor vi arbejder med idéer, roller og afvikling.
-Tilmeldingsfristen er en uge før planlægningsweekenden. Se mere under tilmelding.
+Som planlægger deltager man i Arrangøruddannelse & planlægningsweekend for seniorer og er med til at udvikle hændelser.
+Arrangøruddannelse & planlægningsweekend for seniorer er både et kursus og en workshop, hvor vi arbejder med idéer, roller og afvikling.
+Tilmeldingsfristen er en uge før Arrangøruddannelse & planlægningsweekend for seniorer. Se mere under tilmelding.
 
 Deltager
 Som seniordeltager får man på dagen tildelt en rolle og indgår i afviklingen af hændelserne.
