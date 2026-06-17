@@ -51,6 +51,12 @@
 				<p class="mt-1 text-sm">Vælg denne hvis: I bare skal bruge noget hurtigt.</p>
 				<a href="https://logoai.com" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Åbn LogoAI</a>
 			</div>
+			<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
+				<h3 class="font-semibold text-star-white">Transparent Logo Maker</h3>
+				<p class="mt-1 text-sm">God hvis I vil: fjerne hvid baggrund fra jeres logo.</p>
+				<p class="mt-1 text-sm">Vælg denne hvis: jeres AI-genereret logo har hvid baggrund.</p>
+				<a href="https://www.smallpngtools.com/transparent-logo-maker.php" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Åbn Transparent Logo Maker</a>
+			</div>
 		</div>
 	</section>
 
