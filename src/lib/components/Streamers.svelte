@@ -117,6 +117,7 @@
 			setTimeout(() => animateStreamer(streamer), 10);
 			return;
 		}
+		const el = element;
 
 		const totalWidth = (SVG_WIDTH / SVG_HEIGHT) * streamer.height * REPETITIONS;
 		const radians = (streamer.angle * Math.PI) / 180;
@@ -142,7 +143,7 @@
 			x = streamer.startX + vx * progress;
 			y = streamer.startY + vy * progress;
 
-			element.style.transform = `translate(${x}px, ${y}px) rotate(${streamer.angle}deg)`;
+			el.style.transform = `translate(${x}px, ${y}px) rotate(${streamer.angle}deg)`;
 
 			// Check if streamer is completely off screen
 			if (elapsed < duration) {

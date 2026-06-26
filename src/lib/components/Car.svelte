@@ -7,7 +7,7 @@
 	let duration = $state(12);
 
 	function handleClick() {
-		triggerConvoy.set(true);
+		triggerConvoy.set(direction);
 	}
 
 	onMount(() => {

@@ -26,9 +26,6 @@
 	<div class="shooting-star"></div>
 </div>
 
-<!-- Moon in top right corner (double-click for laser!) -->
-<MoonLaser />
-
 <!-- Streamers easter egg (triggered by double-clicking logo) -->
 <Streamers />
 
@@ -40,6 +37,9 @@
 
 <!-- Main app structure -->
 <div class="main-content flex min-h-screen flex-col">
+	<!-- Moon in top right corner (double-click for laser!) -->
+	<MoonLaser />
+
 	<Navigation />
 
 	<!-- Main content with padding for fixed header -->

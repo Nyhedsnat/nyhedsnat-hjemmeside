@@ -29,6 +29,20 @@ npm run dev
 npm run dev -- --open
 ```
 
+### Debug traffic mode (vehicles)
+
+You can increase vehicle spawn rate for testing via `.env`:
+
+```env
+PUBLIC_DEBUG_TRAFFIC=true
+PUBLIC_DEBUG_TRAFFIC_MULTIPLIER=10
+```
+
+- `PUBLIC_DEBUG_TRAFFIC`: `true` enables debug traffic, `false` disables it (only these values are supported)
+- `PUBLIC_DEBUG_TRAFFIC_MULTIPLIER`: spawn-rate multiplier (e.g. `10` = 10x more frequent)
+
+After changing `.env`, restart the dev server.
+
 ## Building
 
 To create a production version of your app:
