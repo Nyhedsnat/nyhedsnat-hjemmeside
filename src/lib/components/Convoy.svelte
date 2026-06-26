@@ -15,7 +15,7 @@
 		'/svg/eastereggs/vehicles/car-5.svg'
 	];
 
-	const carHeight = 45; // Match the SIZE.car from Vehicles
+	const carHeight = 65; // Match the SIZE.large from Vehicles (same as nyhedsnat-car)
 	const carCount = 10;
 	const gap = 40;
 
@@ -199,7 +199,7 @@
 		position: relative;
 		display: flex;
 		align-items: flex-end;
-		height: 45px;
+		height: 65px;
 		overflow: visible;
 	}
 
@@ -252,7 +252,7 @@
 	}
 
 	.convoy-car {
-		height: 45px;
+		height: 65px;
 		width: auto;
 		display: block;
 		position: relative;

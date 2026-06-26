@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { triggerConvoy } from '$lib/stores/convoy';
-	import { PUBLIC_DEBUG_TRAFFIC } from '$env/static/public';
+
 
 	// When `grid` is true (used by /animation-test) the component renders one
 	// stationary vehicle of every type in a grid so each click effect can be
@@ -69,7 +69,7 @@
 	const totalWeight = vehicleTypes.reduce((sum, v) => sum + v.weight, 0);
 	const minSpawnInterval = 5000;
 	const maxSpawnInterval = 15000;
-	const debugTrafficEnabled = PUBLIC_DEBUG_TRAFFIC === 'true';
+	const debugTrafficEnabled = import.meta.env.PUBLIC_DEBUG_TRAFFIC === 'true';
 	const spawnRateMultiplier = debugTrafficEnabled ? 5 : 1;
 
 	let vehicleIdCounter = 0;
