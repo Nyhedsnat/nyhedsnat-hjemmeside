@@ -15,7 +15,7 @@
 		'/svg/eastereggs/vehicles/car-5.svg'
 	];
 
-	const carHeight = 65; // Match the SIZE.large from Vehicles (same as nyhedsnat-car)
+	const carHeight = 45; // Match SIZE.car from Vehicles (same height as normal cars)
 	const carCount = 10;
 	const gap = 40;
 
@@ -175,6 +175,10 @@
 		display: flex;
 		align-items: flex-end;
 		gap: 40px;
+		/* Size to the full row, not the clamped viewport, so the drive keyframes'
+		   translateX(-100%/100%) = the convoy's true width and it starts fully
+		   off-screen (otherwise the trailing cars sit on-screen and "pop in"). */
+		width: max-content;
 	}
 
 	/* Left to right drive */
@@ -199,34 +203,39 @@
 		position: relative;
 		display: flex;
 		align-items: flex-end;
-		height: 65px;
+		height: 45px;
 		overflow: visible;
+		/* The 10-car row is wider than the viewport; without this the flex items
+		   shrink horizontally and the cars render narrower (smaller) than normal
+		   traffic. Keep each car at its natural size and let the row overflow. */
+		flex-shrink: 0;
 	}
 
+	/* RGB underglow — strictly under the car body, never the headlight beam.
+	   The SVGs put the headlight/beam on the front (left when unflipped). Across
+	   all convoy car types the solid body overlaps only within ~65–83% of the box,
+	   so the strip lives there (centre 74%); ltr cars are flipped → mirror to 26%. */
 	.convoy-car-btn::after {
 		content: '';
 		position: absolute;
-		left: 50%;
-		bottom: 0;
+		left: 74%;
+		bottom: 2px;
 		transform: translateX(-50%);
-		width: 38%;
+		width: 18%;
 		height: 5px;
 		border-radius: 999px;
 		background: linear-gradient(90deg, #ff2a6d, #ff8a00, #ffe600, #00f5a0, #00d4ff, #7b61ff, #ff2ad4);
 		background-size: 250% 100%;
 		filter: blur(3px);
-		opacity: 0.3;
+		opacity: 0.35;
 		z-index: 1;
 		animation: rgb-shift 1.2s linear infinite, underglow-flicker 0.35s steps(2, end) infinite;
 		animation-delay: calc(var(--i) * -0.07s);
 	}
 
+	/* ltr cars are mirrored, so their body sits on the left → mirror 74% to 26% */
 	.convoy-container.ltr .convoy-car-btn::after {
-		transform: translateX(-120%);
-	}
-
-	.convoy-container.rtl .convoy-car-btn::after {
-		transform: translateX(20%);
+		left: 26%;
 	}
 
 	.convoy-car-btn {
@@ -252,7 +261,7 @@
 	}
 
 	.convoy-car {
-		height: 65px;
+		height: 45px;
 		width: auto;
 		display: block;
 		position: relative;

@@ -13,6 +13,7 @@
 		rot: number;
 		delayMs: number;
 		fxDelayMs: number;
+		arriveDurMs: number;
 		leaveDelay: number;
 		leaveDurMs: number;
 	};
@@ -27,7 +28,7 @@
 		'/svg/eastereggs/vehicles/random-short-car.svg'
 	];
 	const BLOCK_VW = 52; // road blockage x where the pile-up forms
-	const FLEET = 20;
+	const FLEET = 12; // keep the whole pile-up on screen (12 * ~3.6vw ≈ 43vw spread)
 
 	let cloudVisible = $state(false);
 	let cloudActive = $state(false);
@@ -45,17 +46,27 @@
 		eventActive = true;
 		cloudActive = true; // freezes the drift + darkens the cloud
 		snowing = true;
-		snowFreeze.set(true); // freeze normal traffic — snow on the road
+		// freeze normal traffic 5s after snow starts — cars on the road carry on a moment first
+		setTimeout(() => {
+			if (eventActive) snowFreeze.set(true);
+		}, 5000);
 		groundOut = false;
 		leaving = false;
 
 		const sign = direction === 'ltr' ? -1 : 1; // pile grows backward from the blockage
 		const SPEED_VW_S = 12; // drive-off speed — matches normal traffic's on-screen pace
+		const ARRIVE_SPEED_VW_S = 11; // arrival a touch slower — cars roll in and brake gently
+		const iw = typeof window !== 'undefined' ? window.innerWidth : 1200;
+		const entryVw = direction === 'ltr' ? -(280 / iw) * 100 : 100 + (280 / iw) * 100; // off-screen start (keyframe 0%)
 		cars = Array.from({ length: FLEET }, (_, i) => {
-			const delayMs = 9000 + i * 280; // let a deep snow layer build (~9s) before cars slide in
+			const delayMs = 9000 + i * 250; // let a deep snow layer build (~9s) before cars slide in
 			const stopVw = BLOCK_VW + sign * (i * 3.6);
-			// distance each car covers driving off (to just past its exit edge),
-			// so duration ∝ distance → constant speed instead of a fixed-time sprint
+			// Arrival uses the same per-car-duration approach as drive-off: duration ∝
+			// distance → every car rolls in at the SAME gentle speed (no fixed-time sprint
+			// where the far cars zoom). Eased so they decelerate smoothly into the pile.
+			const arriveDistVw = Math.abs(stopVw - entryVw);
+			const arriveDurMs = Math.min(7500, Math.max(3000, (arriveDistVw / ARRIVE_SPEED_VW_S) * 1000));
+			// distance each car covers driving off (to just past its exit edge)
 			const travelVw = direction === 'ltr' ? 110 - stopVw : stopVw + 10;
 			const leaveDurMs = Math.min(8500, Math.max(3500, (travelVw / SPEED_VW_S) * 1000));
 			return {
@@ -64,8 +75,11 @@
 				stopVw,
 				rot: Math.random() * 10 - 5,
 				delayMs,
-				fxDelayMs: delayMs + 2350, // crash fx as it slides into the pile
-				leaveDelay: i * 100, // front of the pile pulls away first
+				arriveDurMs,
+				fxDelayMs: delayMs + arriveDurMs * 0.8, // crash fx as it skids into the pile (~80% in)
+				// Jam clears front-first: each car only pulls away once the one ahead has
+				// opened a gap (~0.55s), plus a little reaction jitter — not all at once.
+				leaveDelay: i * 550 + Math.random() * 180,
 				leaveDurMs
 			};
 		});
@@ -73,12 +87,12 @@
 		// lifecycle: deep snow builds → cars slide in & crash → snow stops & MELTS away → only then cars drive off
 		setTimeout(() => {
 			groundOut = true; // snow stops falling; settled snow starts melting (reverse-grow)
-		}, 17500);
+		}, 18000);
 		setTimeout(() => {
 			leaving = true; // melt finished — road clear, pile-up drives off
 			snowFreeze.set(false); // ...and normal traffic moves again
-		}, 21000);
-		setTimeout(() => endEvent(), 32000); // cars now leave at normal speed → longer tail
+		}, 21500);
+		setTimeout(() => endEvent(), 36500); // sequential drive-off (~0.55s apart) → longer tail
 	}
 
 	function endEvent() {
@@ -152,7 +166,7 @@
 	<div
 		class="snow-car-wrap {direction}"
 		class:leaving
-		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms;"
+		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --arrive-dur: {car.arriveDurMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms;"
 	>
 		<img src={car.src} alt="" aria-hidden="true" draggable="false" class="snow-car" />
 		<div class="crash-fx" aria-hidden="true">
@@ -265,13 +279,17 @@
 		z-index: 2; /* match traffic — between house layers; NOT 3 (= houses-front → z-fight flicker) */
 		transform-origin: 50% 100%;
 	}
-	/* slower than now (≈2.8s) with a slide: overshoots the stop then skids back on the snow */
-	.snow-car-wrap.ltr { animation: snowcar-ltr 2.8s cubic-bezier(0.2, 0.55, 0.1, 1) var(--delay) both; }
-	.snow-car-wrap.rtl { animation: snowcar-rtl 2.8s cubic-bezier(0.2, 0.55, 0.1, 1) var(--delay) both; }
+	/* Per-car duration (∝ distance, like the drive-off) so every car rolls in at the
+	   same gentle speed, with a strong ease-out → decelerates smoothly into the pile
+	   (overshoot + skid on the snow), instead of a fast, flat 2.8s slide. */
+	.snow-car-wrap.ltr { animation: snowcar-ltr var(--arrive-dur, 4s) cubic-bezier(0.16, 1, 0.3, 1) var(--delay) both; }
+	.snow-car-wrap.rtl { animation: snowcar-rtl var(--arrive-dur, 4s) cubic-bezier(0.16, 1, 0.3, 1) var(--delay) both; }
 	/* once the snow clears, the pile drives off (front first) instead of fading */
-	/* linear + per-car duration → drives off at a steady, normal-traffic speed */
-	.snow-car-wrap.leaving.ltr { animation: snowcar-leave-ltr var(--leave-dur, 6s) linear var(--leave-delay) forwards; }
-	.snow-car-wrap.leaving.rtl { animation: snowcar-leave-rtl var(--leave-dur, 6s) linear var(--leave-delay) forwards; }
+	/* linear + per-car duration → drives off at a steady, normal-traffic speed.
+	   `both` so each car holds its pile spot through its stagger delay (the 0%
+	   keyframe = translateX(--stop)) instead of snapping to the left edge first. */
+	.snow-car-wrap.leaving.ltr { animation: snowcar-leave-ltr var(--leave-dur, 6s) linear var(--leave-delay) both; }
+	.snow-car-wrap.leaving.rtl { animation: snowcar-leave-rtl var(--leave-dur, 6s) linear var(--leave-delay) both; }
 	.snow-car {
 		display: block;
 		height: 45px;

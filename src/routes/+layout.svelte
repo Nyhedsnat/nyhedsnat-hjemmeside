@@ -5,7 +5,6 @@
 	import Drone from '$lib/components/Drone.svelte';
 	import Ufo from '$lib/components/Ufo.svelte';
 	import Vehicles from '$lib/components/Vehicles.svelte';
-	import Bus from '$lib/components/Bus.svelte';
 	import Convoy from '$lib/components/Convoy.svelte';
 	import MoonLaser from '$lib/components/MoonLaser.svelte';
 	import Streamers from '$lib/components/Streamers.svelte';
@@ -54,7 +53,6 @@
 		<img src="/svg/background/huse-no-lights.svg" alt="" class="houses-silhouette houses-back" aria-hidden="true" />
 		<!-- Vehicles drive between the layers -->
 		<Vehicles />
-		<Bus />
 		<Convoy />
 		<!-- Snowstorm pile-up easter egg (click the drifting snow cloud) -->
 		<SnowCrash />

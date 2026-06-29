@@ -13,7 +13,8 @@
 	const SIZE = {
 		car: 45,
 		large: 65,
-		small: 24
+		small: 24,
+		bus: 60 // bus.svg is ~2.98:1 → ~179px wide, matching the old standalone bus
 	} as const;
 
 	type SizeCategory = keyof typeof SIZE;
@@ -32,6 +33,7 @@
 		| 'stretch'
 		| 'uturn'
 		| 'poof'
+		| 'busjump'
 		| 'disco';
 
 	interface VehicleType {
@@ -65,7 +67,8 @@
 		{ src: '/svg/eastereggs/vehicles/nyhedsnat-car-ltr.svg', size: 'large', minDuration: 9, maxDuration: 14, weight: 4, direction: 'ltr' },
 		{ src: '/svg/eastereggs/vehicles/dino-car.svg', size: 'car', minDuration: 11, maxDuration: 17, weight: 2 },
 		{ src: '/svg/eastereggs/vehicles/racer.svg', size: 'car', minDuration: 11, maxDuration: 17, weight: 1 },
-		{ src: '/svg/eastereggs/vehicles/limo.svg', size: 'car', minDuration: 11, maxDuration: 17, weight: 1 }
+		{ src: '/svg/eastereggs/vehicles/limo.svg', size: 'car', minDuration: 11, maxDuration: 17, weight: 1 },
+		{ src: '/svg/eastereggs/vehicles/bus.svg', size: 'bus', minDuration: 14, maxDuration: 20, weight: 2 }
 	];
 
 	const totalWeight = vehicleTypes.reduce((sum, v) => sum + v.weight, 0);
@@ -294,6 +297,7 @@
 			return;
 		}
 		if (src.includes('limo.svg')) return setEffect(vehicle.id, 'stretch', 2000);
+		if (src.includes('bus.svg')) return setEffect(vehicle.id, 'busjump', 1400); // big heavy jump while rolling
 
 		triggerConvoy.set(vehicle.direction);
 	}
@@ -323,9 +327,41 @@
 	// while it is still stopped, since pausing the drive doesn't pause this timer.
 	const removalTimers: Record<number, { timer: ReturnType<typeof setTimeout>; at: number; remaining?: number }> = {};
 
-	// Snowstorm freeze: stop every car in place and halt its removal timer so it
-	// isn't culled mid-screen while frozen; on thaw, resume the cull from where it
-	// left off. Spawning is gated separately (see scheduleNextSpawn / startRush).
+	// Snowstorm freeze: every car eases to a smooth stop (and back up to speed on
+	// thaw) by ramping its drive playbackRate, instead of snapping play-state to
+	// paused. Removal timers are halted so a frozen car isn't culled mid-screen.
+	// Spawning is gated separately (see scheduleNextSpawn / startRush).
+	let freezeGen = 0; // bumps on every freeze/thaw so an in-flight ramp can bail
+
+	// Smoothly drive every active car's playbackRate to `target` over `ms` (cosine
+	// ease → gentle start and gentle settle, like a car braking / pulling away).
+	// Stepped with setTimeout (not requestAnimationFrame) so the ramp still runs
+	// — and completes — in a backgrounded tab, where rAF is frozen. Progress is
+	// keyed off performance.now(), so a throttled step still lands at the right
+	// value. It only writes playbackRate (no layout reads), and the motion itself
+	// stays on the GPU compositor, so it's cheap on mobile / old hardware.
+	function rampDriveRates(target: number, ms: number) {
+		const gen = ++freezeGen;
+		const anims = activeVehicles.map((v) => getDriveAnimation(v.id)).filter(Boolean) as Animation[];
+		const starts = anims.map((a) => a.playbackRate);
+		const t0 = performance.now();
+		const STEP_MS = 40; // ~25 updates/s in the foreground; throttled (but still firing) when hidden
+		const tick = () => {
+			if (gen !== freezeGen) return; // superseded by a newer freeze/thaw
+			const p = Math.min(1, (performance.now() - t0) / ms);
+			const e = (1 - Math.cos(p * Math.PI)) / 2; // easeInOut
+			anims.forEach((a, i) => {
+				try {
+					a.playbackRate = starts[i] + (target - starts[i]) * e;
+				} catch {
+					/* vehicle gone */
+				}
+			});
+			if (p < 1) setTimeout(tick, STEP_MS);
+		};
+		tick();
+	}
+
 	function freezeTraffic() {
 		if (trafficFrozen) return;
 		trafficFrozen = true;
@@ -335,11 +371,13 @@
 			clearTimeout(r.timer);
 			r.remaining = Math.max(0, r.at - now);
 		}
+		rampDriveRates(0, 1800); // glide to a gradual stop (not an instant halt)
 	}
 
 	function unfreezeTraffic() {
 		if (!trafficFrozen) return;
 		trafficFrozen = false;
+		rampDriveRates(1, 1100); // ease back up to normal speed
 		const now = performance.now();
 		for (const key of Object.keys(removalTimers)) {
 			const r = removalTimers[Number(key)];
@@ -433,6 +471,7 @@
 		if (src.includes('dino-car.svg')) return 'Meteor + dino-panik';
 		if (src.includes('racer.svg')) return 'Nitro-launch';
 		if (src.includes('limo.svg')) return 'Strækker sig (stræk-limo)';
+		if (src.includes('bus.svg')) return 'Laver et kæmpe hop';
 		return '';
 	}
 
@@ -494,13 +533,14 @@
 	<div
 		bind:this={containerEls[vehicle.id]}
 		class="vehicle-container {vehicle.direction}"
-		class:paused={!!paused[vehicle.id] || trafficFrozen}
+		class:paused={!!paused[vehicle.id]}
 		class:grid
 		style="--duration: {vehicle.duration}s;"
 	>
 		<button class="vehicle-button" class:turbo-active={effect === 'turbo'} class:nitro-active={effect === 'nitro'} onclick={() => { if (!grid) handleClick(vehicle); }} aria-label="Vehicle action">
 			{#if effect === 'drift' || effect === 'firestop' || effect === 'smokewheelie' || effect === 'nitro'}<div class="smoke" class:smoke-wild={effect === 'firestop'}></div>{/if}
 			{#if effect === 'smokewheelie'}<div class="land-dust" aria-hidden="true"><span></span><span></span><span></span><span></span></div>{/if}
+			{#if effect === 'busjump'}<div class="bus-dust" aria-hidden="true"><span></span><span></span><span></span><span></span></div>{/if}
 			{#if effect === 'firestop'}<div class="smoke smoke-wild smoke-second"></div>{/if}
 			{#if fireActive[vehicle.id]}<div class="engine-fire" aria-hidden="true"><span class="fire-tongue"></span><span class="fire-tongue"></span><span class="fire-tongue"></span><span class="fire-core"></span></div>{/if}
 			{#if effect === 'turbo'}<div class="flame turbo-flame"></div>{/if}
@@ -726,6 +766,10 @@
 	.vehicle-container.rtl .vehicle.uturn { animation: uturn-rtl 2.1s linear forwards; }
 	.vehicle-container.ltr .vehicle.poof { animation: poof-ltr 0.4s ease-in forwards; }
 	.vehicle-container.rtl .vehicle.poof { animation: poof-rtl 0.4s ease-in forwards; }
+	/* Bus click: the big heavy bus crouches and pulls off a surprise jump (keeps rolling). */
+	.vehicle.busjump { transform-origin: 50% 100%; }
+	.vehicle-container.ltr .vehicle.busjump { animation: bus-jump-ltr 1.4s linear; }
+	.vehicle-container.rtl .vehicle.busjump { animation: bus-jump-rtl 1.4s linear; }
 
 	/* Magic vanish confetti — bursts from the car's spot just as it disappears. */
 	/* Centred on the car body, not the image centre — car-2's SVG includes a long
@@ -902,6 +946,34 @@
 	.land-dust span:nth-child(2) { --dx: -12px; }
 	.land-dust span:nth-child(3) { --dx: 12px; }
 	.land-dust span:nth-child(4) { --dx: 34px; }
+
+	/* Dust kicked up when the jumping bus lands (~1s into bus-jump). */
+	.bus-dust {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 0;
+		height: 0;
+		z-index: 1;
+		pointer-events: none;
+	}
+	.bus-dust span {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(170, 158, 138, 0.75), transparent 70%);
+		filter: blur(1px);
+		opacity: 0;
+		animation: bus-dust-puff 0.55s ease-out 0.96s forwards;
+	}
+	.bus-dust span:nth-child(1) { --dx: -46px; }
+	.bus-dust span:nth-child(2) { --dx: -18px; }
+	.bus-dust span:nth-child(3) { --dx: 18px; }
+	.bus-dust span:nth-child(4) { --dx: 46px; }
 
 	/* 4x4 plows through a puddle: a water splash centred between the wheels.
 	   The SVG also contains a long headlight beam, so the wheel-centre is NOT the
@@ -1495,5 +1567,29 @@
 		16%  { transform: scaleX(0);  }
 		32%  { transform: scaleX(-1); }
 		100% { transform: scaleX(-1); }
+	}
+
+	/* Crouch → launch (decelerate to apex) → fall (accelerate) → land squash → settle.
+	   scaleX keeps the bus facing its travel direction throughout (like the u-turn). */
+	@keyframes bus-jump-rtl {
+		0%   { transform: translateY(0)      scaleY(1)    scaleX(1);    animation-timing-function: ease-in; }
+		9%   { transform: translateY(0)      scaleY(0.80) scaleX(1.12); animation-timing-function: ease-out; }
+		46%  { transform: translateY(-125px) scaleY(1.05) scaleX(0.96); animation-timing-function: ease-in; }
+		74%  { transform: translateY(0)      scaleY(1)    scaleX(1);    animation-timing-function: ease-out; }
+		82%  { transform: translateY(0)      scaleY(0.82) scaleX(1.12); animation-timing-function: ease-in-out; }
+		100% { transform: translateY(0)      scaleY(1)    scaleX(1); }
+	}
+	@keyframes bus-jump-ltr {
+		0%   { transform: translateY(0)      scaleY(1)    scaleX(-1);    animation-timing-function: ease-in; }
+		9%   { transform: translateY(0)      scaleY(0.80) scaleX(-1.12); animation-timing-function: ease-out; }
+		46%  { transform: translateY(-125px) scaleY(1.05) scaleX(-0.96); animation-timing-function: ease-in; }
+		74%  { transform: translateY(0)      scaleY(1)    scaleX(-1);    animation-timing-function: ease-out; }
+		82%  { transform: translateY(0)      scaleY(0.82) scaleX(-1.12); animation-timing-function: ease-in-out; }
+		100% { transform: translateY(0)      scaleY(1)    scaleX(-1); }
+	}
+	@keyframes bus-dust-puff {
+		0%   { opacity: 0;    transform: translate(0, 0) scale(0.3); }
+		25%  { opacity: 0.85; }
+		100% { opacity: 0;    transform: translate(var(--dx), -8px) scale(1.4); }
 	}
 </style>
