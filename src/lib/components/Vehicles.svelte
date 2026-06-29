@@ -83,7 +83,19 @@
 	let effects = $state<Record<number, EffectName | undefined>>({});
 	let paused = $state<Record<number, boolean>>({});
 	let fireActive = $state<Record<number, boolean>>({});
-	let trafficFrozen = $state(false); // snowstorm on the road → all traffic stops, no new spawns
+	let trafficFrozen = $state(false); // snowstorm on the road → no new spawns (from snow start)
+	let trafficStopped = $state(false); // cars actually halted (after the grace) → clicks just honk
+	let angry = $state<Record<number, string>>({}); // id → emoji shown when a stopped car is clicked
+
+	const STUCK_EMOJI = ['💢', '😡', '🤬', '😤', '❗', '‼️'];
+	function popAngry(id: number) {
+		angry = { ...angry, [id]: STUCK_EMOJI[Math.floor(Math.random() * STUCK_EMOJI.length)] };
+		setTimeout(() => {
+			const next = { ...angry };
+			delete next[id];
+			angry = next;
+		}, 1100);
+	}
 
 	// Element ref per vehicle. Speed/direction effects (turbo, nitro, uturn)
 	// drive the container's own CSS drive-animation via the Web Animations API
@@ -241,6 +253,10 @@
 	 *     Golden mode + sparkle.
 	 */
 	function handleClick(vehicle: ActiveVehicle) {
+		// Only once actually halted by the snow → just an angry honk, no easter egg (which
+		// would un-stick it). During the pre-halt grace, normal eggs still fire.
+		if (trafficStopped) return popAngry(vehicle.id);
+
 		const src = vehicleTypes[vehicle.typeIndex].src;
 
 		if (src.includes('nyhedsnat-car-rtl') || src.includes('nyhedsnat-car-ltr')) {
@@ -364,19 +380,26 @@
 
 	function freezeTraffic() {
 		if (trafficFrozen) return;
-		trafficFrozen = true;
-		const now = performance.now();
-		for (const key of Object.keys(removalTimers)) {
-			const r = removalTimers[Number(key)];
-			clearTimeout(r.timer);
-			r.remaining = Math.max(0, r.at - now);
-		}
-		rampDriveRates(0, 1800); // glide to a gradual stop (not an instant halt)
+		trafficFrozen = true; // stop NEW spawns immediately (no cars appear mid-snow)
+		const gen = ++freezeGen;
+		// Cars already on the road carry on ~5s, THEN ease to a gradual stop.
+		setTimeout(() => {
+			if (gen !== freezeGen) return; // thawed during the grace window
+			const now = performance.now();
+			for (const key of Object.keys(removalTimers)) {
+				const r = removalTimers[Number(key)];
+				clearTimeout(r.timer);
+				r.remaining = Math.max(0, r.at - now);
+			}
+			rampDriveRates(0, 1800); // glide to a gradual stop (not an instant halt)
+			trafficStopped = true; // now clicks just honk (angry emoji), no easter egg
+		}, 5000);
 	}
 
 	function unfreezeTraffic() {
 		if (!trafficFrozen) return;
 		trafficFrozen = false;
+		trafficStopped = false; // driving again → eggs work normally
 		rampDriveRates(1, 1100); // ease back up to normal speed
 		const now = performance.now();
 		for (const key of Object.keys(removalTimers)) {
@@ -538,9 +561,10 @@
 		style="--duration: {vehicle.duration}s;"
 	>
 		<button class="vehicle-button" class:turbo-active={effect === 'turbo'} class:nitro-active={effect === 'nitro'} onclick={() => { if (!grid) handleClick(vehicle); }} aria-label="Vehicle action">
+			{#if angry[vehicle.id]}<span class="angry-pop" aria-hidden="true">{angry[vehicle.id]}</span>{/if}
 			{#if effect === 'drift' || effect === 'firestop' || effect === 'smokewheelie' || effect === 'nitro'}<div class="smoke" class:smoke-wild={effect === 'firestop'}></div>{/if}
 			{#if effect === 'smokewheelie'}<div class="land-dust" aria-hidden="true"><span></span><span></span><span></span><span></span></div>{/if}
-			{#if effect === 'busjump'}<div class="bus-dust" aria-hidden="true"><span></span><span></span><span></span><span></span></div>{/if}
+			{#if effect === 'busjump'}<div class="bus-dust" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>{/if}
 			{#if effect === 'firestop'}<div class="smoke smoke-wild smoke-second"></div>{/if}
 			{#if fireActive[vehicle.id]}<div class="engine-fire" aria-hidden="true"><span class="fire-tongue"></span><span class="fire-tongue"></span><span class="fire-tongue"></span><span class="fire-core"></span></div>{/if}
 			{#if effect === 'turbo'}<div class="flame turbo-flame"></div>{/if}
@@ -960,20 +984,24 @@
 	}
 	.bus-dust span {
 		position: absolute;
-		bottom: 0;
+		bottom: -2px; /* sit right on the road */
 		left: 0;
-		width: 20px;
-		height: 20px;
 		border-radius: 50%;
-		background: radial-gradient(circle, rgba(170, 158, 138, 0.75), transparent 70%);
-		filter: blur(1px);
+		background: radial-gradient(circle, rgba(198, 188, 170, 0.95), rgba(198, 188, 170, 0) 72%);
+		filter: blur(1.2px);
 		opacity: 0;
-		animation: bus-dust-puff 0.55s ease-out 0.96s forwards;
+		animation: bus-dust-puff 0.9s ease-out 0.96s forwards;
 	}
-	.bus-dust span:nth-child(1) { --dx: -46px; }
-	.bus-dust span:nth-child(2) { --dx: -18px; }
-	.bus-dust span:nth-child(3) { --dx: 18px; }
-	.bus-dust span:nth-child(4) { --dx: 46px; }
+	/* low ground wave: flat (wide, short) puffs that hug the road and stay low */
+	.bus-dust span:nth-child(1) { --dx: -80px; --dy: -2px; width: 22px; height: 13px; }
+	.bus-dust span:nth-child(2) { --dx: -58px; --dy: -5px; width: 32px; height: 18px; }
+	.bus-dust span:nth-child(3) { --dx: -36px; --dy: -3px; width: 38px; height: 20px; }
+	.bus-dust span:nth-child(4) { --dx: -16px; --dy: -6px; width: 34px; height: 18px; }
+	.bus-dust span:nth-child(5) { --dx: 0px;   --dy: -4px; width: 42px; height: 22px; }
+	.bus-dust span:nth-child(6) { --dx: 16px;  --dy: -6px; width: 34px; height: 18px; }
+	.bus-dust span:nth-child(7) { --dx: 36px;  --dy: -3px; width: 38px; height: 20px; }
+	.bus-dust span:nth-child(8) { --dx: 58px;  --dy: -5px; width: 32px; height: 18px; }
+	.bus-dust span:nth-child(9) { --dx: 80px;  --dy: -2px; width: 22px; height: 13px; }
 
 	/* 4x4 plows through a puddle: a water splash centred between the wheels.
 	   The SVG also contains a long headlight beam, so the wheel-centre is NOT the
@@ -1588,8 +1616,27 @@
 		100% { transform: translateY(0)      scaleY(1)    scaleX(-1); }
 	}
 	@keyframes bus-dust-puff {
-		0%   { opacity: 0;    transform: translate(0, 0) scale(0.3); }
-		25%  { opacity: 0.85; }
-		100% { opacity: 0;    transform: translate(var(--dx), -8px) scale(1.4); }
+		0%   { opacity: 0;    transform: translate(0, 0) scale(0.4); }
+		15%  { opacity: 0.95; transform: translate(0, 0) scale(0.7); }
+		55%  { opacity: 0.7; }
+		100% { opacity: 0;    transform: translate(var(--dx), var(--dy, -4px)) scale(1.5); }
+	}
+
+	/* angry honk emoji when a snow-frozen car is clicked (no easter egg fires) */
+	.angry-pop {
+		position: absolute;
+		left: 50%;
+		bottom: 100%;
+		font-size: 16px;
+		line-height: 1;
+		pointer-events: none;
+		z-index: 4;
+		animation: angry-rise 1.1s ease-out forwards;
+	}
+	@keyframes angry-rise {
+		0%   { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.4); }
+		20%  { opacity: 1; transform: translateX(-50%) translateY(-2px) scale(1.2); }
+		70%  { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1); }
+		100% { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(0.9); }
 	}
 </style>

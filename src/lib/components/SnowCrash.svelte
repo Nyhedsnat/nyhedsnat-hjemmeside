@@ -16,7 +16,14 @@
 		arriveDurMs: number;
 		leaveDelay: number;
 		leaveDurMs: number;
+		angryDurMs: number;
+		angryDelayMs: number;
+		angrySymbol: string;
 	};
+
+	// Mix of anger/frustration marks — each stuck car flashes its own, so the pile
+	// shows a variety rather than the same symbol everywhere.
+	const ANGRY_SYMBOLS = ['💢', '😡', '❗', '💥', '😤', '🤬', '‼️', '🤬', '💢'];
 
 	const CAR_SRCS = [
 		'/svg/eastereggs/vehicles/car-1.svg',
@@ -40,16 +47,31 @@
 	let driftDuration = $state(40);
 	let cars = $state<Car[]>([]);
 	let carId = 0;
+	let bumped = $state<Record<number, { level: number; sym: string }>>({}); // id → click-bump (2=hit, 1=shoved neighbour)
+
+	// Click a stuck car → it angrily lurches into the car ahead/behind; those
+	// neighbours get shoved a little too. Honk + 💢 + smoke on the one clicked.
+	function setBump(id: number, level: number, sym: string) {
+		bumped = { ...bumped, [id]: { level, sym } };
+		setTimeout(() => {
+			const next = { ...bumped };
+			delete next[id];
+			bumped = next;
+		}, 650);
+	}
+	function bumpCar(i: number) {
+		if (leaving) return; // already driving off
+		setBump(cars[i].id, 2, ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]);
+		if (cars[i - 1]) setBump(cars[i - 1].id, 1, '');
+		if (cars[i + 1]) setBump(cars[i + 1].id, 1, '');
+	}
 
 	function startEvent() {
 		if (eventActive || !cloudVisible) return;
 		eventActive = true;
 		cloudActive = true; // freezes the drift + darkens the cloud
 		snowing = true;
-		// freeze normal traffic 5s after snow starts — cars on the road carry on a moment first
-		setTimeout(() => {
-			if (eventActive) snowFreeze.set(true);
-		}, 5000);
+		snowFreeze.set(true); // stop new cars spawning right away (existing cars halt 5s later — see Vehicles)
 		groundOut = false;
 		leaving = false;
 
@@ -80,7 +102,13 @@
 				// Jam clears front-first: each car only pulls away once the one ahead has
 				// opened a gap (~0.55s), plus a little reaction jitter — not all at once.
 				leaveDelay: i * 550 + Math.random() * 180,
-				leaveDurMs
+				leaveDurMs,
+				// Stuck-in-the-jam fidget: each car bumps the one ahead + flashes a 💢 on
+				// its OWN cycle (varied period) starting once it has settled, so the anger
+				// ripples one-by-one through the pile instead of everyone twitching at once.
+				angryDurMs: 1500 + Math.random() * 1500, // 1.5–3.0s per bump cycle (varied → desynced)
+				angryDelayMs: delayMs + arriveDurMs + 150 + Math.random() * 700, // begin right after it parks
+				angrySymbol: ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]
 			};
 		});
 
@@ -162,13 +190,30 @@
 	<div class="snow-ground" class:out={groundOut} aria-hidden="true"></div>
 {/if}
 
-{#each cars as car (car.id)}
+{#each cars as car, i (car.id)}
 	<div
 		class="snow-car-wrap {direction}"
 		class:leaving
-		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --arrive-dur: {car.arriveDurMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms;"
+		class:bumped-hard={bumped[car.id]?.level === 2}
+		class:bumped-soft={bumped[car.id]?.level === 1}
+		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --arrive-dur: {car.arriveDurMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms; --angry-dur: {car.angryDurMs}ms; --angry-delay: {car.angryDelayMs}ms;"
 	>
-		<img src={car.src} alt="" aria-hidden="true" draggable="false" class="snow-car" />
+		<button class="snow-car-btn" onclick={() => bumpCar(i)} aria-label="Bil i snekø">
+			<img src={car.src} alt="" aria-hidden="true" draggable="false" class="snow-car" />
+		</button>
+		<span class="anger-mark" aria-hidden="true">{car.angrySymbol}</span>
+		{#if bumped[car.id]}
+			<div class="bump-fx" aria-hidden="true">
+				{#if bumped[car.id].level === 2}
+					<span class="bump-sym">{bumped[car.id].sym}</span>
+					<span class="bump-honk">!</span>
+				{/if}
+				<span class="bump-smoke b1"></span><span class="bump-smoke b2"></span>
+			</div>
+		{/if}
+		<span class="jam-dust d1" aria-hidden="true"></span>
+		<span class="jam-dust d2" aria-hidden="true"></span>
+		<span class="jam-dust d3" aria-hidden="true"></span>
 		<div class="crash-fx" aria-hidden="true">
 			<span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
 			<span class="csmoke cm1"></span><span class="csmoke cm2"></span>
@@ -298,7 +343,86 @@
 		user-select: none;
 		-webkit-user-select: none;
 		-webkit-user-drag: none;
+		/* impatient fidget while stuck: a quick lurch into the car ahead once per
+		   (varied) cycle, beginning after the car has parked. Each car runs its own
+		   period/phase so the bumps ripple one-by-one, not as a synchronized swarm. */
+		animation: jam-angry var(--angry-dur, 2.4s) ease-in-out var(--angry-delay, 0s) infinite;
 	}
+	/* once it pulls away, stop fidgeting */
+	.snow-car-wrap.leaving .snow-car { animation: none; }
+
+	.snow-car-btn {
+		display: block;
+		background: none;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		cursor: pointer;
+		pointer-events: auto;
+	}
+	/* click bump: clicked car slams into its neighbour; shoved neighbours move less.
+	   More specific than the jam-angry rule so it takes over for the one-shot. */
+	.snow-car-wrap.bumped-hard .snow-car { animation: snow-bump-hard 0.55s ease-out; }
+	.snow-car-wrap.bumped-soft .snow-car { animation: snow-bump-soft 0.55s ease-out; }
+
+	.bump-fx { position: absolute; left: 50%; bottom: 0; width: 0; height: 0; z-index: 3; pointer-events: none; }
+	.bump-sym { position: absolute; left: -9px; top: -28px; font-size: 17px; line-height: 1; animation: honk-pop 0.6s ease-out forwards; }
+	.bump-honk {
+		position: absolute;
+		left: 7px;
+		top: -24px;
+		font: 800 18px/1 system-ui, sans-serif;
+		color: #ffd24a;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+		animation: honk-pop 0.6s ease-out forwards;
+	}
+	.bump-smoke {
+		position: absolute;
+		bottom: -4px;
+		width: 17px;
+		height: 17px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(120, 120, 120, 0.7), rgba(120, 120, 120, 0) 70%);
+		opacity: 0;
+		animation: crash-smoke 0.8s ease-out forwards;
+	}
+	.bump-smoke.b1 { --sx: -13px; left: -11px; }
+	.bump-smoke.b2 { --sx: 13px; left: 4px; animation-delay: 80ms; }
+
+	/* 💢 anger mark — pops above the car in sync with its bump */
+	.anger-mark {
+		position: absolute;
+		top: -8px;
+		left: 50%;
+		font-size: 13px;
+		line-height: 1;
+		opacity: 0;
+		pointer-events: none;
+		z-index: 3;
+		transform: translateX(-50%) scale(0.4);
+		animation: anger-pop var(--angry-dur, 2.4s) ease-out var(--angry-delay, 0s) infinite;
+	}
+	.snow-car-wrap.leaving .anger-mark { animation: none; opacity: 0; }
+
+	/* Snow/dust kicked up at the wheels each time the car lurches into the one ahead. */
+	.jam-dust {
+		position: absolute;
+		bottom: 1px;
+		left: 50%;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(228, 235, 245, 0.75), rgba(228, 235, 245, 0) 70%);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 1; /* under the car body */
+		transform: translate(-50%, 0) scale(0.2);
+		animation: jam-dust-puff var(--angry-dur, 2.4s) ease-out var(--angry-delay, 0s) infinite;
+	}
+	.jam-dust.d1 { --ddx: -11px; }
+	.jam-dust.d2 { --ddx: 9px; }
+	.jam-dust.d3 { --ddx: -2px; width: 7px; height: 7px; }
+	.snow-car-wrap.leaving .jam-dust { animation: none; opacity: 0; }
 
 	/* crash sparks + "!" honk, fired as the car hits the pile */
 	.crash-fx {
@@ -397,6 +521,44 @@
 	@keyframes snowcar-leave-rtl {
 		0% { transform: translateX(var(--stop)) scaleX(1) rotate(var(--rot)); }
 		100% { transform: translateX(-10vw) scaleX(1) rotate(0); }
+	}
+
+	/* click bump: a bigger slam forward + recoil (clicked car), and a lighter shove
+	   for the neighbours it rams into. */
+	@keyframes snow-bump-hard {
+		0% { transform: translate(0, 0) rotate(0deg); }
+		28% { transform: translate(9px, 0) rotate(5deg); }
+		54% { transform: translate(-4px, 0) rotate(-3deg); }
+		78% { transform: translate(2px, 0) rotate(1deg); }
+		100% { transform: translate(0, 0) rotate(0deg); }
+	}
+	@keyframes snow-bump-soft {
+		0% { transform: translate(0, 0) rotate(0deg); }
+		35% { transform: translate(5px, 0) rotate(3deg); }
+		68% { transform: translate(-2px, 0) rotate(-1.5deg); }
+		100% { transform: translate(0, 0) rotate(0deg); }
+	}
+
+	/* Stuck-jam fidget: mostly idle, then a quick lurch into the car ahead and a
+	   bump-back recoil. Small (cars are 45px) but reads as impatient/angry. */
+	@keyframes jam-angry {
+		0%, 76%, 100% { transform: translate(0, 0) rotate(0deg); }
+		82% { transform: translate(3px, 0) rotate(2deg); }      /* lurch into the car ahead */
+		87% { transform: translate(-2px, 0) rotate(-1.5deg); }  /* recoil */
+		93% { transform: translate(1px, 0) rotate(0.5deg); }    /* settle */
+	}
+	/* 💢 flashes up in sync with the lurch, then fades as it rises */
+	@keyframes anger-pop {
+		0%, 76%, 100% { opacity: 0; transform: translateX(-50%) scale(0.4); }
+		82% { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.15); }
+		93% { opacity: 0.85; transform: translateX(-50%) translateY(-7px) scale(1); }
+	}
+	/* dust puff fires with the lurch, then drifts out (per-puff via --ddx) and fades */
+	@keyframes jam-dust-puff {
+		0%, 80% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
+		86% { opacity: 0.6; transform: translate(calc(-50% + var(--ddx, 0px) * 0.35), -2px) scale(0.85); }
+		98% { opacity: 0; transform: translate(calc(-50% + var(--ddx, 0px)), -5px) scale(1.3); }
+		100% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
 	}
 
 	@keyframes crash-smoke {
