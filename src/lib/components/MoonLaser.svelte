@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { rushHourTrigger } from '$lib/stores/rushHour';
 
 	let laserActive = $state(false);
 	let moonElement: HTMLButtonElement;
@@ -390,6 +391,9 @@
 		laserActive = false;
 		laserActive = true;
 		isHolding = false;
+
+		// Rush hour: the laser sets off a ~20s traffic surge (~10x cars).
+		rushHourTrigger.set(true);
 
 		// Start the destruction loop
 		destroyNextElement();

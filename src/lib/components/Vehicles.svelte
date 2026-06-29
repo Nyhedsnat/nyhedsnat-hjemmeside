@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { triggerConvoy } from '$lib/stores/convoy';
+	import { rushHourTrigger } from '$lib/stores/rushHour';
+	import { snowFreeze } from '$lib/stores/snow';
 
 
 	// When `grid` is true (used by /animation-test) the component renders one
@@ -78,6 +80,7 @@
 	let effects = $state<Record<number, EffectName | undefined>>({});
 	let paused = $state<Record<number, boolean>>({});
 	let fireActive = $state<Record<number, boolean>>({});
+	let trafficFrozen = $state(false); // snowstorm on the road → all traffic stops, no new spawns
 
 	// Element ref per vehicle. Speed/direction effects (turbo, nitro, uturn)
 	// drive the container's own CSS drive-animation via the Web Animations API
@@ -107,11 +110,28 @@
 	}
 
 	// Send the car back the way it came (u-turn) — it retraces its path and
-	// leaves on the side it entered from.
+	// leaves on the side it entered from. A *forward* WAAPI animation back to the
+	// entry edge stays on the compositor and runs smoothly; reversing the existing
+	// CSS drive with a negative playbackRate dropped to the main thread and stuttered.
 	function reverseDrive(id: number, rate = 1.5) {
-		const anim = getDriveAnimation(id);
-		if (!anim) return;
-		anim.playbackRate = -Math.abs(rate);
+		const el = containerEls[id];
+		if (!el) return;
+		const old = getDriveAnimation(id);
+		const dir = el.classList.contains('rtl') ? 'rtl' : 'ltr';
+		const curX = new DOMMatrixReadOnly(getComputedStyle(el).transform).m41;
+		const fullDur = old ? Number(old.effect?.getTiming().duration) || 0 : 0; // ms for a full crossing
+		old?.cancel();
+		el.style.animation = 'none'; // kill the declarative CSS drive so it can't fight the new one
+		// drive keyframes span roughly -250px .. (100vw + 250px)
+		const span = window.innerWidth + 500;
+		const targetX = dir === 'ltr' ? -(el.offsetWidth + 300) : el.offsetWidth + 300;
+		const dist = Math.abs(targetX - curX);
+		const speed = fullDur > 0 ? span / fullDur : 0.05; // px per ms at normal drive speed
+		const ms = Math.max(300, dist / (speed * Math.abs(rate)));
+		el.animate(
+			[{ transform: `translateX(${curX}px)` }, { transform: `translateX(${targetX}px)` }],
+			{ duration: ms, easing: 'linear', fill: 'forwards' }
+		);
 	}
 
 	function getHeight(size: SizeCategory): number {
@@ -301,7 +321,31 @@
 	// Removal is tracked per vehicle so effects that halt a car (firestop) can
 	// postpone it — otherwise the wall-clock timer would cull the car mid-screen
 	// while it is still stopped, since pausing the drive doesn't pause this timer.
-	const removalTimers: Record<number, { timer: ReturnType<typeof setTimeout>; at: number }> = {};
+	const removalTimers: Record<number, { timer: ReturnType<typeof setTimeout>; at: number; remaining?: number }> = {};
+
+	// Snowstorm freeze: stop every car in place and halt its removal timer so it
+	// isn't culled mid-screen while frozen; on thaw, resume the cull from where it
+	// left off. Spawning is gated separately (see scheduleNextSpawn / startRush).
+	function freezeTraffic() {
+		if (trafficFrozen) return;
+		trafficFrozen = true;
+		const now = performance.now();
+		for (const key of Object.keys(removalTimers)) {
+			const r = removalTimers[Number(key)];
+			clearTimeout(r.timer);
+			r.remaining = Math.max(0, r.at - now);
+		}
+	}
+
+	function unfreezeTraffic() {
+		if (!trafficFrozen) return;
+		trafficFrozen = false;
+		const now = performance.now();
+		for (const key of Object.keys(removalTimers)) {
+			const r = removalTimers[Number(key)];
+			scheduleRemoval(Number(key), now + (r.remaining ?? Math.max(0, r.at - now)));
+		}
+	}
 
 	function removeVehicle(id: number) {
 		activeVehicles = activeVehicles.filter((v) => v.id !== id);
@@ -346,14 +390,31 @@
 		scheduleRemoval(id, performance.now() + duration * 1000 + 200);
 	}
 
+	// "Rush hour" surge (triggered by the moon laser): ~10x traffic for 20s.
+	const RUSH_FACTOR = 10;
+	let rushActive = false;
+	let spawnTimer: ReturnType<typeof setTimeout>;
+
 	function scheduleNextSpawn() {
-		const interval = debugTrafficEnabled
+		const base = debugTrafficEnabled
 			? minSpawnInterval / spawnRateMultiplier
 			: (Math.random() * (maxSpawnInterval - minSpawnInterval) + minSpawnInterval) / spawnRateMultiplier;
-		setTimeout(() => {
-			spawnVehicle();
+		const interval = base / (rushActive ? RUSH_FACTOR : 1);
+		spawnTimer = setTimeout(() => {
+			if (!trafficFrozen) spawnVehicle(); // no new cars while snow covers the road
 			scheduleNextSpawn();
 		}, interval);
+	}
+
+	function startRush() {
+		if (rushActive) return;
+		rushActive = true;
+		clearTimeout(spawnTimer); // drop the slow pending spawn, reschedule fast now
+		scheduleNextSpawn();
+		for (let i = 0; i < 6; i++) setTimeout(() => rushActive && !trafficFrozen && spawnVehicle(), i * 180); // instant burst
+		setTimeout(() => {
+			rushActive = false;
+		}, 20000);
 	}
 
 	// Friendly Danish description of what each vehicle's click effect does.
@@ -404,6 +465,25 @@
 		}
 		spawnVehicle();
 		scheduleNextSpawn();
+
+		// Moon laser → rush hour: spike traffic ~10x for 20s.
+		const unsub = rushHourTrigger.subscribe((on) => {
+			if (on) {
+				startRush();
+				rushHourTrigger.set(false);
+			}
+		});
+
+		// Snowstorm → freeze all traffic until the pile-up drives off again.
+		const unsubSnow = snowFreeze.subscribe((on) => {
+			if (on) freezeTraffic();
+			else unfreezeTraffic();
+		});
+
+		return () => {
+			unsub();
+			unsubSnow();
+		};
 	});
 </script>
 
@@ -414,7 +494,7 @@
 	<div
 		bind:this={containerEls[vehicle.id]}
 		class="vehicle-container {vehicle.direction}"
-		class:paused={!!paused[vehicle.id]}
+		class:paused={!!paused[vehicle.id] || trafficFrozen}
 		class:grid
 		style="--duration: {vehicle.duration}s;"
 	>
@@ -476,6 +556,7 @@
 				<span class="anim-label">
 					<strong>{vehicleType.src.split('/').pop()}</strong>
 					<span class="anim-effect">{getEffectLabel(vehicleType.src)}</span>
+					<span class="anim-prob">{((vehicleType.weight / totalWeight) * 100).toFixed(1)}% spawn chance</span>
 				</span>
 			</div>
 		{/each}
@@ -494,7 +575,10 @@
 		pointer-events: none;
 	}
 
-	.vehicle-container.paused {
+	/* Must out-specify `.vehicle-container.ltr/.rtl`, whose `animation` shorthand
+	   resets play-state to running and otherwise wins on source order. */
+	.vehicle-container.ltr.paused,
+	.vehicle-container.rtl.paused {
 		animation-play-state: paused;
 	}
 
@@ -562,6 +646,10 @@
 	.anim-effect {
 		font-size: 12px;
 		color: rgba(212, 175, 55, 0.85);
+	}
+	.anim-prob {
+		font-size: 11px;
+		color: rgba(255, 255, 255, 0.35);
 	}
 
 	.vehicle-button {

@@ -9,6 +9,7 @@
 	import Convoy from '$lib/components/Convoy.svelte';
 	import MoonLaser from '$lib/components/MoonLaser.svelte';
 	import Streamers from '$lib/components/Streamers.svelte';
+	import SnowCrash from '$lib/components/SnowCrash.svelte';
 
 	let { children } = $props();
 </script>
@@ -55,6 +56,8 @@
 		<Vehicles />
 		<Bus />
 		<Convoy />
+		<!-- Snowstorm pile-up easter egg (click the drifting snow cloud) -->
+		<SnowCrash />
 		<!-- Front layer: house lights (above vehicles) -->
 		<img src="/svg/background/huse-lights.svg" alt="" class="houses-silhouette houses-front" aria-hidden="true" />
 	</div>

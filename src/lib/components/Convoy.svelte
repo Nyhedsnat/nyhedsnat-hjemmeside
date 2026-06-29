@@ -203,11 +203,11 @@
 		overflow: visible;
 	}
 
-	.convoy-car-wrap::after {
+	.convoy-car-btn::after {
 		content: '';
 		position: absolute;
 		left: 50%;
-		bottom: 1px;
+		bottom: 0;
 		transform: translateX(-50%);
 		width: 38%;
 		height: 5px;
@@ -221,11 +221,11 @@
 		animation-delay: calc(var(--i) * -0.07s);
 	}
 
-	.convoy-container.ltr .convoy-car-wrap::after {
+	.convoy-container.ltr .convoy-car-btn::after {
 		transform: translateX(-120%);
 	}
 
-	.convoy-container.rtl .convoy-car-wrap::after {
+	.convoy-container.rtl .convoy-car-btn::after {
 		transform: translateX(20%);
 	}
 
@@ -246,7 +246,7 @@
 	}
 
 	/* The RGB underglow flares brighter & faster while the car dances. */
-	.convoy-car-wrap:has(.convoy-car-btn.dance)::after {
+	.convoy-car-btn.dance::after {
 		filter: blur(4px) brightness(1.7) saturate(1.2);
 		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
 	}
