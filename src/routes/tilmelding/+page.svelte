@@ -18,11 +18,12 @@
 <script lang="ts">
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
-	const signupOpen = false;
-	const signupOpensText = '1. juli 2026';
-
-	const nyhedsnatSignupDeadline = '25. oktober 2026';
+	const signupOpen = true;
 	const planningSignupOpen = true;
+	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
+	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
+	const signupOpensText = '1. juli 2026';
+	const nyhedsnatSignupDeadline = '25. oktober 2026';
 	const planningSignupDeadlineText = '20. september 2026';
 </script>
 
@@ -43,13 +44,25 @@
 				Seniorer deltager enten som planlæggere eller som deltagere. Seniordeltagere tilmeldes her sammen med redaktioner.
 			</p>
 			{#if signupOpen}
-				<JoinButton href="/kontakt" className="mb-4">Tilmeld NyhedsNat</JoinButton>
+				<JoinButton href={nyhedsnatSignupUrl} className="mb-4">Tilmeld NyhedsNat</JoinButton>
 			{:else}
 				<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
 					Tilmeldingen åbner {signupOpensText}
 				</p>
 			{/if}
-			<p class="text-star-white/65">Tilmeldingsfrist: {nyhedsnatSignupDeadline}</p>
+			<p class="text-star-white/65 mb-6">Tilmeldingsfrist: {nyhedsnatSignupDeadline}</p>
+
+			<div class="border-t border-star-white/10 pt-6">
+				<p class="text-sm font-semibold uppercase tracking-wide text-star-white/40 mb-3">Indbydelser</p>
+				<div class="flex flex-wrap gap-3">
+					<a href="/files/Indbydelse_svæb_væb.pdf" download class="inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10">
+						<span aria-hidden="true">📄</span> Væbnere & seniorvæbnere (PDF)
+					</a>
+					<a href="/files/Indbydelse_senior.pdf" download class="inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10">
+						<span aria-hidden="true">📄</span> Seniorer (PDF)
+					</a>
+				</div>
+			</div>
 		</section>
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningSignupOpen ? '' : 'border-red-400/40'}">
@@ -67,13 +80,20 @@
 
 			{#if planningSignupOpen}
 				{#if signupOpen}
-					<JoinButton href="/kontakt" variant="secondary" className="mb-4">Tilmeld dig Arrangøruddannelse & planlægningsweekend for seniorer</JoinButton>
+					<JoinButton href={planningSignupUrl} variant="secondary" className="mb-4">Tilmeld dig Arrangøruddannelse & planlægningsweekend for seniorer</JoinButton>
 				{:else}
 					<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
 						Tilmeldingen åbner {signupOpensText}
 					</p>
 				{/if}
-				<p class="text-star-white/65">Tilmeldingsfrist: {planningSignupDeadlineText}</p>
+				<p class="text-star-white/65 mb-6">Tilmeldingsfrist: {planningSignupDeadlineText}</p>
+
+				<div class="border-t border-star-white/10 pt-6">
+					<p class="text-sm font-semibold uppercase tracking-wide text-star-white/40 mb-3">Indbydelse</p>
+					<a href="/files/Indbydelse_arrangør_planlægning.pdf" download class="inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10">
+						<span aria-hidden="true">📄</span> Arrangøruddannelse & planlægningsweekend (PDF)
+					</a>
+				</div>
 			{:else}
 				<div class="rounded-xl border-2 border-red-400/60 bg-red-500/10 p-5">
 					<p class="text-red-300 font-bold text-lg">Tilmeldingen til Arrangøruddannelse & planlægningsweekend for seniorer er lukket.</p>
@@ -82,34 +102,5 @@
 			{/if}
 		</section>
 
-		<section class="mb-14">
-			<div class="text-center mb-10">
-				<p class="text-star-white/70 text-lg">
-					Der er udarbejdet to indbydelser – én til væbnere/seniorvæbnere og én til seniorer.
-				</p>
-			</div>
-
-			<div class="grid md:grid-cols-2 gap-8">
-				<div class="card-dark rounded-2xl p-8 flex flex-col">
-					<h2 class="text-2xl font-bold text-star-white mb-4">Indbydelse til væbnere og seniorvæbnere</h2>
-					<p class="text-star-white/60 mb-4">
-						PDF med overblik over Nyhedsnat, hvordan man deltager som redaktion, og hvad man kan forvente.
-					</p>
-					<a href="/files/Indbydelse_svæb_væb.pdf" download class="text-gold-400 underline underline-offset-4 hover:text-gold-300">
-						Hent indbydelse (PDF)
-					</a>
-				</div>
-
-				<div class="card-dark rounded-2xl p-8 flex flex-col">
-					<h2 class="text-2xl font-bold text-star-white mb-4">Indbydelse til seniorer</h2>
-					<p class="text-star-white/60 mb-4">
-						PDF med fokus på seniorernes rolle i Nyhedsnat, hændelser, roller og Arrangøruddannelse & planlægningsweekend for seniorer.
-					</p>
-					<a href="/files/Indbydelse_senior.pdf" download class="text-gold-400 underline underline-offset-4 hover:text-gold-300">
-						Hent indbydelse (PDF)
-					</a>
-				</div>
-			</div>
-		</section>
 	</div>
 </div>
