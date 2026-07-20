@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { snowFreeze } from '$lib/stores/snow';
+	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
+	import { eggFor, type EffectName } from '$lib/vehicles';
+	import { getMotionAnimation, boost, reverse } from '$lib/vehicleMotion';
 
 	// Self-contained "snow cloud → snowstorm → 20-car pile-up" easter egg.
 	// A snow cloud drifts over the town now and then; click it to set off the storm.
@@ -48,6 +51,8 @@
 	let cars = $state<Car[]>([]);
 	let carId = 0;
 	let bumped = $state<Record<number, { level: number; sym: string }>>({}); // id → click-bump (2=hit, 1=shoved neighbour)
+	let snowEffect = $state<Record<number, EffectName | null>>({}); // leaving car → its easter-egg effect
+	let snowFire = $state<Record<number, boolean>>({}); // leaving car-5 → engine flames
 
 	// Click a stuck car → it angrily lurches into the car ahead/behind; those
 	// neighbours get shoved a little too. Honk + 💢 + smoke on the one clicked.
@@ -64,6 +69,44 @@
 		setBump(cars[i].id, 2, ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]);
 		if (cars[i - 1]) setBump(cars[i - 1].id, 1, '');
 		if (cars[i + 1]) setBump(cars[i + 1].id, 1, '');
+	}
+
+	// Click routing by state: a leaving car is a normal car again → fire its egg;
+	// a stuck/arriving car just gets an angry bump (arriving cars have no bump anim
+	// yet parked, so it's effectively inert until they settle).
+	function clickCar(i: number, wrapEl: HTMLElement | null) {
+		if (leaving) return fireLeaveEgg(i, wrapEl);
+		if (eventActive) return bumpCar(i);
+	}
+
+	function fireLeaveEgg(i: number, wrapEl: HTMLElement | null) {
+		const egg = eggFor(cars[i].src);
+		if (!egg) return;
+		const id = cars[i].id;
+		snowEffect = { ...snowEffect, [id]: egg.effect };
+		setTimeout(() => {
+			const n = { ...snowEffect };
+			delete n[id];
+			snowEffect = n;
+		}, egg.durationMs);
+		// car-5 firestop: show the engine flames while it rolls off (the full
+		// stop→restart choreography is traffic-only — not worth porting to a car
+		// that's already leaving).
+		if (egg.effect === 'firestop') {
+			snowFire = { ...snowFire, [id]: true };
+			setTimeout(() => {
+				const n = { ...snowFire };
+				delete n[id];
+				snowFire = n;
+			}, 3500);
+		}
+		// Motion-coupled eggs act on the car's own snowcar-leave animation. (None of
+		// the snow fleet's srcs map to boost/reverse today, but keep it generic.)
+		const anim = wrapEl ? getMotionAnimation(wrapEl) : undefined;
+		if (anim && egg.motion) {
+			if (egg.motion.kind === 'boost') boost(anim, egg.motion.rate, egg.motion.ms);
+			else if (egg.motion.kind === 'reverse') reverse(anim, egg.motion.rate);
+		}
 	}
 
 	function startEvent() {
@@ -198,8 +241,10 @@
 		class:bumped-soft={bumped[car.id]?.level === 1}
 		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --arrive-dur: {car.arriveDurMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms; --angry-dur: {car.angryDurMs}ms; --angry-delay: {car.angryDelayMs}ms;"
 	>
-		<button class="snow-car-btn" onclick={() => bumpCar(i)} aria-label="Bil i snekø">
-			<img src={car.src} alt="" aria-hidden="true" draggable="false" class="snow-car" />
+		<button class="snow-car-btn" onclick={(e) => clickCar(i, e.currentTarget.closest('.snow-car-wrap'))} aria-label="Bil i snekø">
+			<div class="snow-fidget">
+				<VehicleSprite src={car.src} size="car" direction={direction} effect={snowEffect[car.id] ?? null} fire={!!snowFire[car.id]} />
+			</div>
 		</button>
 		<span class="anger-mark" aria-hidden="true">{car.angrySymbol}</span>
 		{#if bumped[car.id]}
@@ -335,21 +380,18 @@
 	   keyframe = translateX(--stop)) instead of snapping to the left edge first. */
 	.snow-car-wrap.leaving.ltr { animation: snowcar-leave-ltr var(--leave-dur, 6s) linear var(--leave-delay) both; }
 	.snow-car-wrap.leaving.rtl { animation: snowcar-leave-rtl var(--leave-dur, 6s) linear var(--leave-delay) both; }
-	.snow-car {
+	/* fidget wrapper around the sprite — carries the stuck-jam lurch and click-bump
+	   (the sprite owns the car look + egg visuals; these snow-only motions compose
+	   on this separate element so they don't fight the sprite's egg transform). */
+	.snow-fidget {
 		display: block;
-		height: 45px;
-		width: auto;
-		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-		user-select: none;
-		-webkit-user-select: none;
-		-webkit-user-drag: none;
 		/* impatient fidget while stuck: a quick lurch into the car ahead once per
 		   (varied) cycle, beginning after the car has parked. Each car runs its own
 		   period/phase so the bumps ripple one-by-one, not as a synchronized swarm. */
 		animation: jam-angry var(--angry-dur, 2.4s) ease-in-out var(--angry-delay, 0s) infinite;
 	}
 	/* once it pulls away, stop fidgeting */
-	.snow-car-wrap.leaving .snow-car { animation: none; }
+	.snow-car-wrap.leaving .snow-fidget { animation: none; }
 
 	.snow-car-btn {
 		display: block;
@@ -362,8 +404,8 @@
 	}
 	/* click bump: clicked car slams into its neighbour; shoved neighbours move less.
 	   More specific than the jam-angry rule so it takes over for the one-shot. */
-	.snow-car-wrap.bumped-hard .snow-car { animation: snow-bump-hard 0.55s ease-out; }
-	.snow-car-wrap.bumped-soft .snow-car { animation: snow-bump-soft 0.55s ease-out; }
+	.snow-car-wrap.bumped-hard .snow-fidget { animation: snow-bump-hard 0.55s ease-out; }
+	.snow-car-wrap.bumped-soft .snow-fidget { animation: snow-bump-soft 0.55s ease-out; }
 
 	.bump-fx { position: absolute; left: 50%; bottom: 0; width: 0; height: 0; z-index: 3; pointer-events: none; }
 	.bump-sym { position: absolute; left: -9px; top: -28px; font-size: 17px; line-height: 1; animation: honk-pop 0.6s ease-out forwards; }
@@ -499,28 +541,32 @@
 
 	/* Arrive fast, then SLIDE on the snow: overshoot past the stop, skid back into
 	   the car ahead, small settle. */
+	/* The car FLIP is owned by VehicleSprite (.sprite.ltr .car). These keyframes
+	   only move/rotate the wrap — no scaleX. ltr rotations are negated vs the old
+	   baked-flip version because a mirror reverses rotation sign, so the visual
+	   skid/tilt stays identical to before. */
 	@keyframes snowcar-ltr {
-		0% { transform: translateX(-280px) scaleX(-1) rotate(0); }
-		55% { transform: translateX(calc(var(--stop) + 30px)) scaleX(-1) rotate(calc(var(--rot) * -1)); }
-		78% { transform: translateX(calc(var(--stop) - 12px)) scaleX(-1) rotate(var(--rot)); }
-		90% { transform: translateX(calc(var(--stop) + 4px)) scaleX(-1) rotate(calc(var(--rot) * 0.5)); }
-		100% { transform: translateX(var(--stop)) scaleX(-1) rotate(var(--rot)); }
+		0% { transform: translateX(-280px) rotate(0); }
+		55% { transform: translateX(calc(var(--stop) + 30px)) rotate(var(--rot)); }
+		78% { transform: translateX(calc(var(--stop) - 12px)) rotate(calc(var(--rot) * -1)); }
+		90% { transform: translateX(calc(var(--stop) + 4px)) rotate(calc(var(--rot) * -0.5)); }
+		100% { transform: translateX(var(--stop)) rotate(calc(var(--rot) * -1)); }
 	}
 	@keyframes snowcar-rtl {
-		0% { transform: translateX(calc(100vw + 280px)) scaleX(1) rotate(0); }
-		55% { transform: translateX(calc(var(--stop) - 30px)) scaleX(1) rotate(calc(var(--rot) * -1)); }
-		78% { transform: translateX(calc(var(--stop) + 12px)) scaleX(1) rotate(var(--rot)); }
-		90% { transform: translateX(calc(var(--stop) - 4px)) scaleX(1) rotate(calc(var(--rot) * 0.5)); }
-		100% { transform: translateX(var(--stop)) scaleX(1) rotate(var(--rot)); }
+		0% { transform: translateX(calc(100vw + 280px)) rotate(0); }
+		55% { transform: translateX(calc(var(--stop) - 30px)) rotate(calc(var(--rot) * -1)); }
+		78% { transform: translateX(calc(var(--stop) + 12px)) rotate(var(--rot)); }
+		90% { transform: translateX(calc(var(--stop) - 4px)) rotate(calc(var(--rot) * 0.5)); }
+		100% { transform: translateX(var(--stop)) rotate(var(--rot)); }
 	}
 	/* drive off the way they were heading, straightening out */
 	@keyframes snowcar-leave-ltr {
-		0% { transform: translateX(var(--stop)) scaleX(-1) rotate(var(--rot)); }
-		100% { transform: translateX(110vw) scaleX(-1) rotate(0); }
+		0% { transform: translateX(var(--stop)) rotate(calc(var(--rot) * -1)); }
+		100% { transform: translateX(110vw) rotate(0); }
 	}
 	@keyframes snowcar-leave-rtl {
-		0% { transform: translateX(var(--stop)) scaleX(1) rotate(var(--rot)); }
-		100% { transform: translateX(-10vw) scaleX(1) rotate(0); }
+		0% { transform: translateX(var(--stop)) rotate(var(--rot)); }
+		100% { transform: translateX(-10vw) rotate(0); }
 	}
 
 	/* click bump: a bigger slam forward + recoil (clicked car), and a lighter shove

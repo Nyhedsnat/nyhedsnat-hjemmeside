@@ -75,6 +75,11 @@
 		margin-top: auto;
 		position: relative;
 		z-index: 1;
+		/* decorative scene — never part of a text drag-selection (no blue highlight
+		   / selection box over the houses, street and cars). Inherited, so it also
+		   covers the vehicle/convoy/snow sprites rendered inside. */
+		user-select: none;
+		-webkit-user-select: none;
 	}
 
 	.houses-silhouette {
@@ -85,6 +90,7 @@
 		margin-left: 50%;
 		transform: translateX(-50%);
 		pointer-events: none;
+		-webkit-user-drag: none;
 	}
 
 	/* Back layer sets the container height */
