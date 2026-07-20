@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { triggerConvoy } from '$lib/stores/convoy';
+	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
 
 	// `preview` renders a single stationary, clickable convoy car in a card
 	// (for /animation-test) instead of the live driving convoy.
@@ -15,7 +16,6 @@
 		'/svg/eastereggs/vehicles/car-5.svg'
 	];
 
-	const carHeight = 45; // Match SIZE.car from Vehicles (same height as normal cars)
 	const carCount = 10;
 	const gap = 40;
 
@@ -83,7 +83,7 @@
 					onclick={() => dance(0)}
 					aria-label="Konvoj-bil"
 				>
-					<img src="/svg/eastereggs/vehicles/car-4.svg" alt="" class="convoy-car" draggable="false" />
+					<VehicleSprite src="/svg/eastereggs/vehicles/car-4.svg" size="car" />
 				</button>
 			</div>
 		</div>
@@ -106,7 +106,7 @@
 					onclick={() => dance(i)}
 					aria-label="Konvoj-bil"
 				>
-					<img src={carSrc} alt="" class="convoy-car" draggable="false" />
+					<VehicleSprite src={carSrc} size="car" direction={direction} />
 				</button>
 			</div>
 		{/each}
@@ -195,10 +195,6 @@
 		animation: drive-rtl var(--duration, 20s) linear forwards;
 	}
 
-	.convoy-container.ltr .convoy-car {
-		transform: scaleX(-1);
-	}
-
 	.convoy-car-wrap {
 		position: relative;
 		display: flex;
@@ -258,18 +254,6 @@
 	.convoy-car-btn.dance::after {
 		filter: blur(4px) brightness(1.7) saturate(1.2);
 		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
-	}
-
-	.convoy-car {
-		height: 45px;
-		width: auto;
-		display: block;
-		position: relative;
-		z-index: 2;
-		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-		user-select: none;
-		-webkit-user-select: none;
-		-webkit-user-drag: none;
 	}
 
 	/* Click easter egg: the car dances — rocks side to side to the beat with a bob. */
