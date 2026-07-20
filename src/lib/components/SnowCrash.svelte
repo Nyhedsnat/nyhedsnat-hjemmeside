@@ -285,6 +285,9 @@
 		pointer-events: auto;
 		z-index: 4;
 		opacity: 0.8;
+		-webkit-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
 	}
 	.snow-cloud.ltr {
 		animation: cloud-drift-ltr var(--drift, 40s) linear forwards;
