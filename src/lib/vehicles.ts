@@ -86,6 +86,9 @@ export function eggFor(src: string): Egg | null {
 	if (src.includes('dino-car.svg')) return { effect: 'meteorpanic', durationMs: 3500, motion: { kind: 'boost', rate: 3.5, ms: 1800, delayMs: 1300 } };
 	if (src.includes('racer.svg')) return { effect: 'nitro', durationMs: 2500, motion: { kind: 'boost', rate: 4.2, ms: 1500 } };
 	if (src.includes('limo.svg')) return { effect: 'stretch', durationMs: 2000, motion: null };
-	if (src.includes('bus.svg')) return { effect: 'busjump', durationMs: 1400, motion: null };
+	// jump itself is 1.4s, but the dust it kicks up keeps settling until ~3.6s
+	// (staggered start ~0.96-1.2s + 2.4s puff) — keep the effect mounted that long
+	// so the dust isn't yanked off mid-settle.
+	if (src.includes('bus.svg')) return { effect: 'busjump', durationMs: 3700, motion: null };
 	return null;
 }

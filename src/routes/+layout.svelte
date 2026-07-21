@@ -8,7 +8,9 @@
 	import Convoy from '$lib/components/Convoy.svelte';
 	import MoonLaser from '$lib/components/MoonLaser.svelte';
 	import Streamers from '$lib/components/Streamers.svelte';
-	import SnowCrash from '$lib/components/SnowCrash.svelte';
+	import WeatherClouds from '$lib/components/WeatherClouds.svelte';
+	import SnowPuddles from '$lib/components/SnowPuddles.svelte';
+	import Balloon from '$lib/components/Balloon.svelte';
 
 	let { children } = $props();
 </script>
@@ -35,6 +37,9 @@
 <!-- UFO with search pattern -->
 <Ufo />
 
+<!-- Balloon that drifts up the whole viewport, pops on click or at random up high -->
+<Balloon />
+
 <!-- Main app structure -->
 <div class="main-content flex min-h-screen flex-col">
 	<!-- Moon in top right corner (double-click for laser!) -->
@@ -54,8 +59,11 @@
 		<!-- Vehicles drive between the layers -->
 		<Vehicles />
 		<Convoy />
-		<!-- Snowstorm pile-up easter egg (click the drifting snow cloud) -->
-		<SnowCrash />
+		<!-- Weather-cloud easter eggs (rain/confetti/thunder/fog/autumn/ufo/snow), one
+		     component per type under clouds/, scheduled by WeatherClouds -->
+		<WeatherClouds />
+		<!-- Permanent puddles left behind by melted snowmen (persist for the session) -->
+		<SnowPuddles />
 		<!-- Front layer: house lights (above vehicles) -->
 		<img src="/svg/background/huse-lights.svg" alt="" class="houses-silhouette houses-front" aria-hidden="true" />
 	</div>

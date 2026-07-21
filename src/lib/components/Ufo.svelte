@@ -230,12 +230,17 @@
 		transform: translateX(-50%);
 		animation: ufo-flight var(--duration, 15s) ease-in-out forwards;
 		cursor: pointer;
+		/* no text-selection box / drag-ghost when the cursor drags over it */
+		-webkit-user-select: none;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.ufo {
 		width: 60px;
 		height: auto;
 		filter: drop-shadow(0 0 8px rgba(123, 140, 255, 0.4));
+		-webkit-user-drag: none;
 	}
 
 	/* Rainbow glow behind UFO */

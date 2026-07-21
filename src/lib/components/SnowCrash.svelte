@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { snowFreeze } from '$lib/stores/snow';
+	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
 	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
 	import { eggFor, type EffectName } from '$lib/vehicles';
 	import { getMotionAnimation, boost, reverse } from '$lib/vehicleMotion';
+	import type { CloudProps } from '$lib/clouds';
 
-	// Self-contained "snow cloud → snowstorm → 20-car pile-up" easter egg.
-	// A snow cloud drifts over the town now and then; click it to set off the storm.
-	// Touches nothing else — its own cloud, snow, mound and car fleet.
+	// Self-contained "snow cloud → snowstorm → 20-car pile-up" easter egg, now a member
+	// of the cloud family: the scheduler (WeatherClouds) mounts it when it's snow's turn
+	// and passes the same CloudProps as every other cloud. Click it to set off the storm.
+	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
 
 	type Car = {
 		id: number;
@@ -46,8 +48,19 @@
 	let snowing = $state(false);
 	let groundOut = $state(false); // fade the settled snow (and falling snow) away
 	let leaving = $state(false); // pile-up drives off
-	let direction = $state<'ltr' | 'rtl'>('ltr');
-	let driftDuration = $state(40);
+	let snowmanUp = $state(false); // snowman only starts building once the pile has halted
+	let snowmanX = $state(78); // random spot per storm, on the clear side of the pile (vw)
+	let snowmanMelted = $state(false); // clicked snowman → melts early to a puddle
+	let puddleDropped = false; // guard: drop exactly one permanent puddle per snowman
+
+	// The instant the snowman starts melting (click OR the ground melt), leave a permanent
+	// puddle in the persistent store — it outlives this component so the mark stays forever.
+	$effect(() => {
+		if (snowmanUp && (snowmanMelted || groundOut) && !puddleDropped) {
+			puddleDropped = true;
+			snowPuddles.update((p) => [...p, { x: snowmanX }]);
+		}
+	});
 	let cars = $state<Car[]>([]);
 	let carId = 0;
 	let bumped = $state<Record<number, { level: number; sym: string }>>({}); // id → click-bump (2=hit, 1=shoved neighbour)
@@ -117,6 +130,11 @@
 		snowFreeze.set(true); // stop new cars spawning right away (existing cars halt 5s later — see Vehicles)
 		groundOut = false;
 		leaving = false;
+		snowmanUp = false;
+		snowmanMelted = false;
+		puddleDropped = false;
+		// random spot on the clear side (opposite the pile: ltr jam ~12-52vw, rtl ~52-92vw)
+		snowmanX = (direction === 'ltr' ? 58 : 10) + Math.random() * 32;
 
 		const sign = direction === 'ltr' ? -1 : 1; // pile grows backward from the blockage
 		const SPEED_VW_S = 12; // drive-off speed — matches normal traffic's on-screen pace
@@ -155,15 +173,19 @@
 			};
 		});
 
-		// lifecycle: deep snow builds → cars slide in & crash → snow stops & MELTS away → only then cars drive off
+		// lifecycle: deep snow builds → cars slide in & crash → pile sits (snowman builds
+		// on the halted, snowed-in road) → snow stops & MELTS away → only then cars drive off
 		setTimeout(() => {
-			groundOut = true; // snow stops falling; settled snow starts melting (reverse-grow)
-		}, 18000);
+			snowmanUp = true; // pile has parked & traffic is frozen — NOW the snowman builds
+		}, 15000);
+		setTimeout(() => {
+			groundOut = true; // snow stops falling; settled snow (and the snowman) start melting
+		}, 23000);
 		setTimeout(() => {
 			leaving = true; // melt finished — road clear, pile-up drives off
 			snowFreeze.set(false); // ...and normal traffic moves again
-		}, 21500);
-		setTimeout(() => endEvent(), 36500); // sequential drive-off (~0.55s apart) → longer tail
+		}, 26500);
+		setTimeout(() => endEvent(), 41500); // sequential drive-off (~0.55s apart) → longer tail
 	}
 
 	function endEvent() {
@@ -172,49 +194,41 @@
 		snowing = false;
 		groundOut = false;
 		leaving = false;
+		snowmanUp = false;
+		snowmanMelted = false;
 		cloudActive = false; // un-freeze: cloud resumes drifting from where it parked
 		snowFreeze.set(false); // safety: never leave traffic frozen
 	}
 
-	let nextCloudTimer: ReturnType<typeof setTimeout> | undefined;
-
-	function showCloud() {
-		if (eventActive) return;
-		direction = Math.random() > 0.5 ? 'ltr' : 'rtl';
-		driftDuration = Math.random() * 20 + 35; // 35-55s drift across
-		cloudVisible = true;
-	}
-
-	function scheduleNextCloud(delay: number) {
-		clearTimeout(nextCloudTimer);
-		nextCloudTimer = setTimeout(showCloud, delay);
-	}
-
 	// Cloud finished drifting across (after a storm it resumes from where it parked,
-	// then finishes here) → hide it and bring a fresh one along later.
+	// then finishes here) → tell the scheduler this snow cloud is done.
 	function onCloudDriftEnd() {
 		if (eventActive) return; // still storming (drift paused) — ignore
 		cloudVisible = false;
-		scheduleNextCloud(Math.random() * 90000 + 60000); // next cloud in 60-150s
+		if (mode === 'drift') ondone?.(); // scheduler brings the next cloud along
 	}
 
 	onMount(() => {
-		scheduleNextCloud(Math.random() * 30000 + 20000); // first cloud after 20-50s
-		return () => clearTimeout(nextCloudTimer);
+		cloudVisible = true; // the scheduler mounted us because it's snow's turn
 	});
 </script>
 
 {#if cloudVisible}
 	<button
 		type="button"
-		class="snow-cloud {direction}"
+		class="snow-cloud {mode === 'static' ? 'debug' : direction}"
 		class:active={cloudActive}
-		style="--drift: {driftDuration}s;"
+		style={mode === 'static' ? `left:${left};` : `--drift:${drift}s;`}
 		onclick={startEvent}
 		onanimationend={onCloudDriftEnd}
 		aria-label="Snesky"
 	>
 		<span class="puff p1"></span><span class="puff p2"></span><span class="puff p3"></span>
+		<span class="cloud-snow" aria-hidden="true">
+			{#each Array(7) as _, i}
+				<span class="cf" style="left: {8 + i * 12}px; --d: {2.2 + (i % 3) * 0.5}s; --delay: {-(i % 5) * 0.6}s; --sway: {8 + (i % 3) * 4}px;"></span>
+			{/each}
+		</span>
 	</button>
 {/if}
 
@@ -231,6 +245,27 @@
 
 {#if eventActive}
 	<div class="snow-ground" class:out={groundOut} aria-hidden="true"></div>
+{/if}
+
+<!-- Snowman: builds only once the pile-up has halted (snowmanUp), off to the clear side
+     of the jam. Click → melts early to a puddle; otherwise melts with the ground. -->
+{#if snowmanUp}
+	<button
+		type="button"
+		class="snowman {direction}"
+		class:melting={snowmanMelted || groundOut}
+		style="--sx: {snowmanX}vw;"
+		onclick={() => (snowmanMelted = true)}
+		aria-label="Snemand"
+	>
+		<span class="ball b-bottom"></span>
+		<span class="ball b-mid"></span>
+		<span class="ball b-head">
+			<span class="eye e-l"></span><span class="eye e-r"></span>
+			<span class="nose"></span>
+		</span>
+		<span class="arm arm-l"></span><span class="arm arm-r"></span>
+	</button>
 {/if}
 
 {#each cars as car, i (car.id)}
@@ -301,13 +336,34 @@
 		opacity: 1;
 		animation-play-state: paused; /* park overhead while it storms */
 	}
+	.snow-cloud.debug { animation: none; } /* static debug cloud — no drift */
+	/* a bit of snow always drifting down under the cloud (part of its look) */
+	.cloud-snow { position: absolute; left: 50%; top: 30px; width: 84px; height: 46px; transform: translateX(-50%); pointer-events: none; z-index: -1; }
+	.cf {
+		position: absolute;
+		top: 0;
+		width: 5px;
+		height: 5px;
+		border-radius: 50%;
+		background: radial-gradient(circle, #fff 40%, rgba(255, 255, 255, 0.55) 100%);
+		box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+		animation: cloud-snowfall var(--d, 2.4s) ease-in-out var(--delay, 0s) infinite;
+	}
+	/* slow, wavy drift (sways side to side) → clearly snow, not straight rain streaks */
+	@keyframes cloud-snowfall {
+		0% { transform: translate(0, 0); opacity: 0; }
+		15% { opacity: 0.95; }
+		35% { transform: translate(var(--sway, 8px), 15px); }
+		65% { transform: translate(calc(var(--sway, 8px) * -1), 30px); }
+		100% { transform: translate(0, 44px); opacity: 0.1; }
+	}
 	.snow-cloud .puff {
 		position: absolute;
 		bottom: 0;
 		border-radius: 50%;
 		/* dark, blue-tinted night cloud */
 		background: radial-gradient(circle at 40% 35%, #6b7da6, #38456a 72%, rgba(56, 69, 106, 0) 100%);
-		filter: blur(0.5px);
+		filter: blur(1.6px); /* subtle blur → softer, more cloud-like */
 		transition: background 0.4s ease;
 	}
 	.snow-cloud.active .puff {
@@ -562,14 +618,18 @@
 		90% { transform: translateX(calc(var(--stop) - 4px)) rotate(calc(var(--rot) * 0.5)); }
 		100% { transform: translateX(var(--stop)) rotate(var(--rot)); }
 	}
-	/* drive off the way they were heading, straightening out */
+	/* drive off the way they were heading, straightening out. Exits with the same
+	   fixed-px clearance the main traffic fleet uses (not a skimpy 10vw) — otherwise
+	   a wide sprite (bus/truck/limo) on a narrow viewport never fully clears the edge
+	   and just sits there half-visible, since this animation's fill (`both`) holds
+	   forever at its end state. */
 	@keyframes snowcar-leave-ltr {
 		0% { transform: translateX(var(--stop)) rotate(calc(var(--rot) * -1)); }
-		100% { transform: translateX(110vw) rotate(0); }
+		100% { transform: translateX(calc(100vw + 250px)) rotate(0); }
 	}
 	@keyframes snowcar-leave-rtl {
 		0% { transform: translateX(var(--stop)) rotate(var(--rot)); }
-		100% { transform: translateX(-10vw) rotate(0); }
+		100% { transform: translateX(-250px) rotate(0); }
 	}
 
 	/* click bump: a bigger slam forward + recoil (clicked car), and a lighter shove
@@ -626,5 +686,79 @@
 		25% { opacity: 1; transform: translateY(-2px) scale(1.1); }
 		70% { opacity: 1; transform: translateY(-4px) scale(1); }
 		100% { opacity: 0; transform: translateY(-8px) scale(0.9); }
+	}
+
+	/* ---- snowman ---- */
+	.snowman {
+		position: absolute;
+		bottom: 8px;
+		left: var(--sx, 78vw);
+		z-index: 1; /* above the back houses, below the vehicles → cars drive in front of it */
+		width: 34px;
+		height: 48px;
+		transform: translateX(-50%);
+		background: none;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		pointer-events: auto;
+	}
+	/* balls centred by explicit left offsets → transform stays free for build/melt */
+	.snowman .ball {
+		position: absolute;
+		border-radius: 50%;
+		background: radial-gradient(circle at 38% 30%, #ffffff, #dbe7f3 78%);
+		box-shadow: inset -2px -3px 4px rgba(150, 170, 190, 0.35);
+		transform-origin: 50% 100%;
+	}
+	.b-bottom { bottom: 0; left: 4px; width: 26px; height: 26px; }
+	.b-mid { bottom: 18px; left: 7px; width: 20px; height: 20px; }
+	.b-head { bottom: 32px; left: 10px; width: 15px; height: 15px; }
+	.eye { position: absolute; top: 5px; width: 2px; height: 2px; border-radius: 50%; background: #2a2a2a; }
+	.eye.e-l { left: 4px; }
+	.eye.e-r { left: 9px; }
+	/* carrot nose — a little orange triangle poking out */
+	.nose {
+		position: absolute;
+		top: 7px;
+		left: 11px;
+		width: 0;
+		height: 0;
+		border-left: 6px solid #ff8a2a;
+		border-top: 2px solid transparent;
+		border-bottom: 2px solid transparent;
+	}
+	.arm { position: absolute; bottom: 25px; width: 11px; height: 2px; border-radius: 1px; background: #7a4a22; }
+	.arm-l { left: -3px; transform: rotate(22deg); transform-origin: right center; }
+	.arm-r { right: -3px; transform: rotate(-22deg); transform-origin: left center; }
+
+	/* build: balls pop in bottom→top as the snow deepens; details fade in last */
+	.snowman:not(.melting) .ball { animation: ball-build 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+	.snowman:not(.melting) .b-bottom { animation-delay: 0.3s; }
+	.snowman:not(.melting) .b-mid { animation-delay: 1.5s; }
+	.snowman:not(.melting) .b-head { animation-delay: 2.7s; }
+	.snowman:not(.melting) .eye,
+	.snowman:not(.melting) .nose,
+	.snowman:not(.melting) .arm { opacity: 0; animation: detail-in 0.5s ease-out 3.3s forwards; }
+
+	/* melt: balls slump onto the ground and fade (head first), puddle spreads */
+	.snowman.melting .ball { animation: ball-melt 2.4s ease-in both; }
+	.snowman.melting .b-head { animation-delay: 0s; }
+	.snowman.melting .b-mid { animation-delay: 0.25s; }
+	.snowman.melting .b-bottom { animation-delay: 0.5s; }
+	.snowman.melting .eye,
+	.snowman.melting .nose,
+	.snowman.melting .arm { animation: detail-out 0.8s ease-in forwards; }
+
+	@keyframes ball-build {
+		0% { transform: scaleY(0) scaleX(0.6); opacity: 0; }
+		60% { opacity: 1; }
+		100% { transform: scale(1); opacity: 1; }
+	}
+	@keyframes detail-in { from { opacity: 0; } to { opacity: 1; } }
+	@keyframes detail-out { from { opacity: 1; } to { opacity: 0; } }
+	@keyframes ball-melt {
+		0% { transform: translateY(0) scaleY(1) scaleX(1); opacity: 1; }
+		100% { transform: translateY(12px) scaleY(0.06) scaleX(1.35); opacity: 0; }
 	}
 </style>

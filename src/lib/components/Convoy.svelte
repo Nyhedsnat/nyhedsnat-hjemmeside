@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { triggerConvoy } from '$lib/stores/convoy';
+	import { snowFreeze } from '$lib/stores/snow';
+	import { trafficMode, trafficPulse } from '$lib/stores/traffic';
 	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
 
 	// `preview` renders a single stationary, clickable convoy car in a card
@@ -24,6 +26,44 @@
 	let duration = $state(20);
 	let convoyCars = $state<string[]>([]);
 	let dancing = $state<Record<number, boolean>>({});
+	let el = $state<HTMLDivElement>(); // the driving row — its own CSS drive-animation is what weather rate-controls
+	let bouncing = $state(false); // confetti: same celebratory hop as the live traffic
+
+	// ---- weather reactions (same stores the live traffic reacts to) ----
+	let sustainedRate = 1; // last trafficMode rate (rain/fog/autumn crawl), 1 = normal
+	let snowHalted = false; // full stop while the snowstorm owns the road
+	let rateGen = 0;
+
+	function convoyAnim(): Animation | undefined {
+		return el?.getAnimations()[0];
+	}
+
+	// Ease the row's own drive-animation to the target rate (mirrors Vehicles' rampDriveRates,
+	// just for the one animation instead of a fleet).
+	function rampConvoyRate(target: number, ms: number) {
+		const anim = convoyAnim();
+		if (!anim) return;
+		const gen = ++rateGen;
+		const start = anim.playbackRate;
+		const t0 = performance.now();
+		const STEP_MS = 40;
+		const tick = () => {
+			if (gen !== rateGen) return;
+			const p = Math.min(1, (performance.now() - t0) / ms);
+			const e = (1 - Math.cos(p * Math.PI)) / 2; // easeInOut
+			try {
+				anim.playbackRate = start + (target - start) * e;
+			} catch {
+				return; // convoy gone
+			}
+			if (p < 1) setTimeout(tick, STEP_MS);
+		};
+		tick();
+	}
+
+	function applyConvoyRate(ms = 1200) {
+		rampConvoyRate(snowHalted ? 0 : sustainedRate, ms);
+	}
 
 	// Click a convoy car → it dances to the beat (and its RGB underglow flares).
 	function dance(i: number) {
@@ -57,6 +97,12 @@
 		}, duration * 1000 + 200);
 	};
 
+	// Row just mounted (a convoy started) → pick up whatever weather is already active
+	// instead of starting at full speed and snapping to the right rate a tick later.
+	$effect(() => {
+		if (el) applyConvoyRate(0);
+	});
+
 	onMount(() => {
 		if (preview) return; // static demo card — no live driving convoy
 
@@ -68,7 +114,35 @@
 			}
 		});
 
-		return unsubscribe;
+		const unsubSnow = snowFreeze.subscribe((on) => {
+			snowHalted = on;
+			applyConvoyRate(on ? 1800 : 1100); // same grace/ease feel as the live traffic halt/thaw
+		});
+
+		const unsubMode = trafficMode.subscribe((m) => {
+			sustainedRate = m ? m.rate : 1;
+			applyConvoyRate(m ? 1200 : 1000);
+		});
+
+		const unsubPulse = trafficPulse.subscribe((p) => {
+			if (!p) return;
+			if (p.kind === 'bounce') {
+				bouncing = true; // confetti: same celebratory hop as the live traffic
+				setTimeout(() => (bouncing = false), 650);
+			} else if (p.kind === 'flinch') {
+				// thunder: startled beat — brake hard, then ease back to whatever rate was current
+				rampConvoyRate(0, 120);
+				setTimeout(() => applyConvoyRate(500), 300);
+			}
+			trafficPulse.set(null); // consume
+		});
+
+		return () => {
+			unsubscribe();
+			unsubSnow();
+			unsubMode();
+			unsubPulse();
+		};
 	});
 </script>
 
@@ -94,6 +168,7 @@
 	</div>
 {:else if visible}
 	<div
+		bind:this={el}
 		class="convoy-container {direction}"
 		style="--duration: {duration}s;"
 	>
@@ -103,6 +178,7 @@
 					type="button"
 					class="convoy-car-btn"
 					class:dance={dancing[i]}
+					class:bounce={bouncing}
 					onclick={() => dance(i)}
 					aria-label="Konvoj-bil"
 				>
@@ -256,6 +332,18 @@
 		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
 	}
 
+	/* confetti: every convoy car gets the same celebratory hop as the live traffic */
+	.convoy-car-btn.bounce {
+		animation: convoy-bounce 0.6s ease-out;
+	}
+	@keyframes convoy-bounce {
+		0%, 100% { transform: translateY(0) scaleY(1); }
+		20% { transform: translateY(0) scaleY(0.85); }
+		45% { transform: translateY(-14px) scaleY(1.08); }
+		70% { transform: translateY(0) scaleY(0.92); }
+		85% { transform: translateY(-4px) scaleY(1); }
+	}
+
 	/* Click easter egg: the car dances — rocks side to side to the beat with a bob. */
 	@keyframes convoy-dance {
 		0%   { transform: rotate(0deg)   translateY(0); }
@@ -277,24 +365,27 @@
 		50% { opacity: 0.95; }
 	}
 
-	/* Start with the convoy's leading edge exactly at the viewport edge (-100% =
-	   the convoy's own width) so the first car enters the frame immediately on
-	   click instead of after a 1-2s off-screen run-up. */
+	/* Start fully off-screen at a FIXED px offset — not -100%/100% of the row's own
+	   width. A self-referential % needs the browser to have already computed this
+	   element's layout (width: max-content) before the very first animation frame;
+	   when that race is lost the row starts at 0 and the convoy pops in mid-screen,
+	   half-cut. 2600px comfortably clears the widest possible 10-car row + gaps, so
+	   it always starts off-frame and drives in like normal traffic. */
 	@keyframes drive-ltr {
 		0% {
-			transform: translateX(-100%);
+			transform: translateX(-2600px);
 		}
 		100% {
-			transform: translateX(calc(100vw + 100%));
+			transform: translateX(calc(100vw + 2600px));
 		}
 	}
 
 	@keyframes drive-rtl {
 		0% {
-			transform: translateX(100%);
+			transform: translateX(2600px);
 		}
 		100% {
-			transform: translateX(calc(-100vw - 100%));
+			transform: translateX(calc(-100vw - 2600px));
 		}
 	}
 </style>
