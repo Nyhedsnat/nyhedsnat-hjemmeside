@@ -3,9 +3,9 @@
 	import { env } from '$env/dynamic/public';
 	import { triggerConvoy } from '$lib/stores/convoy';
 	import { rushHourTrigger } from '$lib/stores/rushHour';
-	import { snowFreeze } from '$lib/stores/snow';
+	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
 	import { trafficMode, trafficPulse, abductBeam, abductCaught, abductRelease } from '$lib/stores/traffic';
-	import { vehicleTypes, eggFor, type EffectName, type VehicleType, type MotionOp } from '$lib/vehicles';
+	import { vehicleTypes, eggFor, type EffectName, type VehicleType, type MotionOp, type Egg } from '$lib/vehicles';
 	import { getMotionAnimation } from '$lib/vehicleMotion';
 	import { jaggedPath } from '$lib/lightning';
 	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
@@ -21,7 +21,35 @@
 		typeIndex: number;
 		direction: 'ltr' | 'rtl';
 		duration: number;
+		eggOverride?: Egg | null; // click behaviour override, mutable post-spawn via setEggOverride (null = no egg at all, e.g. parked)
+		underglow?: boolean; // persistent RGB underglow decoration (convoy look) — extension point for future per-vehicle decorations
 	}
+
+	// Strategy-pattern overrides: motion + egg (+ speed) are all swappable per vehicle,
+	// independent of its type. motionOverride replaces the standard drive-ltr/rtl
+	// crossing with a custom WAAPI sequence on that car's own element (same technique
+	// as the UFO beam's pin/rise/release) — e.g. arrive → park at a spot → hold, for
+	// something like a future snow-pile-up-as-regular-vehicles migration. eggOverride
+	// is mutable after spawn (setEggOverride) so a parked car can go egg-less (or
+	// angry-honk-only) while stopped, then revert to its normal egg once it drives
+	// off again — the override doesn't have to be fixed for the vehicle's whole life.
+	type MotionOverride = (el: HTMLDivElement, id: number) => void;
+
+	function setEggOverride(id: number, egg: Egg | null | undefined) {
+		activeVehicles = activeVehicles.map((v) => (v.id === id ? { ...v, eggOverride: egg } : v));
+	}
+
+	// A convoy is just regular vehicles, spawned in a tight, fast burst with the
+	// underglow decoration, instead of a bespoke component re-implementing every
+	// weather reaction from scratch. Each car keeps its own normal click egg.
+	const CONVOY_TYPES = ['car-1.svg', 'car-2.svg', 'car-3.svg', 'car-4.svg', 'car-5.svg'];
+	const CONVOY_COUNT = 10;
+	// Spawn stagger. Cars share one duration/speed, so screen-space gap ≈ (crossing
+	// distance / duration) * gap — 140ms was tuned for the old single-row convoy, not
+	// independent per-car drive animations, and worked out to only ~10-20px between
+	// cars (less than a car's own width) → they rendered stacked on top of each other.
+	// 700ms was still too tight — bumped further for a clearly-separated row.
+	const CONVOY_GAP_MS = 1000;
 
 	const totalWeight = vehicleTypes.reduce((sum, v) => sum + v.weight, 0);
 	const minSpawnInterval = 5000;
@@ -54,7 +82,8 @@
 	let popId = 0;
 	let carSplash = $state<Record<number, boolean>>({}); // rain: car kicking up water over a puddle
 	let modeRate = 1; // current sustained fleet-speed multiplier (so new spawns match)
-	let puddleXs: number[] = []; // puddle x-centres (vw) while it rains
+	let puddleXs: number[] = []; // rain puddle x-centres (vw) — temporary, cleared once evaporated
+	let snowPuddleXs: number[] = []; // snowman meltwater x-centres (vw) — permanent for the session
 	let puddleRAF: number | null = null;
 	const carOverPuddle: Record<number, number> = {}; // id → puddle index it's currently over (-1 none)
 
@@ -235,8 +264,13 @@
 		// Lightning-stalled car → no egg while it sits dead (eggs work before + after).
 		if (struck[vehicle.id]) return popAngry(vehicle.id);
 
+		// eggOverride === null → explicitly egg-less (e.g. parked), distinct from
+		// undefined (no override → fall through to its normal egg). A parked car
+		// just honks, same as the snow/lightning halts above.
+		if (vehicle.eggOverride === null) return popAngry(vehicle.id);
+
 		const src = vehicleTypes[vehicle.typeIndex].src;
-		const egg = eggFor(src);
+		const egg = vehicle.eggOverride ?? eggFor(src);
 		if (!egg) return triggerConvoy.set(vehicle.direction); // unmapped → default convoy trigger
 
 		if (egg.convoy) triggerConvoy.set(vehicle.direction); // convoy travels the same way as this car
@@ -363,8 +397,7 @@
 		wet = !!m?.spray;
 		leafy = !!m?.leaves;
 		puddleXs = m?.puddles ?? [];
-		if (puddleXs.length) startPuddleWatch();
-		else stopPuddleWatch();
+		updatePuddleWatch();
 		modeRate = newRate;
 		// Removal is off-frame based, so a slowed car simply takes longer to reach the
 		// edge — nothing to rescale. (Snow keeps its full-stop via trafficStopped.)
@@ -373,19 +406,23 @@
 	}
 
 	// Watch each car's x against the puddle positions; when a car drives onto a puddle
-	// it hasn't just been on, kick up a water splash at its wheels.
+	// it hasn't just been on, kick up a water splash at its wheels. Covers BOTH the
+	// rain cloud's temporary puddles and the permanent snowman meltwater marks — same
+	// splash, whichever puddle it is.
 	function startPuddleWatch() {
 		if (puddleRAF != null) return;
 		const tick = () => {
 			const iw = window.innerWidth;
+			const allX = [...puddleXs, ...snowPuddleXs];
 			for (const v of activeVehicles) {
+				if (effects[v.id] === 'flyout') continue; // airborne — wheels aren't on the road, no splash
 				const el = containerEls[v.id];
 				if (!el) continue;
 				const r = el.getBoundingClientRect();
 				const cx = r.left + r.width / 2;
 				let over = -1;
-				for (let i = 0; i < puddleXs.length; i++) {
-					if (Math.abs(cx - (puddleXs[i] / 100) * iw) < 26) { over = i; break; }
+				for (let i = 0; i < allX.length; i++) {
+					if (Math.abs(cx - (allX[i] / 100) * iw) < 26) { over = i; break; }
 				}
 				const prev = carOverPuddle[v.id] ?? -1;
 				if (over !== -1 && over !== prev) doRoadSplash(v.id); // just rolled onto a puddle
@@ -399,6 +436,12 @@
 		if (puddleRAF != null) cancelAnimationFrame(puddleRAF);
 		puddleRAF = null;
 		for (const k of Object.keys(carOverPuddle)) delete carOverPuddle[Number(k)];
+	}
+	// Start/stop the shared watch based on whether ANY puddle (rain or permanent
+	// snowman meltwater) currently exists.
+	function updatePuddleWatch() {
+		if (puddleXs.length || snowPuddleXs.length) startPuddleWatch();
+		else stopPuddleWatch();
 	}
 	function doRoadSplash(id: number) {
 		if (carSplash[id]) return;
@@ -700,24 +743,68 @@
 		fireActive = nextFire;
 	}
 
-	function spawnVehicle() {
-		const typeIndex = getWeightedRandomVehicle();
+	function spawnVehicle(opts?: {
+		typeIndex?: number;
+		direction?: 'ltr' | 'rtl';
+		duration?: number;
+		eggOverride?: Egg | null;
+		underglow?: boolean;
+		speedOverride?: number; // playbackRate this car spawns at (e.g. 2 = double speed), instead of the current weather rate
+		motionOverride?: MotionOverride; // replaces the standard drive-ltr/rtl crossing entirely (e.g. arrive-and-park)
+	}) {
+		const typeIndex = opts?.typeIndex ?? getWeightedRandomVehicle();
 		const vehicleType = vehicleTypes[typeIndex];
-		const direction = getDirection(vehicleType);
+		const direction = opts?.direction ?? getDirection(vehicleType);
 
-		const duration = debugTrafficEnabled
-			? (vehicleType.minDuration + vehicleType.maxDuration) / 2
-			: Math.random() * (vehicleType.maxDuration - vehicleType.minDuration) + vehicleType.minDuration;
+		const duration =
+			opts?.duration ??
+			(debugTrafficEnabled
+				? (vehicleType.minDuration + vehicleType.maxDuration) / 2
+				: Math.random() * (vehicleType.maxDuration - vehicleType.minDuration) + vehicleType.minDuration);
 		const id = vehicleIdCounter++;
 
 		if (debugTrafficEnabled) debugSpawnCounter++;
 
-		activeVehicles = [...activeVehicles, { id, typeIndex, direction, duration }];
+		activeVehicles = [
+			...activeVehicles,
+			{ id, typeIndex, direction, duration, eggOverride: opts?.eggOverride, underglow: opts?.underglow }
+		];
 		// no removal timer — offFrameWatch culls it once it drives off the frame.
 
+		if (opts?.motionOverride) {
+			// Custom motion entirely replaces the CSS drive-ltr/rtl crossing — hand the
+			// element straight to the override once it exists (after render).
+			const motionOverride = opts.motionOverride;
+			requestAnimationFrame(() => {
+				const el = containerEls[id];
+				if (el) motionOverride(el, id);
+			});
+			return id;
+		}
+
 		// A car spawned mid weather-crawl should roll at the same slowed pace, not
-		// zoom in at full speed. Apply once its element exists (after render).
-		if (modeRate !== 1) requestAnimationFrame(() => setDriveRate(id, modeRate));
+		// zoom in at full speed — unless it has its own speed override (e.g. convoy).
+		// Apply once its element exists (after render).
+		const rate = opts?.speedOverride ?? modeRate;
+		if (rate !== 1) requestAnimationFrame(() => setDriveRate(id, rate));
+		return id;
+	}
+
+	// A convoy: CONVOY_COUNT cars from the curated small-car set, spawned in a tight,
+	// fast burst all travelling the same way, all sharing one duration (so they stay
+	// evenly spaced across the whole crossing instead of drifting apart), each with
+	// the dance egg override + underglow decoration instead of their normal click egg.
+	function spawnConvoyBatch(direction: 'ltr' | 'rtl') {
+		const duration = Math.random() * 5 + 18; // 18-23s, shared by the whole batch
+		for (let i = 0; i < CONVOY_COUNT; i++) {
+			setTimeout(() => {
+				const pick = CONVOY_TYPES[Math.floor(Math.random() * CONVOY_TYPES.length)];
+				const typeIndex = vehicleTypes.findIndex((v) => v.src.includes(pick));
+				// no eggOverride — convoy cars use their own normal egg (poof/flyout/firestop
+				// and all), the chaos is the fun part now that they're just regular vehicles.
+				spawnVehicle({ typeIndex, direction, duration, underglow: true, speedOverride: 2.6 });
+			}, i * CONVOY_GAP_MS);
+		}
 	}
 
 	// "Rush hour" surge (triggered by the moon laser): ~10x traffic for 20s.
@@ -814,6 +901,12 @@
 			else unfreezeTraffic();
 		});
 
+		// Permanent snowman meltwater marks — splash on these too, for as long as they exist.
+		const unsubSnowPuddles = snowPuddles.subscribe((list) => {
+			snowPuddleXs = list.map((p) => p.x);
+			updatePuddleWatch();
+		});
+
 		// Weather clouds → sustained crawl (rain/fog/autumn) + one-shot reactions.
 		const unsubMode = trafficMode.subscribe((m) => applyMode(m));
 		const unsubPulse = trafficPulse.subscribe((p) => {
@@ -840,13 +933,25 @@
 			releaseRisingCars();
 		});
 
+		// A car's egg (or a click on an unmapped one) asks for a convoy → spawn a batch
+		// of regular vehicles (see spawnConvoyBatch) instead of a separate component, so
+		// every weather reaction already applies to them for free.
+		const unsubConvoy = triggerConvoy.subscribe((dir) => {
+			if (dir) {
+				spawnConvoyBatch(dir);
+				triggerConvoy.set(null); // consume
+			}
+		});
+
 		return () => {
 			unsub();
 			unsubSnow();
+			unsubSnowPuddles();
 			unsubMode();
 			unsubPulse();
 			unsubBeam();
 			unsubRelease();
+			unsubConvoy();
 			stopPuddleWatch();
 			stopBeamWatch();
 			if (offFrameRAF != null) cancelAnimationFrame(offFrameRAF);
@@ -884,6 +989,7 @@
 					direction={vehicle.direction}
 					effect={effects[vehicle.id]}
 					fire={!!fireActive[vehicle.id]}
+					decorations={{ underglow: vehicle.underglow }}
 				/>
 			</div>
 			{#if wet}<span class="wheel-fx spray" aria-hidden="true"><span></span><span></span></span>{/if}

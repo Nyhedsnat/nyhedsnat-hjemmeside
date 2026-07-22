@@ -1,0 +1,176 @@
+/* Shared cloud skeleton + per-type "look" CSS, global so every cloud component's
+   <button class="cloud …"> and its puffs/wisps/svg pick it up. Imported once by
+   WeatherClouds. Each cloud component keeps its own EFFECT layers scoped locally. */
+
+/* ---- cloud (trigger), shared skeleton ---- */
+.cloud {
+	position: absolute;
+	top: 18%;
+	left: 0;
+	width: 96px;
+	height: 40px;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	pointer-events: auto;
+	z-index: 4;
+	opacity: 0.85;
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+}
+.cloud.ltr { animation: cloud-drift-ltr var(--drift, 45s) linear forwards; }
+.cloud.rtl { right: 0; left: auto; animation: cloud-drift-rtl var(--drift, 45s) linear forwards; }
+.cloud.active { opacity: 1; animation-play-state: paused; }
+.cloud.debug { animation: none; opacity: 0.95; } /* debug: static, always visible */
+
+.puff {
+	position: absolute;
+	bottom: 0;
+	border-radius: 50%;
+	filter: blur(1.6px); /* subtle blur → softer, more cloud-like */
+	transition: background 0.4s ease;
+}
+.puff.p1 { left: 4px; width: 40px; height: 32px; }
+.puff.p2 { left: 28px; width: 52px; height: 40px; }
+.puff.p3 { left: 60px; width: 34px; height: 28px; }
+
+/* per-type cloud colours */
+.cloud.rain .puff { background: radial-gradient(circle at 40% 35%, #9aa7bd, #5c6b86 72%, rgba(92, 107, 134, 0) 100%); }
+.cloud.confetti .puff { background: radial-gradient(circle at 40% 35%, #ffd7ef, #ff9ecf 68%, rgba(255, 158, 207, 0) 100%); }
+.cloud.thunder .puff { background: radial-gradient(circle at 40% 35%, #4a5270, #232a40 72%, rgba(35, 42, 64, 0) 100%); }
+.cloud.autumn .puff { background: radial-gradient(circle at 40% 35%, #e79a4f, #b5652a 70%, rgba(181, 101, 42, 0) 100%); }
+
+/* fog cloud: wider + built from soft, heavily-blurred overlapping wisps so it reads
+   as a diffuse fog bank rather than three stacked circles */
+.cloud.fog { width: 124px; height: 44px; }
+.fog-wisp {
+	position: absolute;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(210, 216, 224, 0.7), rgba(180, 188, 198, 0) 72%);
+	filter: blur(5px);
+}
+.fog-wisp.w1 { left: 0; bottom: 4px; width: 60px; height: 30px; opacity: 0.6; }
+.fog-wisp.w2 { left: 26px; bottom: 8px; width: 74px; height: 38px; opacity: 0.7; }
+.fog-wisp.w3 { left: 64px; bottom: 4px; width: 58px; height: 30px; opacity: 0.6; }
+.fog-wisp.w4 { left: 10px; bottom: -2px; width: 108px; height: 22px; opacity: 0.5; }
+.fog-wisp.w5 { left: 40px; bottom: 12px; width: 52px; height: 26px; opacity: 0.45; }
+
+/* thunder underglow (yellow belly) + charge-up */
+.under-glow {
+	position: absolute;
+	left: 20px;
+	bottom: -4px;
+	width: 56px;
+	height: 16px;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255, 214, 74, 0.6), rgba(255, 214, 74, 0) 70%);
+	filter: blur(2px);
+	animation: glow-pulse 2.4s ease-in-out infinite;
+}
+@keyframes glow-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; } }
+.cloud.thunder.charging .under-glow { animation: charge-glow 0.34s ease-out; }
+.cloud.thunder.charging .puff { animation: charge-flicker 0.34s steps(2, end) 2; }
+@keyframes charge-glow {
+	0% { opacity: 0.5; filter: blur(2px); box-shadow: none; }
+	70% { opacity: 1; filter: blur(1px); box-shadow: 0 0 14px 5px rgba(255, 240, 150, 0.95); }
+	100% { opacity: 0.9; box-shadow: 0 0 6px 2px rgba(255, 240, 150, 0.4); }
+}
+@keyframes charge-flicker {
+	0%, 100% { filter: none; }
+	50% { filter: brightness(1.9) drop-shadow(0 0 4px #ffe680); }
+}
+
+/* ---- ufo cloud (borrows the UFO look + glow) ---- */
+.cloud.ufo { width: 100px; height: 46px; opacity: 1; }
+.ufo-mini { position: absolute; left: 50%; top: 0; width: 100px; transform: translateX(-50%); filter: drop-shadow(0 0 6px rgba(123, 255, 168, 0.5)); animation: ufo-bob 3s ease-in-out infinite; pointer-events: none; -webkit-user-drag: none; }
+.uf-dome { fill: #9fdcff; opacity: 0.85; }
+.uf-hi { fill: #fff; opacity: 0.25; }
+.uf-body { fill: #2f3648; }
+.uf-mid { fill: #3c465c; }
+.uf-dark { fill: #1c2230; }
+.ufo-glow {
+	position: absolute;
+	left: 50%;
+	top: 26px;
+	width: 60px;
+	height: 22px;
+	transform: translateX(-50%);
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(90, 255, 150, 0.55), rgba(90, 255, 150, 0) 70%);
+	filter: blur(5px);
+	animation: glow-pulse 1.6s ease-in-out infinite;
+}
+@keyframes ufo-bob { 0%, 100% { transform: translateX(-50%) rotate(-3deg); } 50% { transform: translateX(-50%) rotate(3deg); } }
+/* positioning + the blur live on the WRAPPER, not the shape itself — clip-path/mask on
+   an element re-clips its own filter output back to the same hard edge (learned that the
+   hard way on the bottom-edge feather attempt). Blurring the already-clipped result from
+   OUTSIDE, on an element with no clip-path of its own, actually softens every edge. */
+.beam-wrap {
+	position: absolute;
+	left: 50%;
+	top: 30px;
+	width: 90px;
+	height: 245px; /* stretched back out again — cloud moved up (top:28%→18%), so the cone needs the extra length to still land at road level */
+	transform: translateX(-50%);
+	pointer-events: none; /* the parent button owns the click */
+	filter: blur(1.6px); /* same as the clouds' own puff blur */
+	z-index: 5;
+}
+.beam {
+	position: absolute;
+	inset: 0;
+	border: none;
+	padding: 0;
+	/* top stays solid, fading toward the base — unchanged from the original look */
+	background: linear-gradient(to bottom, rgba(120, 255, 170, 0.35) 0%, rgba(120, 255, 170, 0.12) 60%, rgba(120, 255, 170, 0) 100%);
+	/* narrow straight mouth at the saucer, bulging into a rounded, spherical base
+	   instead of hard trapezoid corners at the bottom (scaled to the new height) */
+	clip-path: path("M34,0 L56,0 C76,96 94,179 82,224 Q45,259 8,224 C-4,179 14,96 34,0 Z");
+	/* reveal top-to-bottom on arming (mask-size animates 0%→100%). The mask itself fades
+	   out over its own last ~18% instead of staying solid black. A smaller fade-in at the
+	   very top (the mouth) softens that edge too. */
+	-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 82%, transparent 100%);
+	mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 82%, transparent 100%);
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+	-webkit-mask-position: top;
+	mask-position: top;
+	animation: beam-reveal 0.4s linear forwards;
+}
+/* soft feathered glow pooling at the base — the light cone diffusing on contact.
+   Pulled up to OVERLAP the clip-path's hard bottom edge (not just sit below it), so
+   that crisp boundary itself reads as feathered, not just haloed. Top is untouched. */
+.beam::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	bottom: -18px;
+	width: 92px;
+	height: 56px;
+	transform: translateX(-50%);
+	background: radial-gradient(ellipse, rgba(120, 255, 170, 0.5) 0%, rgba(120, 255, 170, 0.22) 50%, rgba(120, 255, 170, 0) 78%);
+	filter: blur(10px);
+	pointer-events: none;
+}
+@keyframes beam-reveal {
+	from { -webkit-mask-size: 100% 0%; mask-size: 100% 0%; }
+	to { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+}
+
+/* shared helpers */
+@keyframes wx-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cloud-drift-ltr { 0% { transform: translateX(-120px); } 100% { transform: translateX(calc(100vw + 120px)); } }
+@keyframes cloud-drift-rtl { 0% { transform: translateX(120px); } 100% { transform: translateX(calc(-100vw - 120px)); } }
+
+/* jolt on a thunder bolt — applied to the town scene only (NOT <html>, which would
+   reparent the fixed nav via a transform containing-block and make it vanish) */
+.wx-shake { animation: wx-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes wx-shake {
+	0%, 100% { transform: translate(0, 0); }
+	20% { transform: translate(-4px, 2px); }
+	40% { transform: translate(5px, -2px); }
+	60% { transform: translate(-3px, 3px); }
+	80% { transform: translate(3px, -1px); }
+}

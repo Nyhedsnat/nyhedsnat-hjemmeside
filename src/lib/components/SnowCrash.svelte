@@ -600,7 +600,7 @@
 
 	/* Arrive fast, then SLIDE on the snow: overshoot past the stop, skid back into
 	   the car ahead, small settle. */
-	/* The car FLIP is owned by VehicleSprite (.sprite.ltr .car). These keyframes
+	/* The car FLIP is owned by VehicleSprite (.sprite.ltr .car-body). These keyframes
 	   only move/rotate the wrap — no scaleX. ltr rotations are negated vs the old
 	   baked-flip version because a mirror reverses rotation sign, so the visual
 	   skid/tilt stays identical to before. */

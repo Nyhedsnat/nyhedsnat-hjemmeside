@@ -5,7 +5,6 @@
 	import Drone from '$lib/components/Drone.svelte';
 	import Ufo from '$lib/components/Ufo.svelte';
 	import Vehicles from '$lib/components/Vehicles.svelte';
-	import Convoy from '$lib/components/Convoy.svelte';
 	import MoonLaser from '$lib/components/MoonLaser.svelte';
 	import Streamers from '$lib/components/Streamers.svelte';
 	import WeatherClouds from '$lib/components/WeatherClouds.svelte';
@@ -56,9 +55,9 @@
 	<div class="houses-container">
 		<!-- Back layer: houses without lights (behind vehicles) -->
 		<img src="/svg/background/huse-no-lights.svg" alt="" class="houses-silhouette houses-back" aria-hidden="true" />
-		<!-- Vehicles drive between the layers -->
+		<!-- Vehicles drive between the layers (a convoy is just a burst of these, see
+		     spawnConvoyBatch in Vehicles.svelte) -->
 		<Vehicles />
-		<Convoy />
 		<!-- Weather-cloud easter eggs (rain/confetti/thunder/fog/autumn/ufo/snow), one
 		     component per type under clouds/, scheduled by WeatherClouds -->
 		<WeatherClouds />

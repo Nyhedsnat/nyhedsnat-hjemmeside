@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Vehicles from '$lib/components/Vehicles.svelte';
-	import Convoy from '$lib/components/Convoy.svelte';
 </script>
 
 <svelte:head>
@@ -18,12 +17,4 @@
 	</header>
 
 	<Vehicles grid />
-
-	<section class="space-y-3">
-		<h2 class="text-lg font-semibold text-star-white">Konvoj</h2>
-		<p class="text-sm text-star-white/70">
-			Konvoj-bilerne har deres eget easter egg: klik på en bil for at få den til at danse.
-		</p>
-		<Convoy preview />
-	</section>
 </div>

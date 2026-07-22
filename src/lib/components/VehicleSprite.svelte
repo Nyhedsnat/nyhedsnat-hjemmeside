@@ -6,18 +6,29 @@
 	// state, no motion — the controller (Vehicles/SnowCrash) decides when an egg
 	// fires and passes `effect`; `null` shows a plain car. `fire` shows the engine
 	// flames (car-5 firestop), gated separately by the controller's choreography.
+	// `decorations` are visuals that must physically belong to the car — they're
+	// rendered inside `.car-body`, the element that carries BOTH the base ltr flip
+	// and every motion effect's transform (flyout, slingre, wheelie, ...), so they
+	// automatically move/fly/wobble along with the car instead of staying behind on
+	// the road. Add a new field here (+ the render below) for future car-attached
+	// extras — no per-effect keyframe duplication needed. Contrast with the effect
+	// overlays above (smoke, dust, splash) which stay siblings of `.car-body`
+	// because they represent something happening to the ROAD, not the car, and
+	// should stay put if the car flies off.
 	let {
 		src,
 		size,
 		direction,
 		effect = null,
-		fire = false
+		fire = false,
+		decorations
 	}: {
 		src: string;
 		size: SizeCategory;
 		direction?: 'ltr' | 'rtl';
 		effect?: EffectName | null;
 		fire?: boolean;
+		decorations?: { underglow?: boolean };
 	} = $props();
 
 	const height = $derived(SIZE[size]);
@@ -60,7 +71,10 @@
 		<div class="meteor-fire"></div>
 		<div class="meteor-smoke"></div>
 	{/if}
-	<img {src} alt="" class="car {effect ?? ''}" style="height: {height}px;" draggable="false" />
+	<div class="car-body {effect ?? ''}">
+		<img {src} alt="" class="car" style="height: {height}px;" draggable="false" />
+		{#if decorations?.underglow}<span class="underglow" class:dancing={effect === 'dance'} aria-hidden="true"></span>{/if}
+	</div>
 </div>
 
 <style>
@@ -71,8 +85,7 @@
 	}
 
 	.car {
-		position: relative;
-		z-index: 2;
+		display: block;
 		width: auto;
 		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 		user-select: none;
@@ -80,54 +93,101 @@
 		-webkit-user-drag: none;
 	}
 
-	.sprite.ltr .car {
+	/* .car-body carries the base ltr flip AND every motion effect's transform, so
+	   anything rendered inside it (the image, plus any `decorations`) moves, flies
+	   or wobbles together as one unit — see the `decorations` prop doc above. */
+	.car-body {
+		position: relative;
+		z-index: 2;
+		display: inline-block; /* shrink-wrap to the image, not stretch to .sprite's width */
+	}
+
+	.sprite.ltr .car-body {
 		transform: scaleX(-1);
 	}
 
-	.sprite.ltr .car.slingre { animation: slingre-ltr 3.6s ease-in-out; }
-	.sprite.rtl .car.slingre { animation: slingre-rtl 3.6s ease-in-out; }
-	.sprite.ltr .car.flyout { animation: flyout-ltr 8s ease-in-out forwards; }
-	.sprite.rtl .car.flyout { animation: flyout-rtl 8s ease-in-out forwards; }
-	.car.drift { animation: drift 1.8s ease-out; }
-	.sprite.ltr .car.firestop { animation: fireShake-ltr 1.2s linear 2; }
-	.sprite.rtl .car.firestop { animation: fireShake-rtl 1.2s linear 2; }
-	.sprite.ltr .car.splash { animation: splash-bob-ltr 1.2s ease-out; }
-	.sprite.rtl .car.splash { animation: splash-bob-rtl 1.2s ease-out; }
-	.car.press { animation: flash 0.2s steps(2, end) 10; }
+	.sprite.ltr .car-body.slingre { animation: slingre-ltr 3.6s ease-in-out; }
+	.sprite.rtl .car-body.slingre { animation: slingre-rtl 3.6s ease-in-out; }
+	.sprite.ltr .car-body.flyout { animation: flyout-ltr 8s ease-in-out forwards; }
+	.sprite.rtl .car-body.flyout { animation: flyout-rtl 8s ease-in-out forwards; }
+	.car-body.drift { animation: drift 1.8s ease-out; }
+	.sprite.ltr .car-body.firestop { animation: fireShake-ltr 1.2s linear 2; }
+	.sprite.rtl .car-body.firestop { animation: fireShake-rtl 1.2s linear 2; }
+	.sprite.ltr .car-body.splash { animation: splash-bob-ltr 1.2s ease-out; }
+	.sprite.rtl .car-body.splash { animation: splash-bob-rtl 1.2s ease-out; }
+	/* press/nitro are filter-only (no motion) — stay targeted at the image itself */
+	.car-body.press .car { animation: flash 0.2s steps(2, end) 10; }
 	/* turbo/nitro motion is driven by the container's drive-animation playbackRate
 	   (see boostDrive) — the image only carries the visual treatment. */
-	.sprite.ltr .car.wheelie {
+	.sprite.ltr .car-body.wheelie {
 		transform-origin: 50% 100%;
 		animation: wheelie-ltr 2.5s ease-out;
 	}
-	.sprite.rtl .car.wheelie {
+	.sprite.rtl .car-body.wheelie {
 		transform-origin: 50% 100%;
 		animation: wheelie-rtl 2.5s ease-out;
 	}
-	.sprite.ltr .car.smokewheelie {
+	.sprite.ltr .car-body.smokewheelie {
 		transform-origin: 50% 100%;
 		animation: smokewheelie-ltr 3s ease-in-out;
 	}
-	.sprite.rtl .car.smokewheelie {
+	.sprite.rtl .car-body.smokewheelie {
 		transform-origin: 50% 100%;
 		animation: smokewheelie-rtl 3s ease-in-out;
 	}
-	.sprite.ltr .car.meteorpanic { animation: panic-ltr 3.5s ease-out; }
-	.sprite.rtl .car.meteorpanic { animation: panic-rtl 3.5s ease-out; }
-	.car.nitro { filter: blur(0.8px) saturate(1.4); }
+	.sprite.ltr .car-body.meteorpanic { animation: panic-ltr 3.5s ease-out; }
+	.sprite.rtl .car-body.meteorpanic { animation: panic-rtl 3.5s ease-out; }
+	.car-body.nitro .car { filter: blur(0.8px) saturate(1.4); }
 	/* Stretch limo: comically elongates with an elastic boing, then springs back.
 	   transform-origin at the road keeps the wheels grounded while it jiggles. */
-	.car.stretch { transform-origin: 50% 100%; }
-	.sprite.ltr .car.stretch { animation: stretch-ltr 2s ease-in-out; }
-	.sprite.rtl .car.stretch { animation: stretch-rtl 2s ease-in-out; }
-	.sprite.ltr .car.uturn { animation: uturn-ltr 2.1s linear forwards; }
-	.sprite.rtl .car.uturn { animation: uturn-rtl 2.1s linear forwards; }
-	.sprite.ltr .car.poof { animation: poof-ltr 0.4s ease-in forwards; }
-	.sprite.rtl .car.poof { animation: poof-rtl 0.4s ease-in forwards; }
+	.car-body.stretch { transform-origin: 50% 100%; }
+	.sprite.ltr .car-body.stretch { animation: stretch-ltr 2s ease-in-out; }
+	.sprite.rtl .car-body.stretch { animation: stretch-rtl 2s ease-in-out; }
+	.sprite.ltr .car-body.uturn { animation: uturn-ltr 2.1s linear forwards; }
+	.sprite.rtl .car-body.uturn { animation: uturn-rtl 2.1s linear forwards; }
+	/* convoy dance: rocks side to side to the beat with a bob (matches the RGB underglow) */
+	.car-body.dance { transform-origin: 50% 100%; }
+	.sprite.ltr .car-body.dance { animation: dance-ltr 0.9s ease-in-out; }
+	.sprite.rtl .car-body.dance { animation: dance-rtl 0.9s ease-in-out; }
+	.sprite.ltr .car-body.poof { animation: poof-ltr 0.4s ease-in forwards; }
+	.sprite.rtl .car-body.poof { animation: poof-rtl 0.4s ease-in forwards; }
 	/* Bus click: the big heavy bus crouches and pulls off a surprise jump (keeps rolling). */
-	.car.busjump { transform-origin: 50% 100%; }
-	.sprite.ltr .car.busjump { animation: bus-jump-ltr 1.4s linear; }
-	.sprite.rtl .car.busjump { animation: bus-jump-rtl 1.4s linear; }
+	.car-body.busjump { transform-origin: 50% 100%; }
+	.sprite.ltr .car-body.busjump { animation: bus-jump-ltr 1.4s linear; }
+	.sprite.rtl .car-body.busjump { animation: bus-jump-rtl 1.4s linear; }
+
+	/* convoy underglow decoration — a car-attached decoration (see `decorations`
+	   prop doc above), so it rides along through slingre/flyout/wheelie/etc. Left
+	   is always 74%: .car-body's own ltr flip mirrors it to 26% automatically, so
+	   no separate ltr override is needed (unlike the old sibling-of-car version). */
+	.underglow {
+		position: absolute;
+		left: 74%;
+		bottom: 2px;
+		transform: translateX(-50%);
+		width: 18%;
+		height: 5px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, #ff2a6d, #ff8a00, #ffe600, #00f5a0, #00d4ff, #7b61ff, #ff2ad4);
+		background-size: 250% 100%;
+		filter: blur(3px);
+		opacity: 0.35;
+		z-index: 1;
+		pointer-events: none;
+		animation: rgb-shift 1.2s linear infinite, underglow-flicker 0.35s steps(2, end) infinite;
+	}
+	.underglow.dancing {
+		filter: blur(4px) brightness(1.7) saturate(1.2);
+		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
+	}
+	@keyframes rgb-shift {
+		0% { background-position: 0% 50%; }
+		100% { background-position: 250% 50%; }
+	}
+	@keyframes underglow-flicker {
+		0%, 100% { opacity: 0.55; }
+		50% { opacity: 0.95; }
+	}
 
 	/* Magic vanish confetti — bursts from the car's spot just as it disappears. */
 	/* Centred on the car body, not the image centre — car-2's SVG includes a long
@@ -678,6 +738,24 @@
 		100% { transform: translateY(-220px) translateX(-440px) scaleX(1); }
 	}
 	@keyframes drift { 0%{ transform: scaleX(-1);} 35%{ transform: translateX(30px) rotate(-12deg) scaleX(-1);} 100%{ transform: scaleX(-1);} }
+	@keyframes dance-ltr {
+		0%   { transform: scaleX(-1) rotate(0deg)   translateY(0); }
+		14%  { transform: scaleX(-1) rotate(-10deg) translateY(-3px); }
+		32%  { transform: scaleX(-1) rotate(9deg)   translateY(-1px); }
+		50%  { transform: scaleX(-1) rotate(-8deg)  translateY(-3px); }
+		68%  { transform: scaleX(-1) rotate(6deg)   translateY(-1px); }
+		84%  { transform: scaleX(-1) rotate(-3deg)  translateY(0); }
+		100% { transform: scaleX(-1) rotate(0deg)   translateY(0); }
+	}
+	@keyframes dance-rtl {
+		0%   { transform: rotate(0deg)   translateY(0); }
+		14%  { transform: rotate(-10deg) translateY(-3px); }
+		32%  { transform: rotate(9deg)   translateY(-1px); }
+		50%  { transform: rotate(-8deg)  translateY(-3px); }
+		68%  { transform: rotate(6deg)   translateY(-1px); }
+		84%  { transform: rotate(-3deg)  translateY(0); }
+		100% { transform: rotate(0deg)   translateY(0); }
+	}
 	@keyframes fireShake-ltr { 0%,100%{ transform: translateX(0) scaleX(-1);} 25%{ transform: translateX(-4px) scaleX(-1);} 75%{ transform: translateX(4px) scaleX(-1);} }
 	@keyframes fireShake-rtl { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-4px);} 75%{ transform: translateX(4px);} }
 	/* 4x4 dips into the puddle on impact, rebounds on its suspension, settles. */

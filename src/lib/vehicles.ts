@@ -26,7 +26,8 @@ export type EffectName =
 	| 'uturn'
 	| 'poof'
 	| 'busjump'
-	| 'disco';
+	| 'disco'
+	| 'dance';
 
 export interface VehicleType {
 	src: string;
