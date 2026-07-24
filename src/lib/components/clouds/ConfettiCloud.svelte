@@ -128,7 +128,9 @@
 {/if}
 {#each balloons as b (b.id)}
 	<button type="button" class="balloon" style="left: {b.x}vw; --hue: {b.hue};" onclick={(e) => popBalloon(b.id, e)} onanimationend={(e) => popBalloon(b.id, e)} aria-label="Ballon">
-		<span class="knot"></span>
+		<span class="balloon-shape">
+			<span class="knot"></span>
+		</span>
 	</button>
 {/each}
 {#each pops as p (p.id)}
@@ -190,20 +192,29 @@
 	.balloon {
 		position: absolute;
 		bottom: 8px;
-		width: 13px;
-		height: 16px;
+		width: 29px; /* bigger invisible hit target than the drawn balloon (13px) — matches Balloon.svelte's rogue balloons */
+		height: 32px;
 		border: none;
 		padding: 0;
+		background: none;
 		cursor: pointer;
 		transform: translateX(-50%);
-		border-radius: 50% 50% 48% 48%;
-		background: radial-gradient(circle at 35% 30%, hsl(var(--hue), 90%, 78%), hsl(var(--hue), 75%, 55%) 75%);
 		z-index: 5;
 		pointer-events: auto;
-		filter: brightness(0.88); /* night — a touch darker */
 		animation: balloon-rise 12s ease-in forwards;
 	}
-	.balloon .knot { position: absolute; left: 50%; bottom: -2px; width: 2px; height: 2px; transform: translateX(-50%); background: hsl(var(--hue), 75%, 50%); border-radius: 0 0 1px 1px; }
+	.balloon-shape {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 13px;
+		height: 16px;
+		transform: translate(-50%, -50%);
+		border-radius: 50% 50% 48% 48%;
+		background: radial-gradient(circle at 35% 30%, hsl(var(--hue), 90%, 78%), hsl(var(--hue), 75%, 55%) 75%);
+		filter: brightness(0.88); /* night — a touch darker */
+	}
+	.balloon-shape .knot { position: absolute; left: 50%; bottom: -2px; width: 2px; height: 2px; transform: translateX(-50%); background: hsl(var(--hue), 75%, 50%); border-radius: 0 0 1px 1px; }
 	/* rise to the top (≈ where confetti spawns) staying fully visible, then pop
 	   (animationend → confetti burst). No fade — it pops, it doesn't vanish. */
 	@keyframes balloon-rise {
