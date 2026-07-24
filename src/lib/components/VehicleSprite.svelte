@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { SIZE, type SizeCategory, type EffectName } from '$lib/vehicles';
 
 	// Presentational sprite: given an `effect` string it renders the car image plus
@@ -6,29 +7,30 @@
 	// state, no motion — the controller (Vehicles/SnowCrash) decides when an egg
 	// fires and passes `effect`; `null` shows a plain car. `fire` shows the engine
 	// flames (car-5 firestop), gated separately by the controller's choreography.
-	// `decorations` are visuals that must physically belong to the car — they're
-	// rendered inside `.car-body`, the element that carries BOTH the base ltr flip
-	// and every motion effect's transform (flyout, slingre, wheelie, ...), so they
-	// automatically move/fly/wobble along with the car instead of staying behind on
-	// the road. Add a new field here (+ the render below) for future car-attached
-	// extras — no per-effect keyframe duplication needed. Contrast with the effect
-	// overlays above (smoke, dust, splash) which stay siblings of `.car-body`
-	// because they represent something happening to the ROAD, not the car, and
-	// should stay put if the car flies off.
+	// `extra` is an OPEN slot for visuals that must physically belong to the car —
+	// it's rendered inside `.car-body`, the element that carries BOTH the base ltr
+	// flip and every motion effect's transform (flyout, slingre, wheelie, ...), so
+	// whatever the caller passes automatically moves/flies/wobbles along with the
+	// car instead of staying behind on the road (e.g. the fleet's underglow, or a
+	// snow-pile car's crash-fx). No per-feature prop needed — any future car-
+	// attached decoration is just another snippet passed in from the caller.
+	// Contrast with the effect overlays below (smoke, dust, splash) which stay
+	// siblings of `.car-body` because they represent something happening to the
+	// ROAD, not the car, and should stay put if the car flies off.
 	let {
 		src,
 		size,
 		direction,
 		effect = null,
 		fire = false,
-		decorations
+		extra
 	}: {
 		src: string;
 		size: SizeCategory;
 		direction?: 'ltr' | 'rtl';
 		effect?: EffectName | null;
 		fire?: boolean;
-		decorations?: { underglow?: boolean };
+		extra?: Snippet;
 	} = $props();
 
 	const height = $derived(SIZE[size]);
@@ -73,7 +75,7 @@
 	{/if}
 	<div class="car-body {effect ?? ''}">
 		<img {src} alt="" class="car" style="height: {height}px;" draggable="false" />
-		{#if decorations?.underglow}<span class="underglow" class:dancing={effect === 'dance'} aria-hidden="true"></span>{/if}
+		{@render extra?.()}
 	</div>
 </div>
 
@@ -156,38 +158,6 @@
 	.sprite.ltr .car-body.busjump { animation: bus-jump-ltr 1.4s linear; }
 	.sprite.rtl .car-body.busjump { animation: bus-jump-rtl 1.4s linear; }
 
-	/* convoy underglow decoration — a car-attached decoration (see `decorations`
-	   prop doc above), so it rides along through slingre/flyout/wheelie/etc. Left
-	   is always 74%: .car-body's own ltr flip mirrors it to 26% automatically, so
-	   no separate ltr override is needed (unlike the old sibling-of-car version). */
-	.underglow {
-		position: absolute;
-		left: 74%;
-		bottom: 2px;
-		transform: translateX(-50%);
-		width: 18%;
-		height: 5px;
-		border-radius: 999px;
-		background: linear-gradient(90deg, #ff2a6d, #ff8a00, #ffe600, #00f5a0, #00d4ff, #7b61ff, #ff2ad4);
-		background-size: 250% 100%;
-		filter: blur(3px);
-		opacity: 0.35;
-		z-index: 1;
-		pointer-events: none;
-		animation: rgb-shift 1.2s linear infinite, underglow-flicker 0.35s steps(2, end) infinite;
-	}
-	.underglow.dancing {
-		filter: blur(4px) brightness(1.7) saturate(1.2);
-		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
-	}
-	@keyframes rgb-shift {
-		0% { background-position: 0% 50%; }
-		100% { background-position: 250% 50%; }
-	}
-	@keyframes underglow-flicker {
-		0%, 100% { opacity: 0.55; }
-		50% { opacity: 0.95; }
-	}
 
 	/* Magic vanish confetti — bursts from the car's spot just as it disappears. */
 	/* Centred on the car body, not the image centre — car-2's SVG includes a long

@@ -20,6 +20,7 @@
 /* Base styles */
 html {
 	scroll-behavior: smooth;
+	background: #030712; /* overscroll bounce reveals past body's box into here */
 }
 
 body {

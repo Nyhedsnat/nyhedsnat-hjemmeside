@@ -1,6 +1,16 @@
 // Car data + easter-egg mapping, shared by the traffic controller (Vehicles.svelte)
 // and the snow pile-up controller (SnowCrash.svelte). Pure data/logic, no DOM.
 
+// Shared off-frame clearance: how far past the viewport edge a vehicle starts/ends
+// its drive, so it's never briefly visible mid-spawn/exit — even for the widest
+// sprite (bus/truck) AND cars whose SVG art draws a long headlight beam well past
+// the body itself (car-2, 4x4 — see the poof-fx/water-splash positioning comments
+// below), which made the old 250px margin insufficient. ONE source of truth, used
+// by both the regular fleet's CSS drive-ltr/rtl keyframes (via a --offscreen custom
+// property) and SnowCrash's own JS-driven arrive/leave motion, instead of two
+// independently-tuned numbers.
+export const OFFSCREEN_MARGIN_PX = 500;
+
 export const SIZE = {
 	car: 45,
 	large: 65,

@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import { env } from '$env/dynamic/public';
+	import { fleetRef, type MotionOverride, type ClickOverride, type SpawnOpts } from '$lib/stores/vehicleFleet';
 	import { triggerConvoy } from '$lib/stores/convoy';
 	import { rushHourTrigger } from '$lib/stores/rushHour';
 	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
 	import { trafficMode, trafficPulse, abductBeam, abductCaught, abductRelease } from '$lib/stores/traffic';
-	import { vehicleTypes, eggFor, type EffectName, type VehicleType, type MotionOp, type Egg } from '$lib/vehicles';
+	import { vehicleTypes, eggFor, OFFSCREEN_MARGIN_PX, type EffectName, type VehicleType, type MotionOp, type Egg } from '$lib/vehicles';
 	import { getMotionAnimation } from '$lib/vehicleMotion';
 	import { jaggedPath } from '$lib/lightning';
 	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
@@ -21,22 +22,36 @@
 		typeIndex: number;
 		direction: 'ltr' | 'rtl';
 		duration: number;
-		eggOverride?: Egg | null; // click behaviour override, mutable post-spawn via setEggOverride (null = no egg at all, e.g. parked)
-		underglow?: boolean; // persistent RGB underglow decoration (convoy look) — extension point for future per-vehicle decorations
+		eggOverride?: Egg | null; // click behaviour override, mutable post-spawn (null = no egg at all, e.g. parked)
+		clickOverride?: ClickOverride; // replaces the WHOLE click pipeline (bump, custom physics, whatever)
+		underglow?: boolean; // persistent RGB underglow decoration (convoy look)
+		extraClass?: string; // ambient/idle CSS hook on .vfx (e.g. a continuous fidget loop)
+		carFx?: Snippet<[id: number]>; // arbitrary car-attached decoration, rides through any transform
+		roadFx?: Snippet<[id: number]>; // arbitrary ground-relative decoration, sibling of the car
 	}
 
-	// Strategy-pattern overrides: motion + egg (+ speed) are all swappable per vehicle,
-	// independent of its type. motionOverride replaces the standard drive-ltr/rtl
-	// crossing with a custom WAAPI sequence on that car's own element (same technique
-	// as the UFO beam's pin/rise/release) — e.g. arrive → park at a spot → hold, for
-	// something like a future snow-pile-up-as-regular-vehicles migration. eggOverride
-	// is mutable after spawn (setEggOverride) so a parked car can go egg-less (or
-	// angry-honk-only) while stopped, then revert to its normal egg once it drives
-	// off again — the override doesn't have to be fixed for the vehicle's whole life.
-	type MotionOverride = (el: HTMLDivElement, id: number) => void;
+	// Strategy-pattern overrides: motion, click behaviour, egg, speed and decoration are
+	// all swappable per vehicle, independent of its type — see $lib/stores/vehicleFleet
+	// for the shared shapes (other components spawn/control fleet cars through fleetRef).
+	// motionOverride replaces the standard drive-ltr/rtl crossing with a custom WAAPI
+	// sequence on the car's own element (same technique as the UFO beam's pin/rise/
+	// release) — e.g. arrive → park at a spot → hold → leave, for something like the
+	// snow pile-up. eggOverride/clickOverride/extraClass are all mutable post-spawn via
+	// their setters, so a car's behaviour can change mid-life (parked → driving off
+	// again) instead of being fixed forever at spawn time.
 
 	function setEggOverride(id: number, egg: Egg | null | undefined) {
 		activeVehicles = activeVehicles.map((v) => (v.id === id ? { ...v, eggOverride: egg } : v));
+	}
+	function setClickOverride(id: number, fn: ClickOverride | undefined) {
+		activeVehicles = activeVehicles.map((v) => (v.id === id ? { ...v, clickOverride: fn } : v));
+	}
+	function setExtraClass(id: number, cls: string | undefined) {
+		activeVehicles = activeVehicles.map((v) => (v.id === id ? { ...v, extraClass: cls } : v));
+	}
+	function setMotionOverride(id: number, fn: MotionOverride) {
+		const el = containerEls[id];
+		if (el) fn(el, id);
 	}
 
 	// A convoy is just regular vehicles, spawned in a tight, fast burst with the
@@ -258,6 +273,14 @@
 	}
 
 	function handleClick(vehicle: ActiveVehicle) {
+		// A clickOverride takes over the WHOLE click pipeline (e.g. snow-pile bump, which
+		// shoves neighbours — not something the egg/effect shape can express) — checked
+		// FIRST, before the generic frozen/struck honk fallbacks below, which otherwise
+		// swallow every click on a car with its own override (snowFreeze stays on for the
+		// entire time a pile-up car is clickable, so trafficStopped was intercepting 100%
+		// of its bumps before they ever reached bumpCar).
+		if (vehicle.clickOverride) return vehicle.clickOverride(vehicle.id);
+
 		// Only once actually halted by the snow → just an angry honk, no easter egg (which
 		// would un-stick it). During the pre-halt grace, normal eggs still fire.
 		if (trafficStopped) return popAngry(vehicle.id);
@@ -743,15 +766,7 @@
 		fireActive = nextFire;
 	}
 
-	function spawnVehicle(opts?: {
-		typeIndex?: number;
-		direction?: 'ltr' | 'rtl';
-		duration?: number;
-		eggOverride?: Egg | null;
-		underglow?: boolean;
-		speedOverride?: number; // playbackRate this car spawns at (e.g. 2 = double speed), instead of the current weather rate
-		motionOverride?: MotionOverride; // replaces the standard drive-ltr/rtl crossing entirely (e.g. arrive-and-park)
-	}) {
+	function spawnVehicle(opts?: SpawnOpts) {
 		const typeIndex = opts?.typeIndex ?? getWeightedRandomVehicle();
 		const vehicleType = vehicleTypes[typeIndex];
 		const direction = opts?.direction ?? getDirection(vehicleType);
@@ -767,7 +782,18 @@
 
 		activeVehicles = [
 			...activeVehicles,
-			{ id, typeIndex, direction, duration, eggOverride: opts?.eggOverride, underglow: opts?.underglow }
+			{
+				id,
+				typeIndex,
+				direction,
+				duration,
+				eggOverride: opts?.eggOverride,
+				clickOverride: opts?.clickOverride,
+				underglow: opts?.underglow,
+				extraClass: opts?.extraClass,
+				carFx: opts?.carFx,
+				roadFx: opts?.roadFx
+			}
 		];
 		// no removal timer — offFrameWatch culls it once it drives off the frame.
 
@@ -883,6 +909,11 @@
 			}));
 			return;
 		}
+
+		// Let other components (SnowCrash's pile-up, anything future) spawn/control
+		// real fleet vehicles instead of building their own parallel car system.
+		fleetRef.current = { spawnVehicle, removeVehicle, setEggOverride, setMotionOverride, setClickOverride, setExtraClass };
+
 		spawnVehicle();
 		scheduleNextSpawn();
 		offFrameRAF = requestAnimationFrame(offFrameWatch); // cull cars once they leave the frame
@@ -944,6 +975,7 @@
 		});
 
 		return () => {
+			fleetRef.current = null;
 			unsub();
 			unsubSnow();
 			unsubSnowPuddles();
@@ -966,7 +998,7 @@
 		class="vehicle-container {vehicle.direction}"
 		class:paused={!!paused[vehicle.id]}
 		class:grid
-		style="--duration: {vehicle.duration}s;"
+		style="--duration: {vehicle.duration}s; --offscreen: {OFFSCREEN_MARGIN_PX}px;"
 	>
 		<button class="vehicle-button" onclick={() => { if (!grid) handleClick(vehicle); }} aria-label="Vehicle action">
 			{#if angry[vehicle.id]}<span class="angry-pop" aria-hidden="true">{angry[vehicle.id]}</span>{/if}
@@ -982,14 +1014,18 @@
 					{/each}
 				</span>
 			{/if}
-			<div class="vfx" class:bounce={bouncing} class:lift={!!abducting[vehicle.id]} class:zapped={!!struck[vehicle.id]} class:leafy={leafy}>
+			{#snippet carDecor()}
+				{#if vehicle.underglow}<span class="underglow" class:dancing={effects[vehicle.id] === 'dance'} aria-hidden="true"></span>{/if}
+				{@render vehicle.carFx?.(vehicle.id)}
+			{/snippet}
+			<div class="vfx {vehicle.extraClass ?? ''}" class:bounce={bouncing} class:lift={!!abducting[vehicle.id]} class:zapped={!!struck[vehicle.id]} class:leafy={leafy}>
 				<VehicleSprite
 					src={vehicleType.src}
 					size={vehicleType.size}
 					direction={vehicle.direction}
 					effect={effects[vehicle.id]}
 					fire={!!fireActive[vehicle.id]}
-					decorations={{ underglow: vehicle.underglow }}
+					extra={carDecor}
 				/>
 			</div>
 			{#if wet}<span class="wheel-fx spray" aria-hidden="true"><span></span><span></span></span>{/if}
@@ -1008,6 +1044,7 @@
 					<span class="ssmoke s1"></span><span class="ssmoke s2"></span>
 				</span>
 			{/if}
+			{@render vehicle.roadFx?.(vehicle.id)}
 		</button>
 	</div>
 {/snippet}
@@ -1149,8 +1186,40 @@
 		animation: drive-rtl var(--duration, 12s) linear forwards;
 	}
 
-	@keyframes drive-ltr { 0% { transform: translateX(-250px);} 100% { transform: translateX(calc(100vw + 250px));}}
-	@keyframes drive-rtl { 0% { transform: translateX(250px);} 100% { transform: translateX(calc(-100vw - 250px));}}
+	@keyframes drive-ltr { 0% { transform: translateX(calc(-1 * var(--offscreen, 250px)));} 100% { transform: translateX(calc(100vw + var(--offscreen, 250px)));}}
+	@keyframes drive-rtl { 0% { transform: translateX(var(--offscreen, 250px));} 100% { transform: translateX(calc(-100vw - var(--offscreen, 250px)));}}
+
+	/* convoy underglow decoration — rendered via VehicleSprite's `extra` slot, inside
+	   .car-body, so it rides along through slingre/flyout/wheelie/etc. Left is always
+	   74%: .car-body's own ltr flip mirrors it to 26% automatically. */
+	.underglow {
+		position: absolute;
+		left: 74%;
+		bottom: 2px;
+		transform: translateX(-50%);
+		width: 18%;
+		height: 5px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, #ff2a6d, #ff8a00, #ffe600, #00f5a0, #00d4ff, #7b61ff, #ff2ad4);
+		background-size: 250% 100%;
+		filter: blur(3px);
+		opacity: 0.35;
+		z-index: 1;
+		pointer-events: none;
+		animation: rgb-shift 1.2s linear infinite, underglow-flicker 0.35s steps(2, end) infinite;
+	}
+	.underglow.dancing {
+		filter: blur(4px) brightness(1.7) saturate(1.2);
+		animation: rgb-shift 0.4s linear infinite, underglow-flicker 0.18s steps(2, end) infinite;
+	}
+	@keyframes rgb-shift {
+		0% { background-position: 0% 50%; }
+		100% { background-position: 250% 50%; }
+	}
+	@keyframes underglow-flicker {
+		0%, 100% { opacity: 0.55; }
+		50% { opacity: 0.95; }
+	}
 
 	/* angry honk emoji when a snow-frozen car is clicked (no easter egg fires) */
 	.angry-pop {

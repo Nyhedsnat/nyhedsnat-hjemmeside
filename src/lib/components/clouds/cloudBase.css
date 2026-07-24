@@ -41,6 +41,9 @@
 .cloud.confetti .puff { background: radial-gradient(circle at 40% 35%, #ffd7ef, #ff9ecf 68%, rgba(255, 158, 207, 0) 100%); }
 .cloud.thunder .puff { background: radial-gradient(circle at 40% 35%, #4a5270, #232a40 72%, rgba(35, 42, 64, 0) 100%); }
 .cloud.autumn .puff { background: radial-gradient(circle at 40% 35%, #e79a4f, #b5652a 70%, rgba(181, 101, 42, 0) 100%); }
+/* dark, blue-tinted night cloud; heavier/darker still once the storm is active */
+.cloud.snow .puff { background: radial-gradient(circle at 40% 35%, #6b7da6, #38456a 72%, rgba(56, 69, 106, 0) 100%); }
+.cloud.snow.active .puff { background: radial-gradient(circle at 40% 35%, #45527a, #232d49 72%, rgba(35, 45, 73, 0) 100%); }
 
 /* fog cloud: wider + built from soft, heavily-blurred overlapping wisps so it reads
    as a diffuse fog bank rather than three stacked circles */

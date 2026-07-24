@@ -1,34 +1,29 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
-	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
-	import { eggFor, type EffectName } from '$lib/vehicles';
-	import { getMotionAnimation, boost, reverse } from '$lib/vehicleMotion';
+	import { fleetRef } from '$lib/stores/vehicleFleet';
+	import { vehicleTypes, OFFSCREEN_MARGIN_PX } from '$lib/vehicles';
 	import type { CloudProps } from '$lib/clouds';
+	import './clouds/cloudBase.css';
 
-	// Self-contained "snow cloud → snowstorm → 20-car pile-up" easter egg, now a member
-	// of the cloud family: the scheduler (WeatherClouds) mounts it when it's snow's turn
+	// Self-contained "snow cloud → snowstorm → 12-car pile-up" easter egg, a member of
+	// the cloud family: the scheduler (WeatherClouds) mounts it when it's snow's turn
 	// and passes the same CloudProps as every other cloud. Click it to set off the storm.
+	//
+	// The pile-up cars are REAL fleet vehicles (spawned via fleetRef into Vehicles.svelte),
+	// not a parallel car system — arrive/park/leave is a motionOverride, parked-click-to-
+	// bump is a clickOverride, the ambient jam fidget is an extraClass, crash-fx/bump-fx/
+	// anger-mark are a carFx snippet, jam-dust is a roadFx snippet. Once a car leaves the
+	// jam (clickOverride cleared), it's a completely normal vehicle again — same click-egg
+	// pipeline as regular traffic, for free.
 	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
-
-	type Car = {
-		id: number;
-		src: string;
-		stopVw: number;
-		rot: number;
-		delayMs: number;
-		fxDelayMs: number;
-		arriveDurMs: number;
-		leaveDelay: number;
-		leaveDurMs: number;
-		angryDurMs: number;
-		angryDelayMs: number;
-		angrySymbol: string;
-	};
 
 	// Mix of anger/frustration marks — each stuck car flashes its own, so the pile
 	// shows a variety rather than the same symbol everywhere.
-	const ANGRY_SYMBOLS = ['💢', '😡', '❗', '💥', '😤', '🤬', '‼️', '🤬', '💢'];
+	// 🤬 is reserved exclusively for the car that was actually clicked (see bumpCar) —
+	// never used here, so shoved neighbours always read as visibly different/lesser.
+	const CLICK_SYMBOL = '🤬';
+	const ANGRY_SYMBOLS = ['💢', '😡', '💥', '😤', '‼️', '😠', '🗯️', '⁉️'];
 
 	const CAR_SRCS = [
 		'/svg/eastereggs/vehicles/car-1.svg',
@@ -40,14 +35,28 @@
 		'/svg/eastereggs/vehicles/random-short-car.svg'
 	];
 	const BLOCK_VW = 52; // road blockage x where the pile-up forms
-	const FLEET = 12; // keep the whole pile-up on screen (12 * ~3.6vw ≈ 43vw spread)
+	const FLEET = 12; // keep the whole pile-up on screen
+	// Fixed PIXELS, not vw — cars render at a fixed pixel height/width regardless of
+	// viewport, but vw scales with it. A vw-based gap meant cars barely touched on a
+	// narrow screen and had a visible gap on a wide one. ~58px ≈ one car's own length
+	// (bumper just touching the one ahead), converted to vw per-storm via `iw` below.
+	const CAR_GAP_PX = 58;
+	// preset fidget timings (varied but not per-car-random) so the jam doesn't twitch in
+	// lockstep. `dur` doubled vs the wobble's natural feel → half as many anger-mark pops.
+	const VARIANTS = [
+		{ dur: 3.6, delay: 0 },
+		{ dur: 4.2, delay: 0.4 },
+		{ dur: 4.8, delay: 0.9 },
+		{ dur: 3.2, delay: 1.3 },
+		{ dur: 5.4, delay: 1.7 }
+	];
 
 	let cloudVisible = $state(false);
 	let cloudActive = $state(false);
 	let eventActive = $state(false);
 	let snowing = $state(false);
 	let groundOut = $state(false); // fade the settled snow (and falling snow) away
-	let leaving = $state(false); // pile-up drives off
+	let leaving = $state(false); // pile-up drives off (used for the crash-fx/jam-dust snippets)
 	let snowmanUp = $state(false); // snowman only starts building once the pile has halted
 	let snowmanX = $state(78); // random spot per storm, on the clear side of the pile (vw)
 	let snowmanMelted = $state(false); // clicked snowman → melts early to a puddle
@@ -61,69 +70,80 @@
 			snowPuddles.update((p) => [...p, { x: snowmanX }]);
 		}
 	});
-	let cars = $state<Car[]>([]);
-	let carId = 0;
-	let bumped = $state<Record<number, { level: number; sym: string }>>({}); // id → click-bump (2=hit, 1=shoved neighbour)
-	let snowEffect = $state<Record<number, EffectName | null>>({}); // leaving car → its easter-egg effect
-	let snowFire = $state<Record<number, boolean>>({}); // leaving car-5 → engine flames
 
-	// Click a stuck car → it angrily lurches into the car ahead/behind; those
-	// neighbours get shoved a little too. Honk + 💢 + smoke on the one clicked.
+	type PileCar = { id: number; stopVw: number; rot: number };
+	let pileCars: PileCar[] = []; // plain array — only read by closures, not rendered directly
+	let carConfigs = $state<Record<number, { fxDelayMs: number; angrySymbol: string; variant: number }>>({});
+	let bumped = $state<Record<number, { level: number; sym: string }>>({}); // id → click-bump (2=hit, 1=shoved neighbour)
+
+	// Click a stuck car → it VIOLENTLY lurches into the car ahead/behind; those
+	// neighbours get shoved hard too. Honk + 🤬 + smoke on the one clicked.
 	function setBump(id: number, level: number, sym: string) {
 		bumped = { ...bumped, [id]: { level, sym } };
+		// swap the fidget class for the one-shot bump-shake, then resume fidgeting
+		const api = fleetRef.current;
+		const variant = carConfigs[id]?.variant ?? 0;
+		api?.setExtraClass(id, level === 2 ? 'bumped-hard' : 'bumped-soft');
 		setTimeout(() => {
 			const next = { ...bumped };
 			delete next[id];
 			bumped = next;
-		}, 650);
+			fleetRef.current?.setExtraClass(id, `jam-angry-${variant}`);
+		}, 2600); // 4x — long enough for bump-sym's own longer linger to actually finish
 	}
-	function bumpCar(i: number) {
-		if (leaving) return; // already driving off
-		setBump(cars[i].id, 2, ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]);
-		if (cars[i - 1]) setBump(cars[i - 1].id, 1, '');
-		if (cars[i + 1]) setBump(cars[i + 1].id, 1, '');
+	// Shared forward-nudge: a temporary shove layered on top of a car's own resting
+	// animation (fill: 'none' hands control straight back once it's done, so it never
+	// permanently moves the car's parked spot). Used by both the arrival chain-reaction
+	// and the click-bump, so the two "something hit me" reactions stay one mechanism.
+	function pushForward(target: PileCar, pxAmount: number) {
+		fleetRef.current?.setMotionOverride(target.id, (el) => {
+			const stopTx = `${target.stopVw}vw`;
+			const push = direction === 'ltr' ? pxAmount : -pxAmount;
+			const wobble = direction === 'ltr' ? 2 : -2;
+			const restRot = direction === 'ltr' ? -target.rot * 0.75 : target.rot * 0.75;
+			el.animate(
+				[
+					{ transform: `translateX(${stopTx}) rotate(${restRot}deg)` },
+					{ transform: `translateX(calc(${stopTx} + ${push}px)) rotate(${wobble}deg)`, offset: 0.55 },
+					{ transform: `translateX(${stopTx}) rotate(${restRot}deg)` }
+				],
+				{ duration: 700, easing: 'ease-out', fill: 'none' }
+			);
+		});
 	}
 
-	// Click routing by state: a leaving car is a normal car again → fire its egg;
-	// a stuck/arriving car just gets an angry bump (arriving cars have no bump anim
-	// yet parked, so it's effectively inert until they settle).
-	function clickCar(i: number, wrapEl: HTMLElement | null) {
-		if (leaving) return fireLeaveEgg(i, wrapEl);
-		if (eventActive) return bumpCar(i);
-	}
+	// Chain reaction, not a synced group shove: the clicked car lurches forward+back
+	// on its own first, THEN (once that push has actually reached the car ahead/behind)
+	// the neighbours get shaken — a beat apart, not all three moving as one blob.
+	const BUMP_REACTION_MS = 220;
 
-	function fireLeaveEgg(i: number, wrapEl: HTMLElement | null) {
-		const egg = eggFor(cars[i].src);
-		if (!egg) return;
-		const id = cars[i].id;
-		snowEffect = { ...snowEffect, [id]: egg.effect };
-		setTimeout(() => {
-			const n = { ...snowEffect };
-			delete n[id];
-			snowEffect = n;
-		}, egg.durationMs);
-		// car-5 firestop: show the engine flames while it rolls off (the full
-		// stop→restart choreography is traffic-only — not worth porting to a car
-		// that's already leaving).
-		if (egg.effect === 'firestop') {
-			snowFire = { ...snowFire, [id]: true };
+	function bumpCar(id: number) {
+		if (leaving) return; // already driving off — a normal car again, no more bumping
+		const i = pileCars.findIndex((c) => c.id === id);
+		if (i < 0) return;
+		// The clicked car ALWAYS shows 🤬 — reserved for this, never shown any other way.
+		// Shoved neighbours get a fresh random pick from the rest of the pool each time,
+		// a real forward nudge (not just an in-place shake), and a bit of dust.
+		setBump(id, 2, CLICK_SYMBOL);
+		const ahead = pileCars[i - 1];
+		const behind = pileCars[i + 1];
+		if (ahead) {
 			setTimeout(() => {
-				const n = { ...snowFire };
-				delete n[id];
-				snowFire = n;
-			}, 3500);
+				setBump(ahead.id, 1, ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]);
+				pushForward(ahead, 34);
+			}, BUMP_REACTION_MS);
 		}
-		// Motion-coupled eggs act on the car's own snowcar-leave animation. (None of
-		// the snow fleet's srcs map to boost/reverse today, but keep it generic.)
-		const anim = wrapEl ? getMotionAnimation(wrapEl) : undefined;
-		if (anim && egg.motion) {
-			if (egg.motion.kind === 'boost') boost(anim, egg.motion.rate, egg.motion.ms);
-			else if (egg.motion.kind === 'reverse') reverse(anim, egg.motion.rate);
+		if (behind) {
+			setTimeout(() => {
+				setBump(behind.id, 1, ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]);
+				pushForward(behind, 34);
+			}, BUMP_REACTION_MS * 2); // behind reacts after the hit has passed through ahead first
 		}
 	}
 
 	function startEvent() {
-		if (eventActive || !cloudVisible) return;
+		const api = fleetRef.current;
+		if (eventActive || !cloudVisible || !api) return;
 		eventActive = true;
 		cloudActive = true; // freezes the drift + darkens the cloud
 		snowing = true;
@@ -138,40 +158,87 @@
 
 		const sign = direction === 'ltr' ? -1 : 1; // pile grows backward from the blockage
 		const SPEED_VW_S = 12; // drive-off speed — matches normal traffic's on-screen pace
-		const ARRIVE_SPEED_VW_S = 11; // arrival a touch slower — cars roll in and brake gently
+		const ARRIVE_SPEED_VW_S = 6.875; // half speed, +25% on top — cars roll in and brake gently
 		const iw = typeof window !== 'undefined' ? window.innerWidth : 1200;
-		const entryVw = direction === 'ltr' ? -(280 / iw) * 100 : 100 + (280 / iw) * 100; // off-screen start (keyframe 0%)
-		cars = Array.from({ length: FLEET }, (_, i) => {
-			const delayMs = 9000 + i * 250; // let a deep snow layer build (~9s) before cars slide in
-			const stopVw = BLOCK_VW + sign * (i * 3.6);
-			// Arrival uses the same per-car-duration approach as drive-off: duration ∝
-			// distance → every car rolls in at the SAME gentle speed (no fixed-time sprint
-			// where the far cars zoom). Eased so they decelerate smoothly into the pile.
+		const entryVw = direction === 'ltr' ? -(OFFSCREEN_MARGIN_PX / iw) * 100 : 100 + (OFFSCREEN_MARGIN_PX / iw) * 100; // off-screen start — matches startTx below
+
+		pileCars = [];
+		carConfigs = {};
+
+		for (let i = 0; i < FLEET; i++) {
+			// let a deep snow layer build before cars slide in, but finish arriving with a
+			// buffer before groundOut (19000ms) — base was 9000ms when groundOut was 23000ms.
+			const delayMs = 5000 + i * 250;
+			const stopVw = BLOCK_VW + sign * (i * (CAR_GAP_PX / iw) * 100);
+			const rot = Math.random() * 28 - 14; // wide violent tilt on impact
+			// Arrival duration ∝ distance → every car rolls in at the same gentle speed
+			// (no fixed-time sprint where the far cars zoom), eased into an overshoot+skid.
 			const arriveDistVw = Math.abs(stopVw - entryVw);
-			const arriveDurMs = Math.min(7500, Math.max(3000, (arriveDistVw / ARRIVE_SPEED_VW_S) * 1000));
-			// distance each car covers driving off (to just past its exit edge)
-			const travelVw = direction === 'ltr' ? 110 - stopVw : stopVw + 10;
-			const leaveDurMs = Math.min(8500, Math.max(3500, (travelVw / SPEED_VW_S) * 1000));
-			return {
-				id: carId++,
-				src: CAR_SRCS[Math.floor(Math.random() * CAR_SRCS.length)],
-				stopVw,
-				rot: Math.random() * 10 - 5,
-				delayMs,
-				arriveDurMs,
-				fxDelayMs: delayMs + arriveDurMs * 0.8, // crash fx as it skids into the pile (~80% in)
-				// Jam clears front-first: each car only pulls away once the one ahead has
-				// opened a gap (~0.55s), plus a little reaction jitter — not all at once.
-				leaveDelay: i * 550 + Math.random() * 180,
-				leaveDurMs,
-				// Stuck-in-the-jam fidget: each car bumps the one ahead + flashes a 💢 on
-				// its OWN cycle (varied period) starting once it has settled, so the anger
-				// ripples one-by-one through the pile instead of everyone twitching at once.
-				angryDurMs: 1500 + Math.random() * 1500, // 1.5–3.0s per bump cycle (varied → desynced)
-				angryDelayMs: delayMs + arriveDurMs + 150 + Math.random() * 700, // begin right after it parks
-				angrySymbol: ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)]
+			const arriveDurMs = Math.min(12000, Math.max(4800, (arriveDistVw / ARRIVE_SPEED_VW_S) * 1000));
+			const src = CAR_SRCS[Math.floor(Math.random() * CAR_SRCS.length)];
+			const typeIndex = vehicleTypes.findIndex((v) => v.src === src);
+			const variant = i % VARIANTS.length;
+
+			const id = api.spawnVehicle({
+				typeIndex,
+				direction,
+				duration: 9999, // inert — motionOverride replaces the CSS drive entirely
+				clickOverride: bumpCar, // parked → click shoves neighbours, no normal egg
+				extraClass: `jam-angry-${variant}`,
+				carFx,
+				roadFx,
+				motionOverride: (el) => {
+					el.style.animation = 'none'; // kill the default drive-ltr/rtl
+					const startTx = direction === 'ltr' ? `-${OFFSCREEN_MARGIN_PX}px` : `calc(100vw + ${OFFSCREEN_MARGIN_PX}px)`;
+					const stop = `${stopVw}vw`;
+					const r = rot;
+					// Physics: momentum only ever carries FORWARD into the pile — a real crash
+					// doesn't glide backward and forward again, it slams forward hard (impact
+					// at 45% in), then ONE small backward recoil (crumple rebound), then it's
+					// simply stopped. No lingering back-and-forth oscillation. Overshoot is
+					// deliberately SMALLER than CAR_GAP_PX (58px) — it's the amount a crumple
+					// zone compresses on impact, not a distance that drives through the car
+					// it just hit. Collision = the moment it reaches this peak, not a delayed
+					// "glide past, then come back" swing.
+					const kf: Keyframe[] =
+						direction === 'ltr'
+							? [
+									{ transform: `translateX(${startTx}) rotate(0deg)` },
+									{ transform: `translateX(calc(${stop} + 28px)) rotate(${r}deg)`, offset: 0.45 },
+									{ transform: `translateX(calc(${stop} - 10px)) rotate(${-r * 0.5}deg)`, offset: 0.61 },
+									{ transform: `translateX(${stop}) rotate(${-r * 0.75}deg)` }
+								]
+							: [
+									{ transform: `translateX(${startTx}) rotate(0deg)` },
+									{ transform: `translateX(calc(${stop} - 28px)) rotate(${-r}deg)`, offset: 0.45 },
+									{ transform: `translateX(calc(${stop} + 10px)) rotate(${r * 0.5}deg)`, offset: 0.61 },
+									{ transform: `translateX(${stop}) rotate(${r * 0.75}deg)` }
+								];
+					// fill: 'both' (not just 'forwards') — with a multi-second delay, 'forwards'
+					// has NO effect during the delay itself, so the car would sit at its
+					// default (no-transform) position — visibly at the road's edge — for the
+					// whole 9-15s snow-build wait instead of staying off-screen until it's
+					// actually time to slide in.
+					el.animate(kf, { duration: arriveDurMs, delay: delayMs, easing: 'cubic-bezier(0.16,1,0.3,1)', fill: 'both' });
+				}
+			});
+
+			const impactMs = delayMs + arriveDurMs * 0.45;
+			pileCars.push({ id, stopVw, rot });
+			carConfigs[id] = {
+				fxDelayMs: impactMs, // crash fx right AT impact — same checkpoint the motion itself uses
+				angrySymbol: ANGRY_SYMBOLS[Math.floor(Math.random() * ANGRY_SYMBOLS.length)], // ambient pop — never 🤬, that's click-only
+				variant
 			};
-		});
+
+			// Chain reaction: the car it just hit (the one ahead, already parked) gets
+			// shoved a bit further forward too — that's where the force actually goes.
+			// Same pushForward() the click-bump uses.
+			if (i > 0) {
+				const ahead = pileCars[i - 1];
+				setTimeout(() => pushForward(ahead, 50), impactMs);
+			}
+		}
 
 		// lifecycle: deep snow builds → cars slide in & crash → pile sits (snowman builds
 		// on the halted, snowed-in road) → snow stops & MELTS away → only then cars drive off
@@ -180,16 +247,55 @@
 		}, 15000);
 		setTimeout(() => {
 			groundOut = true; // snow stops falling; settled snow (and the snowman) start melting
-		}, 23000);
+		}, 19000);
 		setTimeout(() => {
 			leaving = true; // melt finished — road clear, pile-up drives off
 			snowFreeze.set(false); // ...and normal traffic moves again
+			cloudActive = false; // un-park the cloud the instant the cars start driving, not at full cleanup
+			const exitMarginVw = (OFFSCREEN_MARGIN_PX / iw) * 100; // matches the actual off-frame exit distance
+			let maxFinishMs = 0;
+			// Jam clears front-first: each car only pulls away once the one ahead has
+			// opened a gap (~0.55s), plus a little reaction jitter — not all at once.
+			pileCars.forEach((car, i) => {
+				const leaveDelay = i * 550 + Math.random() * 180;
+				const travelVw = direction === 'ltr' ? 100 + exitMarginVw - car.stopVw : car.stopVw + exitMarginVw;
+				const leaveDurMs = Math.min(8500, Math.max(3500, (travelVw / SPEED_VW_S) * 1000));
+				maxFinishMs = Math.max(maxFinishMs, leaveDelay + leaveDurMs);
+				setTimeout(() => {
+					const liveApi = fleetRef.current;
+					if (!liveApi) return;
+					liveApi.setClickOverride(car.id, undefined); // normal click-egg again
+					liveApi.setExtraClass(car.id, undefined); // stop fidgeting
+					liveApi.setMotionOverride(car.id, (el) => {
+						const end = direction === 'ltr' ? `calc(100vw + ${OFFSCREEN_MARGIN_PX}px)` : `-${OFFSCREEN_MARGIN_PX}px`;
+						const tilt = direction === 'ltr' ? -car.rot * 0.75 : car.rot * 0.75; // matches the arrive keyframes' settle tilt
+						el.animate(
+							[
+								{ transform: `translateX(${car.stopVw}vw) rotate(${tilt}deg)` },
+								// straightens out FIRST, right as it pulls out — not a slow un-tilt
+								// spread across the whole crossing.
+								{ transform: `translateX(${car.stopVw}vw) rotate(0deg)`, offset: 0.06 },
+								{ transform: `translateX(${end}) rotate(0deg)` }
+							],
+							{ duration: leaveDurMs, easing: 'linear', fill: 'forwards' }
+						);
+					});
+				}, leaveDelay);
+			});
+			// Safety-net cleanup, timed off the ACTUAL slowest car's real finish time —
+			// not a hand-tuned constant that silently goes stale (and starts cutting cars
+			// off mid-drive) every time speed/duration/stagger constants change upstream.
+			setTimeout(() => endEvent(), maxFinishMs + 3000);
 		}, 26500);
-		setTimeout(() => endEvent(), 41500); // sequential drive-off (~0.55s apart) → longer tail
 	}
 
 	function endEvent() {
-		cars = [];
+		// Safety net: any car whose leave animation hasn't cleared the frame yet (off-frame
+		// removal usually already got it) is force-removed so a storm never leaves stragglers.
+		const api = fleetRef.current;
+		if (api) for (const c of pileCars) api.removeVehicle(c.id);
+		pileCars = [];
+		carConfigs = {};
 		eventActive = false;
 		snowing = false;
 		groundOut = false;
@@ -213,10 +319,51 @@
 	});
 </script>
 
+<!-- Car-attached decoration (rides through the arrive/leave motion): crash-fx sparks
+     on arrival + the click-bump honk/smoke/symbol/dust + the ambient anger-mark. 🤬
+     (CLICK_SYMBOL) is reserved for the car that was actually clicked (level 2) — never
+     shown any other way. The ambient pop and the shoved-neighbour pick both draw from
+     ANGRY_SYMBOLS, which never contains 🤬. -->
+{#snippet carFx(id: number)}
+	{@const cfg = carConfigs[id]}
+	{#if cfg}
+		<span class="anger-mark jam-angry-{cfg.variant}" class:leaving aria-hidden="true">{cfg.angrySymbol}</span>
+		{#if bumped[id]}
+			<div class="bump-fx" aria-hidden="true">
+				<span class="bump-sym">{bumped[id].sym}</span>
+				{#if bumped[id].level === 2}
+					<span class="bump-honk">!</span>
+				{/if}
+				<span class="bump-smoke b1"></span><span class="bump-smoke b2"></span>
+				<span class="bump-dust bd1"></span><span class="bump-dust bd2"></span>
+			</div>
+		{/if}
+		<div class="crash-fx" style="--fx-delay: {cfg.fxDelayMs}ms;" aria-hidden="true">
+			<span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
+			<span class="spark s5"></span><span class="spark s6"></span>
+			<span class="csmoke cm1"></span><span class="csmoke cm2"></span><span class="csmoke cm3"></span>
+			<span class="csmoke cm4"></span><span class="csmoke cm5"></span><span class="csmoke cm6"></span>
+			<span class="csmoke cm7"></span><span class="csmoke cm8"></span>
+			<span class="honk">!</span>
+		</div>
+	{/if}
+{/snippet}
+
+<!-- Ground-relative decoration: dust kicked up at the wheels while stuck in the jam —
+     stays at the road, doesn't need to ride the car's own bump/skid transforms. -->
+{#snippet roadFx(id: number)}
+	{@const cfg = carConfigs[id]}
+	{#if cfg && !leaving}
+		<span class="jam-dust d1 jam-angry-{cfg.variant}" aria-hidden="true"></span>
+		<span class="jam-dust d2 jam-angry-{cfg.variant}" aria-hidden="true"></span>
+		<span class="jam-dust d3 jam-angry-{cfg.variant}" aria-hidden="true"></span>
+	{/if}
+{/snippet}
+
 {#if cloudVisible}
 	<button
 		type="button"
-		class="snow-cloud {mode === 'static' ? 'debug' : direction}"
+		class="cloud snow {mode === 'static' ? 'debug' : direction}"
 		class:active={cloudActive}
 		style={mode === 'static' ? `left:${left};` : `--drift:${drift}s;`}
 		onclick={startEvent}
@@ -248,7 +395,9 @@
 {/if}
 
 <!-- Snowman: builds only once the pile-up has halted (snowmanUp), off to the clear side
-     of the jam. Click → melts early to a puddle; otherwise melts with the ground. -->
+     of the jam. Click → melts early to a puddle; otherwise melts with the ground. Its
+     timing is just a fixed delay after the storm starts — it doesn't need to be tied to
+     any specific car, so it isn't touched by the fleet migration at all. -->
 {#if snowmanUp}
 	<button
 		type="button"
@@ -268,75 +417,12 @@
 	</button>
 {/if}
 
-{#each cars as car, i (car.id)}
-	<div
-		class="snow-car-wrap {direction}"
-		class:leaving
-		class:bumped-hard={bumped[car.id]?.level === 2}
-		class:bumped-soft={bumped[car.id]?.level === 1}
-		style="--stop: {car.stopVw}vw; --rot: {car.rot}deg; --delay: {car.delayMs}ms; --arrive-dur: {car.arriveDurMs}ms; --fx-delay: {car.fxDelayMs}ms; --leave-delay: {car.leaveDelay}ms; --leave-dur: {car.leaveDurMs}ms; --angry-dur: {car.angryDurMs}ms; --angry-delay: {car.angryDelayMs}ms;"
-	>
-		<button class="snow-car-btn" onclick={(e) => clickCar(i, e.currentTarget.closest('.snow-car-wrap'))} aria-label="Bil i snekø">
-			<div class="snow-fidget">
-				<VehicleSprite src={car.src} size="car" direction={direction} effect={snowEffect[car.id] ?? null} fire={!!snowFire[car.id]} />
-			</div>
-		</button>
-		<span class="anger-mark" aria-hidden="true">{car.angrySymbol}</span>
-		{#if bumped[car.id]}
-			<div class="bump-fx" aria-hidden="true">
-				{#if bumped[car.id].level === 2}
-					<span class="bump-sym">{bumped[car.id].sym}</span>
-					<span class="bump-honk">!</span>
-				{/if}
-				<span class="bump-smoke b1"></span><span class="bump-smoke b2"></span>
-			</div>
-		{/if}
-		<span class="jam-dust d1" aria-hidden="true"></span>
-		<span class="jam-dust d2" aria-hidden="true"></span>
-		<span class="jam-dust d3" aria-hidden="true"></span>
-		<div class="crash-fx" aria-hidden="true">
-			<span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
-			<span class="csmoke cm1"></span><span class="csmoke cm2"></span>
-			<span class="honk">!</span>
-		</div>
-	</div>
-{/each}
-
 <style>
 	/* ---- cloud (trigger) ---- */
-	/* absolute in the houses band → floats in the sky over the rooftops and
-	   scrolls with the town, so it never drifts up behind the fixed nav.
-	   z-index 4 keeps it above the houses-front layer (3) without tying with it. */
-	.snow-cloud {
-		position: absolute;
-		top: 40%;
-		left: 0;
-		width: 92px;
-		height: 38px;
-		background: none;
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		pointer-events: auto;
-		z-index: 4;
-		opacity: 0.8;
-		-webkit-user-select: none;
-		user-select: none;
-		-webkit-tap-highlight-color: transparent;
-	}
-	.snow-cloud.ltr {
-		animation: cloud-drift-ltr var(--drift, 40s) linear forwards;
-	}
-	.snow-cloud.rtl {
-		right: 0;
-		left: auto;
-		animation: cloud-drift-rtl var(--drift, 40s) linear forwards;
-	}
-	.snow-cloud.active {
-		opacity: 1;
-		animation-play-state: paused; /* park overhead while it storms */
-	}
-	.snow-cloud.debug { animation: none; } /* static debug cloud — no drift */
+	/* Uses the SHARED .cloud skeleton (position/size/drift/active/debug) from
+	   cloudBase.css, same as every other cloud type — only the snow-specific puff
+	   colour (cloudBase.css's .cloud.snow rule) and the drip decoration below are
+	   local to this component. */
 	/* a bit of snow always drifting down under the cloud (part of its look) */
 	.cloud-snow { position: absolute; left: 50%; top: 30px; width: 84px; height: 46px; transform: translateX(-50%); pointer-events: none; z-index: -1; }
 	.cf {
@@ -357,23 +443,6 @@
 		65% { transform: translate(calc(var(--sway, 8px) * -1), 30px); }
 		100% { transform: translate(0, 44px); opacity: 0.1; }
 	}
-	.snow-cloud .puff {
-		position: absolute;
-		bottom: 0;
-		border-radius: 50%;
-		/* dark, blue-tinted night cloud */
-		background: radial-gradient(circle at 40% 35%, #6b7da6, #38456a 72%, rgba(56, 69, 106, 0) 100%);
-		filter: blur(1.6px); /* subtle blur → softer, more cloud-like */
-		transition: background 0.4s ease;
-	}
-	.snow-cloud.active .puff {
-		/* heavier storm cloud — darker still */
-		background: radial-gradient(circle at 40% 35%, #45527a, #232d49 72%, rgba(35, 45, 73, 0) 100%);
-	}
-	.puff.p1 { left: 4px; width: 38px; height: 30px; }
-	.puff.p2 { left: 26px; width: 50px; height: 38px; }
-	.puff.p3 { left: 56px; width: 34px; height: 28px; }
-
 	/* ---- snowfall ---- */
 	.snowfall {
 		position: absolute;
@@ -386,7 +455,7 @@
 	.snowfall.out { animation: snow-fade-out 2.2s ease forwards; }
 	.flake {
 		position: absolute;
-		top: -10px;
+		top: 18%; /* spawn at the cloud's own height (cloudBase.css .cloud top), not the container top */
 		left: var(--x);
 		width: var(--sz);
 		height: var(--sz);
@@ -420,54 +489,55 @@
 	/* melt: reverse the build — snow shrinks back down to the road (bottom origin) */
 	.snow-ground.out { animation: ground-melt 3.2s ease-in forwards; }
 
-	/* ---- car fleet ---- */
-	.snow-car-wrap {
-		position: absolute;
-		bottom: 8px;
-		left: 0;
-		z-index: 2; /* match traffic — between house layers; NOT 3 (= houses-front → z-fight flicker) */
-		transform-origin: 50% 100%;
-	}
-	/* Per-car duration (∝ distance, like the drive-off) so every car rolls in at the
-	   same gentle speed, with a strong ease-out → decelerates smoothly into the pile
-	   (overshoot + skid on the snow), instead of a fast, flat 2.8s slide. */
-	.snow-car-wrap.ltr { animation: snowcar-ltr var(--arrive-dur, 4s) cubic-bezier(0.16, 1, 0.3, 1) var(--delay) both; }
-	.snow-car-wrap.rtl { animation: snowcar-rtl var(--arrive-dur, 4s) cubic-bezier(0.16, 1, 0.3, 1) var(--delay) both; }
-	/* once the snow clears, the pile drives off (front first) instead of fading */
-	/* linear + per-car duration → drives off at a steady, normal-traffic speed.
-	   `both` so each car holds its pile spot through its stagger delay (the 0%
-	   keyframe = translateX(--stop)) instead of snapping to the left edge first. */
-	.snow-car-wrap.leaving.ltr { animation: snowcar-leave-ltr var(--leave-dur, 6s) linear var(--leave-delay) both; }
-	.snow-car-wrap.leaving.rtl { animation: snowcar-leave-rtl var(--leave-dur, 6s) linear var(--leave-delay) both; }
-	/* fidget wrapper around the sprite — carries the stuck-jam lurch and click-bump
-	   (the sprite owns the car look + egg visuals; these snow-only motions compose
-	   on this separate element so they don't fight the sprite's egg transform). */
-	.snow-fidget {
-		display: block;
-		/* impatient fidget while stuck: a quick lurch into the car ahead once per
-		   (varied) cycle, beginning after the car has parked. Each car runs its own
-		   period/phase so the bumps ripple one-by-one, not as a synchronized swarm. */
-		animation: jam-angry var(--angry-dur, 2.4s) ease-in-out var(--angry-delay, 0s) infinite;
-	}
-	/* once it pulls away, stop fidgeting */
-	.snow-car-wrap.leaving .snow-fidget { animation: none; }
+	/* ---- pile-up car decorations (rendered via carFx/roadFx into the fleet's own
+	   vehicle-container/.vfx — see Vehicles.svelte) ---- */
 
-	.snow-car-btn {
-		display: block;
-		background: none;
-		border: 0;
-		padding: 0;
-		margin: 0;
-		cursor: pointer;
-		pointer-events: auto;
+	/* Stuck-jam fidget: mostly idle, then a quick lurch into the car ahead and a
+	   bump-back recoil. Applied to the fleet's .vfx via extraClass. 5 preset
+	   variants (not per-car-random) so the jam doesn't twitch in perfect lockstep. */
+	@keyframes jam-angry {
+		0%, 76%, 100% { transform: translate(0, 0) rotate(0deg); }
+		82% { transform: translate(3px, 0) rotate(2deg); }      /* lurch into the car ahead */
+		87% { transform: translate(-2px, 0) rotate(-1.5deg); }  /* recoil */
+		93% { transform: translate(1px, 0) rotate(0.5deg); }    /* settle */
 	}
-	/* click bump: clicked car slams into its neighbour; shoved neighbours move less.
-	   More specific than the jam-angry rule so it takes over for the one-shot. */
-	.snow-car-wrap.bumped-hard .snow-fidget { animation: snow-bump-hard 0.55s ease-out; }
-	.snow-car-wrap.bumped-soft .snow-fidget { animation: snow-bump-soft 0.55s ease-out; }
+	.jam-angry-0 { animation: jam-angry 3.6s ease-in-out 0s infinite; }
+	.jam-angry-1 { animation: jam-angry 4.2s ease-in-out 0.4s infinite; }
+	.jam-angry-2 { animation: jam-angry 4.8s ease-in-out 0.9s infinite; }
+	.jam-angry-3 { animation: jam-angry 3.2s ease-in-out 1.3s infinite; }
+	.jam-angry-4 { animation: jam-angry 5.4s ease-in-out 1.7s infinite; }
+
+	/* click bump: clicked car slams VIOLENTLY into its neighbour; the neighbours it hits
+	   get shoved hard too (slightly less than the car that started it, but still a real
+	   hit, not a nudge). */
+	:global(.vfx.bumped-hard) { animation: snow-bump-hard 0.9s ease-out !important; }
+	:global(.vfx.bumped-soft) { animation: snow-bump-soft 0.9s ease-out !important; }
+	/* One push, one settle — not a springy multi-bounce. Forward hard, a single small
+	   recoil, done. */
+	@keyframes snow-bump-hard {
+		0% { transform: translate(0, 0) rotate(0deg); }
+		45% { transform: translate(30px, 0) rotate(14deg); }
+		70% { transform: translate(-8px, 0) rotate(-4deg); }
+		100% { transform: translate(0, 0) rotate(0deg); }
+	}
+	@keyframes snow-bump-soft {
+		0% { transform: translate(0, 0) rotate(0deg); }
+		45% { transform: translate(14px, 0) rotate(7deg); }
+		70% { transform: translate(-4px, 0) rotate(-2deg); }
+		100% { transform: translate(0, 0) rotate(0deg); }
+	}
 
 	.bump-fx { position: absolute; left: 50%; bottom: 0; width: 0; height: 0; z-index: 3; pointer-events: none; }
-	.bump-sym { position: absolute; left: -9px; top: -28px; font-size: 17px; line-height: 1; animation: honk-pop 0.6s ease-out forwards; }
+	/* 4x honk-pop's effective visible lifetime — pops in the same way but HOLDS
+	   visible much longer before fading, instead of fading out almost immediately. */
+	.bump-sym { position: absolute; left: -9px; top: -28px; font-size: 17px; line-height: 1; animation: symbol-linger 2.4s ease-out forwards; }
+	@keyframes symbol-linger {
+		0% { opacity: 0; transform: translateY(2px) scale(0.6); }
+		10% { opacity: 1; transform: translateY(-2px) scale(1.1); }
+		20% { opacity: 1; transform: translateY(-4px) scale(1); }
+		88% { opacity: 1; transform: translateY(-4px) scale(1); }
+		100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
+	}
 	.bump-honk {
 		position: absolute;
 		left: 7px;
@@ -490,7 +560,28 @@
 	.bump-smoke.b1 { --sx: -13px; left: -11px; }
 	.bump-smoke.b2 { --sx: 13px; left: 4px; animation-delay: 80ms; }
 
-	/* 💢 anger mark — pops above the car in sync with its bump */
+	/* a bit of dust kicked up at the wheels the instant a bump lands — a one-shot puff,
+	   not the looping ambient jam-dust below */
+	.bump-dust {
+		position: absolute;
+		bottom: -3px;
+		width: 10px;
+		height: 8px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(210, 198, 176, 0.8), rgba(210, 198, 176, 0) 70%);
+		opacity: 0;
+		animation: bump-dust-puff 0.55s ease-out forwards;
+	}
+	.bump-dust.bd1 { left: -16px; }
+	.bump-dust.bd2 { left: 10px; animation-delay: 60ms; }
+	@keyframes bump-dust-puff {
+		0% { opacity: 0; transform: translateY(0) scale(0.3); }
+		20% { opacity: 0.85; }
+		100% { opacity: 0; transform: translateY(-10px) scale(1.6); }
+	}
+
+	/* 💢 ambient anger mark — pops above the car on its own jam-angry cycle. Never 🤬
+	   (that pool is ANGRY_SYMBOLS, which excludes it). Stops once it's driving off. */
 	.anger-mark {
 		position: absolute;
 		top: -8px;
@@ -501,9 +592,18 @@
 		pointer-events: none;
 		z-index: 3;
 		transform: translateX(-50%) scale(0.4);
-		animation: anger-pop var(--angry-dur, 2.4s) ease-out var(--angry-delay, 0s) infinite;
 	}
-	.snow-car-wrap.leaving .anger-mark { animation: none; opacity: 0; }
+	.anger-mark.jam-angry-0 { animation: anger-pop 3.6s ease-out 0s infinite; }
+	.anger-mark.jam-angry-1 { animation: anger-pop 4.2s ease-out 0.4s infinite; }
+	.anger-mark.jam-angry-2 { animation: anger-pop 4.8s ease-out 0.9s infinite; }
+	.anger-mark.jam-angry-3 { animation: anger-pop 3.2s ease-out 1.3s infinite; }
+	.anger-mark.jam-angry-4 { animation: anger-pop 5.4s ease-out 1.7s infinite; }
+	.anger-mark.leaving { animation: none; opacity: 0; }
+	@keyframes anger-pop {
+		0%, 76%, 100% { opacity: 0; transform: translateX(-50%) scale(0.4); }
+		82% { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.15); }
+		93% { opacity: 0.85; transform: translateX(-50%) translateY(-7px) scale(1); }
+	}
 
 	/* Snow/dust kicked up at the wheels each time the car lurches into the one ahead. */
 	.jam-dust {
@@ -518,14 +618,24 @@
 		pointer-events: none;
 		z-index: 1; /* under the car body */
 		transform: translate(-50%, 0) scale(0.2);
-		animation: jam-dust-puff var(--angry-dur, 2.4s) ease-out var(--angry-delay, 0s) infinite;
 	}
 	.jam-dust.d1 { --ddx: -11px; }
 	.jam-dust.d2 { --ddx: 9px; }
 	.jam-dust.d3 { --ddx: -2px; width: 7px; height: 7px; }
-	.snow-car-wrap.leaving .jam-dust { animation: none; opacity: 0; }
+	.jam-dust.jam-angry-0 { animation: jam-dust-puff 3.6s ease-out 0s infinite; }
+	.jam-dust.jam-angry-1 { animation: jam-dust-puff 4.2s ease-out 0.4s infinite; }
+	.jam-dust.jam-angry-2 { animation: jam-dust-puff 4.8s ease-out 0.9s infinite; }
+	.jam-dust.jam-angry-3 { animation: jam-dust-puff 3.2s ease-out 1.3s infinite; }
+	.jam-dust.jam-angry-4 { animation: jam-dust-puff 5.4s ease-out 1.7s infinite; }
+	/* dust puff fires with the lurch, then drifts out (per-puff via --ddx) and fades */
+	@keyframes jam-dust-puff {
+		0%, 80% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
+		86% { opacity: 0.6; transform: translate(calc(-50% + var(--ddx, 0px) * 0.35), -2px) scale(0.85); }
+		98% { opacity: 0; transform: translate(calc(-50% + var(--ddx, 0px)), -5px) scale(1.3); }
+		100% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
+	}
 
-	/* crash sparks + "!" honk, fired as the car hits the pile */
+	/* crash sparks + "!" honk, fired once as the car hits the pile (--fx-delay, inline) */
 	.crash-fx {
 		position: absolute;
 		top: 2px;
@@ -535,32 +645,43 @@
 		z-index: 5;
 		pointer-events: none;
 	}
+	/* bigger, faster, further-flying sparks — a hard hit, not a fender-bender */
 	.crash-fx .spark {
 		position: absolute;
-		width: 5px;
-		height: 5px;
+		width: 6px;
+		height: 6px;
 		border-radius: 1px;
 		background: #fff3b0;
-		box-shadow: 0 0 4px #ffd24a;
+		box-shadow: 0 0 6px #ffd24a;
 		opacity: 0;
-		animation: spark-pop 0.45s ease-out var(--fx-delay) forwards;
+		animation: spark-pop 0.5s ease-out var(--fx-delay) forwards;
 	}
-	.crash-fx .s1 { --dx: -18px; --dy: -14px; }
-	.crash-fx .s2 { --dx: 16px; --dy: -16px; }
-	.crash-fx .s3 { --dx: -8px; --dy: -22px; }
-	.crash-fx .s4 { --dx: 12px; --dy: -8px; }
+	.crash-fx .s1 { --dx: -34px; --dy: -24px; }
+	.crash-fx .s2 { --dx: 30px; --dy: -28px; }
+	.crash-fx .s3 { --dx: -16px; --dy: -38px; }
+	.crash-fx .s4 { --dx: 22px; --dy: -14px; }
+	.crash-fx .s5 { --dx: -26px; --dy: -6px; }
+	.crash-fx .s6 { --dx: 12px; --dy: -40px; }
+	/* the impact is mostly a big, dense smoke burst — the car practically vanishes
+	   into it for a moment, several overlapping puffs instead of two thin ones */
 	.crash-fx .csmoke {
 		position: absolute;
 		bottom: -6px;
-		width: 16px;
-		height: 16px;
+		width: 30px;
+		height: 30px;
 		border-radius: 50%;
-		background: radial-gradient(circle, rgba(120, 120, 120, 0.7), rgba(120, 120, 120, 0) 70%);
+		background: radial-gradient(circle, rgba(90, 90, 95, 0.92), rgba(90, 90, 95, 0) 70%);
 		opacity: 0;
-		animation: crash-smoke 1s ease-out var(--fx-delay) forwards;
+		animation: crash-smoke 1.4s ease-out var(--fx-delay) forwards;
 	}
-	.crash-fx .cm1 { --sx: -12px; }
-	.crash-fx .cm2 { --sx: 12px; animation-delay: calc(var(--fx-delay) + 120ms); }
+	.crash-fx .cm1 { --sx: -30px; width: 34px; height: 34px; }
+	.crash-fx .cm2 { --sx: 28px; width: 34px; height: 34px; animation-delay: calc(var(--fx-delay) + 60ms); }
+	.crash-fx .cm3 { --sx: -12px; width: 40px; height: 40px; animation-delay: calc(var(--fx-delay) + 40ms); }
+	.crash-fx .cm4 { --sx: 14px; width: 38px; height: 38px; animation-delay: calc(var(--fx-delay) + 90ms); }
+	.crash-fx .cm5 { --sx: 0px; width: 46px; height: 46px; animation-delay: calc(var(--fx-delay) + 20ms); }
+	.crash-fx .cm6 { --sx: -46px; width: 26px; height: 26px; animation-delay: calc(var(--fx-delay) + 140ms); }
+	.crash-fx .cm7 { --sx: 44px; width: 26px; height: 26px; animation-delay: calc(var(--fx-delay) + 160ms); }
+	.crash-fx .cm8 { --sx: 0px; width: 22px; height: 22px; animation-delay: calc(var(--fx-delay) + 220ms); }
 	.crash-fx .honk {
 		position: absolute;
 		left: -3px;
@@ -573,8 +694,7 @@
 	}
 
 	/* ---- keyframes ---- */
-	@keyframes cloud-drift-ltr { 0% { transform: translateX(-120px); } 100% { transform: translateX(calc(100vw + 120px)); } }
-	@keyframes cloud-drift-rtl { 0% { transform: translateX(120px); } 100% { transform: translateX(calc(-100vw - 120px)); } }
+	/* cloud-drift-ltr/rtl now come from the shared cloudBase.css (.cloud.ltr/.rtl) */
 
 	@keyframes snow-fade-in { from { opacity: 0; } to { opacity: 1; } }
 	@keyframes snow-fade-out { to { opacity: 0; } }
@@ -598,82 +718,11 @@
 		100% { transform: scaleY(0); opacity: 0; }
 	}
 
-	/* Arrive fast, then SLIDE on the snow: overshoot past the stop, skid back into
-	   the car ahead, small settle. */
-	/* The car FLIP is owned by VehicleSprite (.sprite.ltr .car-body). These keyframes
-	   only move/rotate the wrap — no scaleX. ltr rotations are negated vs the old
-	   baked-flip version because a mirror reverses rotation sign, so the visual
-	   skid/tilt stays identical to before. */
-	@keyframes snowcar-ltr {
-		0% { transform: translateX(-280px) rotate(0); }
-		55% { transform: translateX(calc(var(--stop) + 30px)) rotate(var(--rot)); }
-		78% { transform: translateX(calc(var(--stop) - 12px)) rotate(calc(var(--rot) * -1)); }
-		90% { transform: translateX(calc(var(--stop) + 4px)) rotate(calc(var(--rot) * -0.5)); }
-		100% { transform: translateX(var(--stop)) rotate(calc(var(--rot) * -1)); }
-	}
-	@keyframes snowcar-rtl {
-		0% { transform: translateX(calc(100vw + 280px)) rotate(0); }
-		55% { transform: translateX(calc(var(--stop) - 30px)) rotate(calc(var(--rot) * -1)); }
-		78% { transform: translateX(calc(var(--stop) + 12px)) rotate(var(--rot)); }
-		90% { transform: translateX(calc(var(--stop) - 4px)) rotate(calc(var(--rot) * 0.5)); }
-		100% { transform: translateX(var(--stop)) rotate(var(--rot)); }
-	}
-	/* drive off the way they were heading, straightening out. Exits with the same
-	   fixed-px clearance the main traffic fleet uses (not a skimpy 10vw) — otherwise
-	   a wide sprite (bus/truck/limo) on a narrow viewport never fully clears the edge
-	   and just sits there half-visible, since this animation's fill (`both`) holds
-	   forever at its end state. */
-	@keyframes snowcar-leave-ltr {
-		0% { transform: translateX(var(--stop)) rotate(calc(var(--rot) * -1)); }
-		100% { transform: translateX(calc(100vw + 250px)) rotate(0); }
-	}
-	@keyframes snowcar-leave-rtl {
-		0% { transform: translateX(var(--stop)) rotate(var(--rot)); }
-		100% { transform: translateX(-250px) rotate(0); }
-	}
-
-	/* click bump: a bigger slam forward + recoil (clicked car), and a lighter shove
-	   for the neighbours it rams into. */
-	@keyframes snow-bump-hard {
-		0% { transform: translate(0, 0) rotate(0deg); }
-		28% { transform: translate(9px, 0) rotate(5deg); }
-		54% { transform: translate(-4px, 0) rotate(-3deg); }
-		78% { transform: translate(2px, 0) rotate(1deg); }
-		100% { transform: translate(0, 0) rotate(0deg); }
-	}
-	@keyframes snow-bump-soft {
-		0% { transform: translate(0, 0) rotate(0deg); }
-		35% { transform: translate(5px, 0) rotate(3deg); }
-		68% { transform: translate(-2px, 0) rotate(-1.5deg); }
-		100% { transform: translate(0, 0) rotate(0deg); }
-	}
-
-	/* Stuck-jam fidget: mostly idle, then a quick lurch into the car ahead and a
-	   bump-back recoil. Small (cars are 45px) but reads as impatient/angry. */
-	@keyframes jam-angry {
-		0%, 76%, 100% { transform: translate(0, 0) rotate(0deg); }
-		82% { transform: translate(3px, 0) rotate(2deg); }      /* lurch into the car ahead */
-		87% { transform: translate(-2px, 0) rotate(-1.5deg); }  /* recoil */
-		93% { transform: translate(1px, 0) rotate(0.5deg); }    /* settle */
-	}
-	/* 💢 flashes up in sync with the lurch, then fades as it rises */
-	@keyframes anger-pop {
-		0%, 76%, 100% { opacity: 0; transform: translateX(-50%) scale(0.4); }
-		82% { opacity: 1; transform: translateX(-50%) translateY(-3px) scale(1.15); }
-		93% { opacity: 0.85; transform: translateX(-50%) translateY(-7px) scale(1); }
-	}
-	/* dust puff fires with the lurch, then drifts out (per-puff via --ddx) and fades */
-	@keyframes jam-dust-puff {
-		0%, 80% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
-		86% { opacity: 0.6; transform: translate(calc(-50% + var(--ddx, 0px) * 0.35), -2px) scale(0.85); }
-		98% { opacity: 0; transform: translate(calc(-50% + var(--ddx, 0px)), -5px) scale(1.3); }
-		100% { opacity: 0; transform: translate(-50%, 0) scale(0.2); }
-	}
-
 	@keyframes crash-smoke {
-		0% { opacity: 0; transform: translate(0, 0) scale(0.4); }
-		25% { opacity: 0.7; }
-		100% { opacity: 0; transform: translate(var(--sx), -22px) scale(1.7); }
+		0% { opacity: 0; transform: translate(0, 0) scale(0.3); }
+		15% { opacity: 0.95; }
+		55% { opacity: 0.8; transform: translate(calc(var(--sx) * 0.6), -18px) scale(1.6); }
+		100% { opacity: 0; transform: translate(var(--sx), -34px) scale(2.3); }
 	}
 
 	@keyframes spark-pop {
@@ -742,10 +791,12 @@
 	.snowman:not(.melting) .arm { opacity: 0; animation: detail-in 0.5s ease-out 3.3s forwards; }
 
 	/* melt: balls slump onto the ground and fade (head first), puddle spreads */
+	/* one sphere melts fully before the next starts — delay = previous balls' full
+	   2.4s duration each, not a short overlap-stagger. */
 	.snowman.melting .ball { animation: ball-melt 2.4s ease-in both; }
 	.snowman.melting .b-head { animation-delay: 0s; }
-	.snowman.melting .b-mid { animation-delay: 0.25s; }
-	.snowman.melting .b-bottom { animation-delay: 0.5s; }
+	.snowman.melting .b-mid { animation-delay: 2.4s; }
+	.snowman.melting .b-bottom { animation-delay: 4.8s; }
 	.snowman.melting .eye,
 	.snowman.melting .nose,
 	.snowman.melting .arm { animation: detail-out 0.8s ease-in forwards; }

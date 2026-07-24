@@ -28,7 +28,7 @@ export interface CloudProps {
 // `weight: 20` as "20% chance" directly instead of eyeballing a ratio. Rarest
 // entries here (confetti/ufo) are 5%, the floor requested for "least likely".
 export const cloudTypes: CloudConfig[] = [
-	{ type: 'snow', weight: 20, label: 'Snesky' },
+	{ type: 'snow', weight: 2000, label: 'Snesky' },
 	{ type: 'rain', weight: 20, label: 'Regnsky' },
 	{ type: 'confetti', weight: 5, label: 'Konfettisky' },
 	{ type: 'thunder', weight: 15, label: 'Tordensky' },
