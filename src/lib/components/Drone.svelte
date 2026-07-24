@@ -10,6 +10,58 @@
 	let scaredY = $state(0);
 	let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
+	const HIT_COUNT_KEY = 'droneHitCount';
+	let hitCount = $state(0);
+	if (typeof window !== 'undefined') {
+		hitCount = Number(localStorage.getItem(HIT_COUNT_KEY)) || 0;
+	}
+
+	// Cursor avoidance — first-ever sighting (hitCount 0) never dodges, exactly the old
+	// straight-line flight. Every hit afterward raises how far out it starts noticing the
+	// cursor and how hard it flinches away, capped so it stays hittable.
+	let dodgeWrap: HTMLDivElement | undefined = $state();
+	let dodgeX = $state(0);
+	let dodgeY = $state(0);
+	let mouseX = -9999;
+	let mouseY = -9999;
+
+	onMount(() => {
+		const onPointerMove = (e: PointerEvent) => {
+			mouseX = e.clientX;
+			mouseY = e.clientY;
+		};
+		window.addEventListener('pointermove', onPointerMove);
+
+		let rafId: number;
+		const loop = () => {
+			if (visible && !scared && dodgeWrap) {
+				const learn = Math.min(hitCount, 10);
+				const radius = 70 + learn * 14; // notices the cursor from further away each time
+				const maxPush = learn * 9; // px — how hard it flinches away
+				const r = dodgeWrap.getBoundingClientRect();
+				const cx = r.left + r.width / 2;
+				const cy = r.top + r.height / 2;
+				const dx = cx - mouseX;
+				const dy = cy - mouseY;
+				const dist = Math.hypot(dx, dy) || 1;
+				const targetX = maxPush > 0 && dist < radius ? (dx / dist) * (1 - dist / radius) * maxPush : 0;
+				const targetY = maxPush > 0 && dist < radius ? (dy / dist) * (1 - dist / radius) * maxPush : 0;
+				dodgeX += (targetX - dodgeX) * 0.25;
+				dodgeY += (targetY - dodgeY) * 0.25;
+			} else {
+				dodgeX *= 0.9;
+				dodgeY *= 0.9;
+			}
+			rafId = requestAnimationFrame(loop);
+		};
+		rafId = requestAnimationFrame(loop);
+
+		return () => {
+			window.removeEventListener('pointermove', onPointerMove);
+			cancelAnimationFrame(rafId);
+		};
+	});
+
 	onMount(() => {
 		// Random initial delay between 3-15 seconds
 		const initialDelay = Math.random() * 12000 + 3000;
@@ -51,6 +103,9 @@
 		scaredY = e.clientY;
 		scared = true;
 
+		hitCount++;
+		if (typeof window !== 'undefined') localStorage.setItem(HIT_COUNT_KEY, String(hitCount));
+
 		setTimeout(() => {
 			visible = false;
 			scared = false;
@@ -64,6 +119,7 @@
 		class:scared={scared}
 		style="--start-y: {startY}%; --duration: {duration}s; --scared-x: {scaredX}px; --scared-y: {scaredY}px;"
 	>
+		<div class="drone-dodge" bind:this={dodgeWrap} style="transform: translate({dodgeX}px, {dodgeY}px);">
 		<button
 			class="drone-hit"
 			onclick={handleDroneClick}
@@ -162,6 +218,7 @@
 			</g>
 		</svg>
 		</button>
+		</div>
 	</div>
 {/if}
 
@@ -171,6 +228,13 @@
 		top: var(--start-y, 20%);
 		z-index: 45;
 		pointer-events: auto;
+	}
+
+	/* JS-driven cursor-avoidance offset, layered on top of the CSS-animated container
+	   (left/top + wobble-y) — kept on its own element since a CSS animation would fight
+	   an inline transform set on the same node. */
+	.drone-dodge {
+		display: inline-block;
 	}
 
 	.drone-hit {

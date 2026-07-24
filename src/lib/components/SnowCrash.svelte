@@ -141,9 +141,19 @@
 		}
 	}
 
+	// Bumped on every storm start. The cloud's re-click guard is `cloudActive` (matches
+	// the CSS pause — clickable the instant it's actually moving again, same rule as
+	// every other cloud), but snow's async tail (pile driving off, then endEvent) runs
+	// well past that point. A re-click there starts a NEW storm while the old one's
+	// timers are still pending — each one checks `storm === myStorm` before touching
+	// shared state, so a superseded storm's leftover timers no-op instead of resetting
+	// the new storm's flags or removing its cars.
+	let storm = 0;
+
 	function startEvent() {
 		const api = fleetRef.current;
-		if (eventActive || !cloudVisible || !api) return;
+		if (cloudActive || !cloudVisible || !api) return;
+		const myStorm = ++storm;
 		eventActive = true;
 		cloudActive = true; // freezes the drift + darkens the cloud
 		snowing = true;
@@ -243,12 +253,15 @@
 		// lifecycle: deep snow builds → cars slide in & crash → pile sits (snowman builds
 		// on the halted, snowed-in road) → snow stops & MELTS away → only then cars drive off
 		setTimeout(() => {
+			if (storm !== myStorm) return; // superseded by a re-click — old storm's timers stand down
 			snowmanUp = true; // pile has parked & traffic is frozen — NOW the snowman builds
 		}, 15000);
 		setTimeout(() => {
+			if (storm !== myStorm) return;
 			groundOut = true; // snow stops falling; settled snow (and the snowman) start melting
 		}, 19000);
 		setTimeout(() => {
+			if (storm !== myStorm) return;
 			leaving = true; // melt finished — road clear, pile-up drives off
 			snowFreeze.set(false); // ...and normal traffic moves again
 			cloudActive = false; // un-park the cloud the instant the cars start driving, not at full cleanup
@@ -285,7 +298,9 @@
 			// Safety-net cleanup, timed off the ACTUAL slowest car's real finish time —
 			// not a hand-tuned constant that silently goes stale (and starts cutting cars
 			// off mid-drive) every time speed/duration/stagger constants change upstream.
-			setTimeout(() => endEvent(), maxFinishMs + 3000);
+			setTimeout(() => {
+				if (storm === myStorm) endEvent();
+			}, maxFinishMs + 3000);
 		}, 26500);
 	}
 
