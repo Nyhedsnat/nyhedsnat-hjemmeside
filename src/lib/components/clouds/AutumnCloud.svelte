@@ -161,7 +161,7 @@
 	/* this autumn cloud sits at z-index 5 (above the default 4) so the leaves can be at
 	   z-index 4: in FRONT of the house-fronts (z-index 3) but BEHIND the cloud. */
 	.cloud { z-index: 5; }
-	.leaf-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; }
+	.leaf-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; filter: brightness(0.85); /* night — leaves a touch darker */ }
 	/* leaf shape: a lobed maple-ish blob with a midrib. Each `settling` leaf falls from
 	   above into its resting spot (--x/--b) and STAYS there (fill: both). */
 	.ground-leaf {

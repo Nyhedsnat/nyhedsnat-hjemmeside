@@ -465,6 +465,7 @@
 		pointer-events: none;
 		z-index: 6;
 		overflow: hidden;
+		filter: brightness(0.9); /* night — falling snow a touch dimmer, not grey */
 		animation: snow-fade-in 1.8s ease forwards;
 	}
 	.snowfall.out { animation: snow-fade-out 2.2s ease forwards; }
@@ -497,7 +498,7 @@
 			radial-gradient(22px 15px at 71% 100%, #eef4fb 60%, rgba(238, 244, 251, 0) 72%),
 			radial-gradient(30px 19px at 88% 100%, #eef4fb 60%, rgba(238, 244, 251, 0) 73%),
 			linear-gradient(to top, #eef4fb 0%, #dde8f4 40%, rgba(221, 232, 244, 0) 100%) bottom / 100% 12px no-repeat;
-		filter: blur(0.6px);
+		filter: blur(0.6px) brightness(0.9); /* night — a touch dimmer, not grey */
 		z-index: 2; /* between house layers, like traffic; never 3 (= houses-front → z-fight) */
 		animation: ground-grow 14s linear forwards; /* slow, steady build — road only gets slippery once it's deep */
 	}

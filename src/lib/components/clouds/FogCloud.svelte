@@ -64,10 +64,10 @@
 		pointer-events: none;
 		background: linear-gradient(
 			to top,
-			rgba(200, 208, 218, 0.6) 0%,
-			rgba(198, 206, 216, 0.4) 30%,
-			rgba(196, 204, 214, 0.18) 60%,
-			rgba(196, 204, 214, 0) 92%
+			rgba(160, 168, 180, 0.6) 0%,
+			rgba(158, 166, 178, 0.4) 30%,
+			rgba(156, 164, 176, 0.18) 60%,
+			rgba(156, 164, 176, 0) 92%
 		);
 		backdrop-filter: blur(3px);
 		-webkit-backdrop-filter: blur(3px);

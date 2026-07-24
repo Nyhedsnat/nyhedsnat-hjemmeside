@@ -115,7 +115,7 @@
 		100% { transform: translateY(42px); opacity: 0.15; }
 	}
 
-	.rainfall { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; animation: wx-fade-in 0.6s ease forwards; }
+	.rainfall { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; animation: wx-fade-in 0.6s ease forwards; filter: brightness(0.85); /* night — rain/puddles a touch darker */ }
 	.drop {
 		position: absolute;
 		top: 38%; /* spawn under the cloud, not screen top */
@@ -145,6 +145,7 @@
 			radial-gradient(45% 80% at 72% 60%, rgba(190, 214, 240, 0.5), rgba(150, 180, 215, 0) 78%),
 			radial-gradient(120% 120% at 50% 40%, rgba(120, 150, 190, 0.45), rgba(95, 120, 160, 0.28) 85%);
 		box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25);
+		filter: brightness(0.75); /* puddles specifically a bit darker still, on top of .rainfall's dim */
 		z-index: 1;
 		pointer-events: auto;
 		/* grow slowly into place — the mirror image of the evaporate shrink */

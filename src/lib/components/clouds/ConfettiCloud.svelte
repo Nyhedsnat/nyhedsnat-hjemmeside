@@ -161,7 +161,7 @@
 		100% { transform: translateY(42px) rotate(360deg); opacity: 0.15; }
 	}
 
-	.confetti-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
+	.confetti-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; filter: brightness(0.88); /* night — still festive, just a touch darker */ }
 	/* one-shot fall (forwards) → each piece falls once and is then removed in JS */
 	.conf { position: absolute; top: 38%; width: 4px; height: 6px; animation: conf-fall var(--d) linear forwards; } /* 50% smaller; spawn under the cloud */
 	.conf.c0 { background: #ff5d8f; }
@@ -200,6 +200,7 @@
 		background: radial-gradient(circle at 35% 30%, hsl(var(--hue), 90%, 78%), hsl(var(--hue), 75%, 55%) 75%);
 		z-index: 5;
 		pointer-events: auto;
+		filter: brightness(0.88); /* night — a touch darker */
 		animation: balloon-rise 12s ease-in forwards;
 	}
 	.balloon .knot { position: absolute; left: 50%; bottom: -2px; width: 2px; height: 2px; transform: translateX(-50%); background: hsl(var(--hue), 75%, 50%); border-radius: 0 0 1px 1px; }

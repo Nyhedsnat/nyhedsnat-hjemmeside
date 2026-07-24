@@ -30,7 +30,7 @@
 
 	// fraction of each balloon's own rise after which it becomes eligible for a random pop
 	const POP_ELIGIBLE_AT = 0.45;
-	const POP_ROLL_MS = 700;
+	const POP_ROLL_MS = 2000;
 	const POP_CHANCE = 0.005;
 
 	const els: Record<number, HTMLButtonElement> = {};
@@ -178,6 +178,7 @@
 		border-radius: 50% 50% 48% 48%;
 		background: radial-gradient(circle at 35% 28%, hsl(var(--hue), 90%, 80%), hsl(var(--hue), 75%, 52%) 76%);
 		box-shadow: inset -3px -4px 6px hsla(var(--hue), 70%, 30%, 0.35);
+		filter: brightness(0.88); /* night — a touch darker */
 	}
 	/* little pinched knot + string under the balloon */
 	.balloon-shape .knot {
