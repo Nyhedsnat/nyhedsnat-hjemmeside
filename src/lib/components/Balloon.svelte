@@ -125,8 +125,10 @@
 		onanimationend={() => onRiseEnd(b.id)}
 		aria-label="Ballon"
 	>
-		<span class="knot"></span>
-		<span class="string"></span>
+		<span class="balloon-shape">
+			<span class="knot"></span>
+			<span class="string"></span>
+		</span>
 	</button>
 {/each}
 
@@ -142,26 +144,43 @@
 	.balloon {
 		position: absolute; /* document-relative — scrolls with the page, not viewport-fixed */
 		top: var(--start-top, 0px); /* starts at the confetti cloud's own spot */
-		width: 13px;
-		height: 16px;
+		width: 29px; /* bigger invisible hit target than the drawn balloon (13px) — easier to pop */
+		height: 32px;
 		border: none;
 		padding: 0;
+		background: none;
 		cursor: pointer;
 		transform: translateX(-50%);
-		border-radius: 50% 50% 48% 48%;
-		background: radial-gradient(circle at 35% 28%, hsl(var(--hue), 90%, 80%), hsl(var(--hue), 75%, 52%) 76%);
-		box-shadow: inset -3px -4px 6px hsla(var(--hue), 70%, 30%, 0.35);
-		z-index: 1; /* starts BEHIND .main-content (z-index:2, wraps the confetti cloud) */
+		/* Constant, not animated — the balloon is document-anchored (a root-level sibling
+		   of .main-content), so its z-index is compared against .main-content's OWN
+		   z-index (2) at the page's root stacking context, not against anything inside
+		   it. A step part-way through the rise meant it spent the first 40% behind the
+		   ENTIRE page (not just the confetti cloud sprite it was meant to hide behind),
+		   then popped abruptly in front — exactly the clipping/flicker near the bottom
+		   houses/footer that was reported. Always in front reads fine: a rising balloon
+		   in front of the town scene is the natural look anyway. */
+		z-index: 46;
 		pointer-events: auto;
-		/* rise animates `bottom`; sway animates `transform` — different properties so
-		   they don't fight (same trick the drone uses for fly vs wobble). z-index steps
-		   from behind the cloud to in front of everything partway up the rise. */
+		/* rise animates `top`; sway animates `transform` — different properties so they
+		   don't fight (same trick the drone uses for fly vs wobble). */
 		animation:
 			balloon-rise var(--dur, 16s) linear forwards,
 			balloon-sway 3.2s ease-in-out infinite;
 	}
+	/* the actual drawn balloon — centred inside the larger invisible hit target above */
+	.balloon-shape {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 13px;
+		height: 16px;
+		transform: translate(-50%, -50%);
+		border-radius: 50% 50% 48% 48%;
+		background: radial-gradient(circle at 35% 28%, hsl(var(--hue), 90%, 80%), hsl(var(--hue), 75%, 52%) 76%);
+		box-shadow: inset -3px -4px 6px hsla(var(--hue), 70%, 30%, 0.35);
+	}
 	/* little pinched knot + string under the balloon */
-	.balloon .knot {
+	.balloon-shape .knot {
 		position: absolute;
 		left: 50%;
 		bottom: -1.5px;
@@ -171,7 +190,7 @@
 		background: hsl(var(--hue), 75%, 46%);
 		border-radius: 0 0 1.5px 1.5px;
 	}
-	.balloon .string {
+	.balloon-shape .string {
 		position: absolute;
 		left: 50%;
 		top: 100%;
@@ -181,14 +200,11 @@
 		background: hsla(var(--hue), 40%, 40%, 0.6);
 	}
 
-	/* rise roughly one screen's height above its spawn point. z-index jumps from behind
-	   the cloud (1) to above everything (46) at ~40% up. */
+	/* rise roughly one screen's height above its spawn point */
 	@keyframes balloon-rise {
-		0% { top: var(--start-top, 0px); opacity: 0; z-index: 1; }
+		0% { top: var(--start-top, 0px); opacity: 0; }
 		6% { opacity: 1; }
-		40% { z-index: 1; }
-		41% { z-index: 46; }
-		100% { top: calc(var(--start-top, 0px) - 100vh); opacity: 1; z-index: 46; }
+		100% { top: calc(var(--start-top, 0px) - 100vh); opacity: 1; }
 	}
 	/* gentle horizontal drift; keeps the -50% centering in every keyframe */
 	@keyframes balloon-sway {
