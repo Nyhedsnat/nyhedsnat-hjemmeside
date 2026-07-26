@@ -88,6 +88,12 @@
 	let wet = $state(false); // rain: wet road → wheel spray
 	let leafy = $state(false); // autumn: leaves kicked up from the wheels
 	let bouncing = $state(false); // confetti: celebratory hop (all cars)
+	let confettiActive = $state(false); // confetti: party mode — trail/conga/costume/cheer/click-puff
+	let cheer = $state<Record<number, string>>({}); // confetti: one-shot cheer emoji, honk-chorus style
+	let confettiPuff = $state<Record<number, { dx: number; dy: number; color: string; rot: number }[]>>({}); // confetti: click-puff bits
+	let costumeId = -1; // confetti: the one car wearing the party hat this session
+	let cheerTimer: ReturnType<typeof setInterval> | undefined;
+	const CONFETTI_POP_COLORS = ['#ff2a6d', '#ff8a00', '#ffe600', '#00f5a0', '#00d4ff', '#7b61ff', '#ff2ad4'];
 	let struck = $state<Record<number, boolean>>({}); // thunder: cars hit by a bolt (blacken/smoke)
 	let abducting = $state<Record<number, boolean>>({}); // ufo: car floating up the beam
 	let dust = $state<Record<number, boolean>>({}); // ufo-release: dust puff when a dropped car lands
@@ -281,6 +287,11 @@
 		// of its bumps before they ever reached bumpCar).
 		if (vehicle.clickOverride) return vehicle.clickOverride(vehicle.id);
 
+		// Party mode: every car's click becomes a little confetti puff instead of its
+		// normal egg — the theme takes over the whole fleet while it's active, not just
+		// the cars the cloud spawned itself.
+		if (confettiActive) return doConfettiClick(vehicle.id);
+
 		// Only once actually halted by the snow → just an angry honk, no easter egg (which
 		// would un-stick it). During the pre-halt grace, normal eggs still fire.
 		if (trafficStopped) return popAngry(vehicle.id);
@@ -421,6 +432,18 @@
 		leafy = !!m?.leaves;
 		puddleXs = m?.puddles ?? [];
 		updatePuddleWatch();
+
+		const wasConfetti = confettiActive;
+		confettiActive = !!m?.confetti;
+		if (confettiActive && !wasConfetti) {
+			pickCostume();
+			cheerTimer = setInterval(cheerTick, 900 + Math.random() * 700);
+		} else if (!confettiActive && wasConfetti) {
+			revertCostume();
+			clearInterval(cheerTimer);
+			cheerTimer = undefined;
+		}
+
 		modeRate = newRate;
 		// Removal is off-frame based, so a slowed car simply takes longer to reach the
 		// edge — nothing to rescale. (Snow keeps its full-stop via trafficStopped.)
@@ -561,6 +584,57 @@
 	function doBounce() {
 		bouncing = true;
 		setTimeout(() => (bouncing = false), 650);
+	}
+
+	// Confetti click-puff: replaces a car's normal egg while the party's on.
+	function doConfettiClick(id: number) {
+		const bits = Array.from({ length: 10 }, () => ({
+			dx: Math.random() * 70 - 35,
+			dy: -(Math.random() * 40 + 6),
+			color: CONFETTI_POP_COLORS[Math.floor(Math.random() * CONFETTI_POP_COLORS.length)],
+			rot: Math.floor(Math.random() * 360)
+		}));
+		confettiPuff = { ...confettiPuff, [id]: bits };
+		setTimeout(() => {
+			const next = { ...confettiPuff };
+			delete next[id];
+			confettiPuff = next;
+		}, 900);
+	}
+
+	// Honk chorus: while confetti's active, a random on-screen car cheers every so
+	// often — staggered by the random interval itself, not a fixed beat.
+	const CHEER_EMOJI = ['🎉', '🥳', '📯', '🎊', '📣'];
+	function cheerTick() {
+		const onScreen = activeVehicles.filter((v) => {
+			const el = containerEls[v.id];
+			if (!el) return false;
+			const r = el.getBoundingClientRect();
+			return r.right > 0 && r.left < window.innerWidth;
+		});
+		if (!onScreen.length) return;
+		const v = onScreen[Math.floor(Math.random() * onScreen.length)];
+		cheer = { ...cheer, [v.id]: CHEER_EMOJI[Math.floor(Math.random() * CHEER_EMOJI.length)] };
+		setTimeout(() => {
+			const next = { ...cheer };
+			delete next[v.id];
+			cheer = next;
+		}, 900);
+	}
+
+	// Car costume: one random on-screen car wears a party hat for the whole confetti
+	// window — picked once when the mode turns on, reverted when it turns off.
+	function pickCostume() {
+		if (!activeVehicles.length) return;
+		const v = activeVehicles[Math.floor(Math.random() * activeVehicles.length)];
+		costumeId = v.id;
+		setExtraClass(v.id, [v.extraClass, 'party-hat'].filter(Boolean).join(' '));
+	}
+	function revertCostume() {
+		if (costumeId < 0) return;
+		const v = activeVehicles.find((c) => c.id === costumeId);
+		if (v) setExtraClass(costumeId, (v.extraClass ?? '').replace('party-hat', '').trim() || undefined);
+		costumeId = -1;
 	}
 
 	// UFO tractor beam: while armed at `beamXPct`, watch for the first car to drive into
@@ -986,6 +1060,7 @@
 			unsubConvoy();
 			stopPuddleWatch();
 			stopBeamWatch();
+			clearInterval(cheerTimer);
 			if (offFrameRAF != null) cancelAnimationFrame(offFrameRAF);
 		};
 	});
@@ -1002,6 +1077,14 @@
 	>
 		<button class="vehicle-button" onclick={() => { if (!grid) handleClick(vehicle); }} aria-label="Vehicle action">
 			{#if angry[vehicle.id]}<span class="angry-pop" aria-hidden="true">{angry[vehicle.id]}</span>{/if}
+			{#if cheer[vehicle.id]}<span class="cheer-pop" aria-hidden="true">{cheer[vehicle.id]}</span>{/if}
+			{#if confettiPuff[vehicle.id]}
+				<span class="confetti-puff" aria-hidden="true">
+					{#each confettiPuff[vehicle.id] as b, i (i)}
+						<span class="cp-bit" style="background: {b.color}; --dx: {b.dx}px; --dy: {b.dy}px; --rot: {b.rot}deg;"></span>
+					{/each}
+				</span>
+			{/if}
 			{#if dust[vehicle.id]}
 				<span class="land-dust" aria-hidden="true">
 					{#each Array(16) as _, i (i)}
@@ -1018,7 +1101,7 @@
 				{#if vehicle.underglow}<span class="underglow" class:dancing={effects[vehicle.id] === 'dance'} aria-hidden="true"></span>{/if}
 				{@render vehicle.carFx?.(vehicle.id)}
 			{/snippet}
-			<div class="vfx {vehicle.extraClass ?? ''}" class:bounce={bouncing} class:lift={!!abducting[vehicle.id]} class:zapped={!!struck[vehicle.id]} class:leafy={leafy}>
+			<div class="vfx {vehicle.extraClass ?? ''}" class:bounce={bouncing} class:lift={!!abducting[vehicle.id]} class:zapped={!!struck[vehicle.id]} class:leafy={leafy} class:conga={confettiActive}>
 				<VehicleSprite
 					src={vehicleType.src}
 					size={vehicleType.size}
@@ -1030,6 +1113,7 @@
 			</div>
 			{#if wet}<span class="wheel-fx spray" aria-hidden="true"><span></span><span></span></span>{/if}
 			{#if leafy}<span class="wheel-fx leaf" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>{/if}
+			{#if confettiActive}<span class="wheel-fx confetti-trail" aria-hidden="true"><span></span><span></span><span></span></span>{/if}
 			{#if carSplash[vehicle.id]}
 				<span class="road-splash rear" aria-hidden="true">
 					<span></span><span></span><span></span><span></span><span></span><span></span>
@@ -1237,6 +1321,71 @@
 		20%  { opacity: 1; transform: translateX(-50%) translateY(-2px) scale(1.2); }
 		70%  { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1); }
 		100% { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(0.9); }
+	}
+
+	/* confetti honk-chorus: a random on-screen car cheers, same rise as angry-pop */
+	.cheer-pop {
+		position: absolute;
+		left: 50%;
+		bottom: 100%;
+		font-size: 16px;
+		line-height: 1;
+		pointer-events: none;
+		z-index: 4;
+		animation: angry-rise 1.1s ease-out forwards;
+	}
+
+	/* confetti click-puff: replaces a car's normal egg while the party's on */
+	.confetti-puff { position: absolute; left: 50%; bottom: 60%; width: 0; height: 0; z-index: 4; pointer-events: none; }
+	.cp-bit {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 5px;
+		height: 7px;
+		opacity: 0;
+		animation: cp-burst 0.9s ease-out forwards;
+	}
+	@keyframes cp-burst {
+		0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+		10% { opacity: 1; }
+		100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot, 220deg)); }
+	}
+
+	/* confetti trail: a few colored dots left behind a car driving through the party */
+	.wheel-fx.confetti-trail span {
+		border-radius: 1px;
+		animation: confetti-trail-drop 0.7s ease-out infinite;
+	}
+	.wheel-fx.confetti-trail span:nth-child(1) { left: -12px; background: #ff5d8f; animation-delay: 0s; }
+	.wheel-fx.confetti-trail span:nth-child(2) { left: 0px; background: #ffd24a; animation-delay: 0.22s; }
+	.wheel-fx.confetti-trail span:nth-child(3) { left: 12px; background: #4ad3ff; animation-delay: 0.44s; }
+	@keyframes confetti-trail-drop {
+		0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+		15% { opacity: 0.9; }
+		100% { opacity: 0; transform: translate(0, 10px) rotate(180deg); }
+	}
+
+	/* confetti conga: every car bobs on the same simple beat while the party's on
+	   (each car's own local timeline, so simultaneous joiners are in phase — a car
+	   that joins mid-party may land a little out of step, close enough for the effect) */
+	.vfx.conga { animation: conga-bob 0.6s ease-in-out infinite; }
+	@keyframes conga-bob {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-4px); }
+	}
+
+	/* confetti costume: one random car wears a party hat for the whole session */
+	.vfx.party-hat { position: relative; }
+	.vfx.party-hat::before {
+		content: '🎉';
+		position: absolute;
+		left: 50%;
+		bottom: 100%;
+		transform: translateX(-50%);
+		font-size: 13px;
+		line-height: 1;
+		pointer-events: none;
 	}
 
 	/* big puff of dust when a UFO-released car THUMPS back onto the road — a lot of very

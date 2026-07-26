@@ -30,7 +30,7 @@ export interface CloudProps {
 export const cloudTypes: CloudConfig[] = [
 	{ type: 'snow', weight: 20, label: 'Snesky' },
 	{ type: 'rain', weight: 20, label: 'Regnsky' },
-	{ type: 'confetti', weight: 51, label: 'Konfettisky' },
+	{ type: 'confetti', weight: 5, label: 'Konfettisky' },
 	{ type: 'thunder', weight: 15, label: 'Tordensky' },
 	{ type: 'fog', weight: 20, label: 'Tågesky' },
 	{ type: 'autumn', weight: 15, label: 'Efterårssky' },

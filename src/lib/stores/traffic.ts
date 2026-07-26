@@ -10,6 +10,7 @@ export interface TrafficMode {
 	spray?: boolean; // wet-road wheel spray (rain)
 	leaves?: boolean; // leaves kicked up from the wheels (autumn)
 	glow?: boolean; // headlight glow in low visibility (fog)
+	confetti?: boolean; // party mode — trail, cheer chorus, conga bob, costume, click-puff
 	puddles?: number[]; // puddle x-centres (vw) → a car splashes when it drives over one
 }
 export const trafficMode = writable<TrafficMode | null>(null);
