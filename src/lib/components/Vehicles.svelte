@@ -88,9 +88,12 @@
 	let wet = $state(false); // rain: wet road → wheel spray
 	let leafy = $state(false); // autumn: leaves kicked up from the wheels
 	let bouncing = $state(false); // confetti: celebratory hop (all cars)
-	let confettiActive = $state(false); // confetti: party mode — trail/conga/costume/cheer/click-puff
+	let confettiActive = $state(false); // confetti: party mode — conga/costume/cheer/click-puff
 	let cheer = $state<Record<number, string>>({}); // confetti: one-shot cheer emoji, honk-chorus style
-	let confettiPuff = $state<Record<number, { dx: number; dy: number; color: string; rot: number }[]>>({}); // confetti: click-puff bits
+	// confetti click-puff: shoots up out of the clicked car, falls, and stays on the
+	// road (permanent, like the snowman puddles) — one set of pieces, one motion.
+	let roadConfetti = $state<{ id: number; x: number; color: string; rot: number; dx: number; rise: number; landed: boolean; squashed: boolean; blown?: boolean; kickDir?: 1 | -1 }[]>([]);
+	let roadConfettiUid = 0;
 	let costumeId = -1; // confetti: the one car wearing the party hat this session
 	let cheerTimer: ReturnType<typeof setInterval> | undefined;
 	const CONFETTI_POP_COLORS = ['#ff2a6d', '#ff8a00', '#ffe600', '#00f5a0', '#00d4ff', '#7b61ff', '#ff2ad4'];
@@ -289,8 +292,12 @@
 
 		// Party mode: every car's click becomes a little confetti puff instead of its
 		// normal egg — the theme takes over the whole fleet while it's active, not just
-		// the cars the cloud spawned itself.
-		if (confettiActive) return doConfettiClick(vehicle.id);
+		// the cars the cloud spawned itself. EXCEPT the nyhedsnat trailer-sign car: its
+		// click is what triggers the RGB convoy, and that should still work during
+		// confetti (a party without its own convoy trigger would be a regression, not fun).
+		if (confettiActive && !vehicleTypes[vehicle.typeIndex].src.includes('nyhedsnat-car')) {
+			return doConfettiClick(vehicle);
+		}
 
 		// Only once actually halted by the snow → just an angry honk, no easter egg (which
 		// would un-stick it). During the pre-halt grace, normal eggs still fire.
@@ -353,6 +360,15 @@
 			} else if (enteredCars.has(v.id)) {
 				// entered earlier and is now fully off-frame (exited a side or flew off top)
 				if (r.right < -M || r.left > vw + M || r.bottom < -M || r.top > vh + M) removeVehicle(v.id);
+			}
+			// road confetti: a car driving over a landed piece kicks it up and off screen
+			// (organic disappearance #1 — the other is the rare wind gust, see windTimer)
+			if (roadConfetti.length) {
+				for (const c of roadConfetti) {
+					if (c.squashed || !c.landed) continue;
+					const cx = (c.x / 100) * vw;
+					if (r.left <= cx + 18 && r.right >= cx - 18) squashRoadConfetti(c.id, v.direction === 'ltr' ? 1 : -1);
+				}
 			}
 		}
 		offFrameRAF = requestAnimationFrame(offFrameWatch);
@@ -586,20 +602,62 @@
 		setTimeout(() => (bouncing = false), 650);
 	}
 
-	// Confetti click-puff: replaces a car's normal egg while the party's on.
-	function doConfettiClick(id: number) {
-		const bits = Array.from({ length: 10 }, () => ({
-			dx: Math.random() * 70 - 35,
-			dy: -(Math.random() * 40 + 6),
+	// Confetti click-puff: replaces a car's normal egg while the party's on. ONE set of
+	// pieces — each shoots up out of the car, then falls and lands on the road, staying
+	// there (permanent, like the snowman puddles). Not two separate effects (a burst
+	// that fades + a different landed pile) — same pieces, one motion, start to finish.
+	function doConfettiClick(vehicle: ActiveVehicle) {
+		const el = containerEls[vehicle.id];
+		const houses = el?.closest('.houses-container') as HTMLElement | null;
+		if (!el || !houses) return;
+		const r = el.getBoundingClientRect();
+		const hr = houses.getBoundingClientRect();
+		const xVw = ((r.left + r.width / 2 - hr.left) / hr.width) * 100;
+		const sign = vehicle.direction === 'ltr' ? 1 : -1; // pops FORWARD, the way the car's driving
+
+		const bits = Array.from({ length: 20 }, () => ({
+			id: roadConfettiUid++,
+			x: xVw,
 			color: CONFETTI_POP_COLORS[Math.floor(Math.random() * CONFETTI_POP_COLORS.length)],
-			rot: Math.floor(Math.random() * 360)
+			rot: Math.floor(Math.random() * 360),
+			dx: sign * (Math.random() * 55 + 10), // cannon cone forward, not straight up
+			rise: Math.random() * 20 + 16, // small pop, not a big shot
+			landed: false,
+			squashed: false
 		}));
-		confettiPuff = { ...confettiPuff, [id]: bits };
-		setTimeout(() => {
-			const next = { ...confettiPuff };
-			delete next[id];
-			confettiPuff = next;
-		}, 900);
+		roadConfetti = [...roadConfetti, ...bits];
+	}
+
+	function markRoadConfettiLanded(id: number) {
+		roadConfetti = roadConfetti.map((c) => (c.id === id ? { ...c, landed: true } : c));
+		startWindWatch(); // now eligible for the rare gust roll below
+	}
+	function squashRoadConfetti(id: number, dir: 1 | -1) {
+		roadConfetti = roadConfetti.map((c) => (c.id === id ? { ...c, squashed: true, kickDir: dir } : c));
+		setTimeout(() => (roadConfetti = roadConfetti.filter((q) => q.id !== id)), 1300);
+	}
+	function blowRoadConfettiAway(id: number) {
+		roadConfetti = roadConfetti.map((c) => (c.id === id ? { ...c, blown: true } : c));
+		setTimeout(() => (roadConfetti = roadConfetti.filter((q) => q.id !== id)), 1400);
+	}
+	// Left forever by default — a car driving over a piece is the main way it goes.
+	// Otherwise it just sits there; only a rare, low-odds gust ever blows one away, same
+	// roll-based rarity as the rogue balloon's random pop (Balloon.svelte), not a
+	// guaranteed short countdown that would make confetti feel temporary.
+	const WIND_ROLL_MS = 4000;
+	const WIND_CHANCE = 0.015;
+	let windTimer: ReturnType<typeof setInterval> | undefined;
+	function startWindWatch() {
+		if (windTimer) return;
+		windTimer = setInterval(() => {
+			for (const c of roadConfetti) {
+				if (c.landed && !c.squashed && !c.blown && Math.random() < WIND_CHANCE) blowRoadConfettiAway(c.id);
+			}
+			if (!roadConfetti.some((c) => c.landed && !c.squashed && !c.blown)) {
+				clearInterval(windTimer);
+				windTimer = undefined;
+			}
+		}, WIND_ROLL_MS);
 	}
 
 	// Honk chorus: while confetti's active, a random on-screen car cheers every so
@@ -642,11 +700,35 @@
 	let beamXPct = -1;
 	let beamInt: ReturnType<typeof setInterval> | null = null;
 	const beamPrev: Record<number, number> = {}; // last (carCenter − coneCenter) per car, for crossing detection
+	// Cone's on-screen horizontal span (measured against the real beam rect; falls back to
+	// its fixed 90px box centred on the arm point if it hasn't rendered yet).
+	function coneSpan(bx: number): [number, number] {
+		const beamEl = document.querySelector('.cloud.ufo .beam') as HTMLElement | null;
+		if (beamEl) {
+			const r = beamEl.getBoundingClientRect();
+			return [r.left, r.right];
+		}
+		return [bx - 45, bx + 45];
+	}
 	function startBeamWatch() {
 		if (beamInt != null) return;
+		// On arming, catch a car the cone is ALREADY sitting on — ANY overlap, not a centre
+		// crossing — so a car dropped mid-lift and then re-armed over is re-caught. The
+		// drive-into case (below) is unchanged: it still waits for the car's centre.
+		let firstScan = true;
 		// setInterval (not rAF) so the beam still catches cars when the tab is throttled.
 		beamInt = setInterval(() => {
 			const bx = (beamXPct / 100) * window.innerWidth;
+			if (firstScan) {
+				firstScan = false;
+				const [cl, cr] = coneSpan(bx);
+				for (const v of activeVehicles) {
+					const el = containerEls[v.id];
+					if (!el || abducting[v.id]) continue;
+					const r = el.getBoundingClientRect();
+					if (r.right >= cl && r.left <= cr) { beamAbduct(v.id); return; }
+				}
+			}
 			for (const v of activeVehicles) {
 				const el = containerEls[v.id];
 				if (!el || abducting[v.id]) continue;
@@ -737,6 +819,10 @@
 			const r = el.getBoundingClientRect();
 			const houses = el.closest('.houses-container') as HTMLElement | null;
 			const hLeft = houses ? houses.getBoundingClientRect().left : 0;
+			// Cancel BOTH the declarative CSS drive AND any WAAPI drive (resumeDrive/reverseDrive):
+			// `animation:none` only kills the CSS one, so a dropped-then-re-caught car — which drives
+			// on a WAAPI translateX — would otherwise keep sliding horizontally through the whole lift.
+			el.getAnimations().forEach((a) => a.cancel());
 			el.style.animation = 'none';
 			el.style.transform = 'none';
 			el.style.left = `${r.left - hLeft}px`;
@@ -1061,6 +1147,7 @@
 			stopPuddleWatch();
 			stopBeamWatch();
 			clearInterval(cheerTimer);
+			clearInterval(windTimer);
 			if (offFrameRAF != null) cancelAnimationFrame(offFrameRAF);
 		};
 	});
@@ -1078,13 +1165,6 @@
 		<button class="vehicle-button" onclick={() => { if (!grid) handleClick(vehicle); }} aria-label="Vehicle action">
 			{#if angry[vehicle.id]}<span class="angry-pop" aria-hidden="true">{angry[vehicle.id]}</span>{/if}
 			{#if cheer[vehicle.id]}<span class="cheer-pop" aria-hidden="true">{cheer[vehicle.id]}</span>{/if}
-			{#if confettiPuff[vehicle.id]}
-				<span class="confetti-puff" aria-hidden="true">
-					{#each confettiPuff[vehicle.id] as b, i (i)}
-						<span class="cp-bit" style="background: {b.color}; --dx: {b.dx}px; --dy: {b.dy}px; --rot: {b.rot}deg;"></span>
-					{/each}
-				</span>
-			{/if}
 			{#if dust[vehicle.id]}
 				<span class="land-dust" aria-hidden="true">
 					{#each Array(16) as _, i (i)}
@@ -1101,7 +1181,15 @@
 				{#if vehicle.underglow}<span class="underglow" class:dancing={effects[vehicle.id] === 'dance'} aria-hidden="true"></span>{/if}
 				{@render vehicle.carFx?.(vehicle.id)}
 			{/snippet}
-			<div class="vfx {vehicle.extraClass ?? ''}" class:bounce={bouncing} class:lift={!!abducting[vehicle.id]} class:zapped={!!struck[vehicle.id]} class:leafy={leafy} class:conga={confettiActive}>
+			<div
+				class="vfx {vehicle.extraClass ?? ''}"
+				class:bounce={bouncing}
+				class:lift={!!abducting[vehicle.id]}
+				class:zapped={!!struck[vehicle.id]}
+				class:leafy={leafy}
+				class:conga-jump={confettiActive && !!vehicle.underglow}
+				style={confettiActive ? `--jump-delay: ${-(Date.now() % 600)}ms;` : undefined}
+			>
 				<VehicleSprite
 					src={vehicleType.src}
 					size={vehicleType.size}
@@ -1113,7 +1201,6 @@
 			</div>
 			{#if wet}<span class="wheel-fx spray" aria-hidden="true"><span></span><span></span></span>{/if}
 			{#if leafy}<span class="wheel-fx leaf" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>{/if}
-			{#if confettiActive}<span class="wheel-fx confetti-trail" aria-hidden="true"><span></span><span></span><span></span></span>{/if}
 			{#if carSplash[vehicle.id]}
 				<span class="road-splash rear" aria-hidden="true">
 					<span></span><span></span><span></span><span></span><span></span><span></span>
@@ -1152,6 +1239,17 @@
 {:else}
 	{#each activeVehicles as vehicle (vehicle.id)}
 		{@render vehicleCard(vehicle)}
+	{/each}
+	<!-- confetti that landed on the road after a party click — stays, doesn't fade -->
+	{#each roadConfetti as c (c.id)}
+		<span
+			class="road-confetti"
+			class:squashed={c.squashed}
+			class:blown={c.blown}
+			style="left: {c.x}vw; background: {c.color}; --rot: {c.rot}deg; --dx: {c.dx}px; --rise: {c.rise}px; --kick-dir: {c.kickDir ?? 1};"
+			onanimationend={() => markRoadConfettiLanded(c.id)}
+			aria-hidden="true"
+		></span>
 	{/each}
 	<!-- sparkle where an abducted car pops out at the top of the UFO cone -->
 	{#each beamPops as p (p.id)}
@@ -1335,44 +1433,53 @@
 		animation: angry-rise 1.1s ease-out forwards;
 	}
 
-	/* confetti click-puff: replaces a car's normal egg while the party's on */
-	.confetti-puff { position: absolute; left: 50%; bottom: 60%; width: 0; height: 0; z-index: 4; pointer-events: none; }
-	.cp-bit {
+	/* confetti click-puff: replaces a car's normal egg while the party's on — shoots UP
+	   out of the car, then falls back down and lands on the road, staying there
+	   (permanent, same idea as the snowman puddles). One motion, start to finish. */
+	/* small, like a confetti cannon — not a big shot. Same size as the cloud's own
+	   falling confetti (4x6) so it reads as the same stuff. */
+	.road-confetti {
 		position: absolute;
-		left: 0;
-		top: 0;
-		width: 5px;
-		height: 7px;
-		opacity: 0;
-		animation: cp-burst 0.9s ease-out forwards;
+		bottom: 10px;
+		width: 4px;
+		height: 6px;
+		z-index: 4;
+		transform: translateX(-50%);
+		animation: road-confetti-toss 0.6s cubic-bezier(0.3, 0, 0.6, 1) forwards;
 	}
-	@keyframes cp-burst {
-		0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
-		10% { opacity: 1; }
-		100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot, 220deg)); }
+	@keyframes road-confetti-toss {
+		0% { transform: translate(-50%, 0) rotate(0deg); opacity: 0; }
+		8% { opacity: 1; }
+		45% { transform: translate(calc(-50% + var(--dx) * 0.4), calc(-1 * var(--rise, 20px))) rotate(calc(var(--rot) * 0.5)); }
+		100% { transform: translate(calc(-50% + var(--dx)), 0) rotate(var(--rot)); opacity: 0.9; }
+	}
+	/* organic disappearance #1: a car drives over it — quick flatten, gone */
+	/* kicked up by the car's own wheels and flung off screen — same idea as the leaf-kick
+	   (wx-leafkick above), not a squash-in-place */
+	.road-confetti.squashed { animation: road-confetti-kick 0.9s ease-out forwards; }
+	@keyframes road-confetti-kick {
+		0% { transform: translate(calc(-50% + var(--dx)), 0) rotate(var(--rot)) scale(1); opacity: 0.9; }
+		30% { transform: translate(calc(-50% + var(--dx) + var(--kick-dir) * 40px), -46px) rotate(calc(var(--rot) + 260deg)) scale(1.1); opacity: 1; }
+		100% { transform: translate(calc(-50% + var(--dx) + var(--kick-dir) * 340px), -30px) rotate(calc(var(--rot) + 620deg)) scale(0.8); opacity: 0; }
+	}
+	/* organic disappearance #2: nothing ran it over, so the wind just blows it away */
+	.road-confetti.blown { animation: road-confetti-blow 1.4s ease-in forwards; }
+	@keyframes road-confetti-blow {
+		0% { transform: translate(calc(-50% + var(--dx)), 0) rotate(var(--rot)); opacity: 0.9; }
+		100% { transform: translate(calc(-50% + var(--dx) + 90px), -22px) rotate(calc(var(--rot) + 300deg)); opacity: 0; }
 	}
 
-	/* confetti trail: a few colored dots left behind a car driving through the party */
-	.wheel-fx.confetti-trail span {
-		border-radius: 1px;
-		animation: confetti-trail-drop 0.7s ease-out infinite;
-	}
-	.wheel-fx.confetti-trail span:nth-child(1) { left: -12px; background: #ff5d8f; animation-delay: 0s; }
-	.wheel-fx.confetti-trail span:nth-child(2) { left: 0px; background: #ffd24a; animation-delay: 0.22s; }
-	.wheel-fx.confetti-trail span:nth-child(3) { left: 12px; background: #4ad3ff; animation-delay: 0.44s; }
-	@keyframes confetti-trail-drop {
-		0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
-		15% { opacity: 0.9; }
-		100% { opacity: 0; transform: translate(0, 10px) rotate(180deg); }
-	}
-
-	/* confetti conga: every car bobs on the same simple beat while the party's on
-	   (each car's own local timeline, so simultaneous joiners are in phase — a car
-	   that joins mid-party may land a little out of step, close enough for the effect) */
-	.vfx.conga { animation: conga-bob 0.6s ease-in-out infinite; }
-	@keyframes conga-bob {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-4px); }
+	/* confetti conga: only the convoy's own trailer-sign/underglow cars bop — a real
+	   party bounce. Phase-locked via --jump-delay (time-since-cycle-start, computed
+	   fresh whenever a car's style re-renders) instead of relying on each element's own
+	   local animation timeline — a convoy car that joins mid-party lands ON beat with
+	   the rest of the convoy instead of drifting out of step. */
+	.vfx.conga-jump { animation: conga-jump 0.6s ease-in-out var(--jump-delay, 0s) infinite; }
+	@keyframes conga-jump {
+		0%, 100% { transform: translateY(0) scale(1, 1); }
+		35% { transform: translateY(-11px) scale(0.95, 1.08); }
+		55% { transform: translateY(0) scale(1.08, 0.9); }
+		75% { transform: translateY(-3px) scale(1, 1); }
 	}
 
 	/* confetti costume: one random car wears a party hat for the whole session */

@@ -36,8 +36,6 @@
 <!-- UFO with search pattern -->
 <Ufo />
 
-<!-- Balloon that drifts up the whole viewport, pops on click or at random up high -->
-<Balloon />
 
 <!-- Main app structure -->
 <div class="main-content flex min-h-screen flex-col">
@@ -45,6 +43,13 @@
 	<MoonLaser />
 
 	<Navigation />
+
+	<!-- Balloon that drifts up the page, pops on click or at random up high — inside
+	     .main-content (not a root sibling) so its z-index actually competes against
+	     Navigation's z-50 in the same stacking context: above the page content, below
+	     the fixed nav. As a root sibling it could only ever be all-the-way-above or
+	     all-the-way-below main-content as a whole, never "between" it and the nav. -->
+	<Balloon />
 
 	<!-- Main content with padding for fixed header -->
 	<main class="page-content flex-1 pt-24 sm:pt-28 md:pt-36 lg:pt-40">

@@ -19,13 +19,13 @@
 	let active = $state(false);
 	let confetti = $state(false); // true while still spawning new confetti
 	let confettiPieces = $state<{ id: number; x: number; c: number; d: number; rot: number; mdx: number }[]>([]);
-	let streamers = $state<{ id: number; x: number }[]>([]);
 	let balloons = $state<{ id: number; x: number; hue: number }[]>([]);
 	// bursts from popped balloons — each with a random scatter of coloured bits
 	let pops = $state<{ id: number; x: number; y: number; bits: { dx: number; dy: number; color: string; rot: number }[] }[]>([]);
-	// deflated balloon left on the road after a pop — squashed once a car drives over it
-	let debris = $state<{ id: number; x: number; squashed: boolean }[]>([]);
-	let squeaks = $state<{ id: number; x: number }[]>([]);
+	// deflated balloon left on the road after a pop — falls from the pop point down to
+	// the road (so the connection to the balloon actually reads), then sits there until
+	// squashed by a car.
+	let debris = $state<{ id: number; x: number; hue: number; dropPx: number; landed: boolean; squashed: boolean; dir: 1 | -1 }[]>([]);
 
 	const balloonEls: Record<number, HTMLButtonElement> = {};
 	const bounced = new Set<number>(); // balloons already nudged by a car — only once per rise
@@ -39,10 +39,9 @@
 		}));
 	}
 	let confettiTimer: ReturnType<typeof setInterval> | undefined;
-	let confTick = 0;
 	let uid = 0;
 
-	const CONF_SPAWN_MS = 5000; // how long new confetti keeps coming
+	const CONF_SPAWN_MS = 10000; // how long new confetti keeps coming (2x)
 
 	// Confetti magnet: nyhedsnat/convoy cars (the only ones with the underglow decoration)
 	// pull nearby falling confetti toward them a little — read the DOM directly (same
@@ -76,7 +75,7 @@
 	// keep falling and clear the sky naturally instead of all vanishing at once.
 	function spawnConfettiTick() {
 		if (!confetti) return;
-		for (let k = 0; k < 3; k++) {
+		for (let k = 0; k < 6; k++) {
 			const x = Math.random() * 100;
 			const p = {
 				id: uid++,
@@ -89,12 +88,6 @@
 			confettiPieces = [...confettiPieces, p];
 			setTimeout(() => (confettiPieces = confettiPieces.filter((q) => q.id !== p.id)), p.d * 1000 + 60);
 		}
-		confTick++;
-		if (confTick % 6 === 0) {
-			const s = { id: uid++, x: Math.random() * 90 + 5 };
-			streamers = [...streamers, s];
-			setTimeout(() => (streamers = streamers.filter((q) => q.id !== s.id)), 4600);
-		}
 	}
 
 	function start() {
@@ -102,20 +95,24 @@
 		active = true;
 		confetti = true;
 		confettiPieces = [];
-		streamers = [];
-		confTick = 0;
-		balloons = Array.from({ length: 10 }, () => ({
-			id: uid++,
-			x: Math.random() * 84 + 8,
-			hue: Math.floor(Math.random() * 360)
-		}));
+		// APPEND, don't replace — a re-click can land while the previous batch's balloons
+		// are still rising (24s rise now outlasts the ~15s active window), and replacing
+		// the array would yank those still-airborne balloons out of existence.
+		balloons = [
+			...balloons,
+			...Array.from({ length: 10 }, () => ({
+				id: uid++,
+				x: Math.random() * 84 + 8,
+				hue: Math.floor(Math.random() * 360)
+			}))
+		];
 		trafficPulse.set({ kind: 'bounce' });
 		setTimeout(() => trafficPulse.set({ kind: 'bounce' }), 1300);
 		trafficMode.set({ rate: 1, confetti: true }); // party mode: trail/conga/costume/cheer/click-puff
 		startCarWatch();
 		spawnConfettiTick();
 		confettiTimer = setInterval(spawnConfettiTick, 120);
-		// stop spawning, keep parked until the last airborne piece + streamer has landed
+		// stop spawning, keep parked until the last airborne piece has landed
 		setTimeout(() => {
 			confetti = false;
 			clearInterval(confettiTimer);
@@ -140,15 +137,23 @@
 			setTimeout(() => (pops = pops.filter((p) => p.id !== pop.id)), 1000);
 		}
 		const b = balloons.find((bb) => bb.id === id);
-		if (b) {
-			const d = { id: uid++, x: b.x, squashed: false };
+		if (b && cont) {
+			const cr = cont.getBoundingClientRect();
+			const r = el.getBoundingClientRect();
+			// distance from where it popped down to the road (debris's own resting spot,
+			// `bottom: 9px` in CSS) — the fall itself is what makes "balloon popped up
+			// there → deflated thing down here" actually read as connected.
+			const dropPx = Math.max(20, cr.height - 9 - (r.top + r.height / 2 - cr.top));
+			const d = { id: uid++, x: b.x, hue: b.hue, dropPx, landed: false, squashed: false, dir: 1 as const };
 			debris = [...debris, d];
 			startCarWatch();
-			// never run over → clears itself so the road doesn't collect debris forever
-			setTimeout(() => (debris = debris.filter((q) => q.id !== d.id)), 6000);
+			// stays put until a car actually drives over it — no self-clear timer
 		}
 		balloons = balloons.filter((bb) => bb.id !== id);
 		bounced.delete(id);
+	}
+	function markLanded(id: number) {
+		debris = debris.map((d) => (d.id === id ? { ...d, landed: true } : d));
 	}
 
 	// Shared watch: balloons still rising get nudged sideways by a car passing directly
@@ -178,13 +183,13 @@
 				}
 			}
 			for (const d of debris) {
-				if (d.squashed) continue;
+				if (d.squashed || !d.landed) continue; // still falling — can't be run over mid-air
 				const iw = window.innerWidth;
 				const dx = (d.x / 100) * iw;
 				for (const carEl of cars) {
 					const cr = carEl.getBoundingClientRect();
 					if (Math.abs(cr.left + cr.width / 2 - dx) < 22) {
-						squashDebris(d.id);
+						squashDebris(d.id, carEl.classList.contains('rtl') ? -1 : 1);
 						break;
 					}
 				}
@@ -216,15 +221,10 @@
 		);
 	}
 
-	// Debris squashed by a passing car: quick squish + a little squeak, then gone.
-	function squashDebris(id: number) {
-		debris = debris.map((d) => (d.id === id ? { ...d, squashed: true } : d));
-		const d = debris.find((q) => q.id === id);
-		if (d) {
-			const sq = { id: uid++, x: d.x };
-			squeaks = [...squeaks, sq];
-			setTimeout(() => (squeaks = squeaks.filter((q) => q.id !== sq.id)), 700);
-		}
+	// Debris kicked by a passing car: thrown a bit forward (same direction the car's
+	// driving, like the autumn leaf-kick), same flatten-and-fade disappearance as before.
+	function squashDebris(id: number, dir: 1 | -1) {
+		debris = debris.map((d) => (d.id === id ? { ...d, squashed: true, dir } : d));
 		setTimeout(() => (debris = debris.filter((q) => q.id !== id)), 400);
 	}
 </script>
@@ -247,13 +247,10 @@
 </button>
 
 <!-- layer stays mounted while any piece is still falling, even after spawning stops -->
-{#if confetti || confettiPieces.length || streamers.length}
+{#if confetti || confettiPieces.length}
 	<div class="confetti-layer" aria-hidden="true">
 		{#each confettiPieces as p (p.id)}
 			<span class="conf c{p.c}" class:magnetized={p.mdx !== 0} style="left: {p.x}vw; --d: {p.d}s; --rot: {p.rot}deg; --mdx: {p.mdx}px;"></span>
-		{/each}
-		{#each streamers as s (s.id)}
-			<span class="streamer" style="left: {s.x}vw;"></span>
 		{/each}
 	</div>
 {/if}
@@ -272,10 +269,13 @@
 	</span>
 {/each}
 {#each debris as d (d.id)}
-	<span class="balloon-debris" class:squashed={d.squashed} style="left: {d.x}vw;" aria-hidden="true"></span>
-{/each}
-{#each squeaks as s (s.id)}
-	<span class="debris-squeak" style="left: {s.x}vw;" aria-hidden="true">💨</span>
+	<span
+		class="balloon-debris"
+		class:squashed={d.squashed}
+		style="left: {d.x}vw; --drop: {d.dropPx}px; --hue: {d.hue}; --dir: {d.dir};"
+		onanimationend={() => markLanded(d.id)}
+		aria-hidden="true"
+	></span>
 {/each}
 
 <style>
@@ -323,17 +323,6 @@
 		85% { opacity: 1; }
 		100% { transform: translate(var(--mdx), 320px) rotate(calc(var(--rot) + 720deg)); opacity: 0; }
 	}
-	.streamer {
-		position: absolute;
-		top: 38%;
-		width: 6px;
-		height: 60px;
-		border-radius: 3px;
-		background: repeating-linear-gradient(45deg, #ff5d8f 0 8px, #ffd24a 8px 16px, #4ad3ff 16px 24px);
-		opacity: 0.85;
-		animation: streamer-fall 4.5s ease-in forwards;
-	}
-	@keyframes streamer-fall { 0% { transform: translateY(0) rotate(-6deg); opacity: 0; } 12% { opacity: 0.85; } 85% { opacity: 0.85; } 100% { transform: translateY(320px) rotate(6deg); opacity: 0; } }
 
 	.balloon {
 		position: absolute;
@@ -347,7 +336,11 @@
 		transform: translateX(-50%);
 		z-index: 5;
 		pointer-events: auto;
-		animation: balloon-rise 12s ease-in forwards;
+		/* 24s base (half speed vs the original 12s), then 30% faster on top → ~18.46s.
+		   Still outlives the confetti spawn window (10s) + tail on purpose. Nothing about
+		   its life past spawn reads `active`/`confetti`/trafficMode, so it keeps rising and
+		   can still be clicked/self-pop long after the party's over. */
+		animation: balloon-rise 18.46s ease-in forwards;
 	}
 	.balloon-shape {
 		position: absolute;
@@ -374,8 +367,8 @@
 		position: absolute;
 		left: 0;
 		top: 0;
-		width: 7px;
-		height: 9px;
+		width: 4px; /* matches .conf — the falling cloud confetti */
+		height: 6px;
 		opacity: 0;
 		animation: balloon-burst 0.9s ease-out forwards;
 	}
@@ -386,36 +379,34 @@
 		100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--rot, 220deg)); }
 	}
 
-	/* deflated balloon left on the road after a pop — squashed by the next car through */
+	/* deflated balloon left on the road after a pop — FALLS from the pop point down to
+	   the road (--drop, set per-instance from the actual pop height) so the balloon→
+	   debris connection actually reads, then sits there until squashed by a car. */
 	.balloon-debris {
 		position: absolute;
 		bottom: 9px;
-		width: 11px;
-		height: 7px;
-		transform: translateX(-50%);
+		width: 5.5px;
+		height: 3.5px;
 		border-radius: 50%;
-		background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.15) 80%);
-		opacity: 0.85;
+		background: radial-gradient(circle at 35% 35%, hsl(var(--hue), 90%, 78%), hsl(var(--hue), 75%, 40%) 80%);
+		filter: brightness(0.88); /* matches the balloon's own night dimming */
 		z-index: 1;
-		transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+		animation: debris-fall 1.1s cubic-bezier(0.55, 0, 0.85, 0.35) forwards;
 	}
-	.balloon-debris.squashed {
-		transform: translateX(-50%) scaleY(0.15) scaleX(1.5);
-		opacity: 0;
+	@keyframes debris-fall {
+		0% { transform: translateX(-50%) translateY(calc(-1 * var(--drop, 40px))) rotate(0deg); opacity: 0.9; }
+		75% { opacity: 0.85; }
+		88% { transform: translateX(-50%) translateY(6px) rotate(200deg); opacity: 0.85; } /* small bounce on landing */
+		100% { transform: translateX(-50%) translateY(0) rotate(180deg); opacity: 0.85; }
 	}
-	.debris-squeak {
-		position: absolute;
-		bottom: 16px;
-		transform: translateX(-50%);
-		font-size: 13px;
-		line-height: 1;
-		z-index: 4;
-		pointer-events: none;
-		animation: squeak-pop 0.7s ease-out forwards;
-	}
-	@keyframes squeak-pop {
-		0% { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.5); }
-		25% { opacity: 1; transform: translateX(-50%) translateY(-2px) scale(1.1); }
-		100% { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(0.9); }
+	/* a NEW animation (not a transition) — a still-running fill-forwards animation
+	   otherwise keeps winning the cascade for `transform` even after this class lands */
+	/* kicked forward a bit by the car (same idea as the autumn leaf-kick), same
+	   flatten-and-fade disappearance as before, just with a little thrown motion first */
+	.balloon-debris.squashed { animation: debris-squash 0.4s ease-out forwards; }
+	@keyframes debris-squash {
+		0% { transform: translateX(-50%) translateY(0) scale(1, 1) rotate(0deg); opacity: 0.85; }
+		40% { transform: translateX(calc(-50% + var(--dir, 1) * 14px)) translateY(-7px) scale(0.9, 1.1) rotate(calc(var(--dir, 1) * 40deg)); opacity: 0.8; }
+		100% { transform: translateX(calc(-50% + var(--dir, 1) * 24px)) translateY(3px) scale(1.4, 0.15) rotate(calc(var(--dir, 1) * 70deg)); opacity: 0; }
 	}
 </style>

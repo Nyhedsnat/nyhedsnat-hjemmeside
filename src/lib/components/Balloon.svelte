@@ -151,15 +151,11 @@
 		background: none;
 		cursor: pointer;
 		transform: translateX(-50%);
-		/* Constant, not animated — the balloon is document-anchored (a root-level sibling
-		   of .main-content), so its z-index is compared against .main-content's OWN
-		   z-index (2) at the page's root stacking context, not against anything inside
-		   it. A step part-way through the rise meant it spent the first 40% behind the
-		   ENTIRE page (not just the confetti cloud sprite it was meant to hide behind),
-		   then popped abruptly in front — exactly the clipping/flicker near the bottom
-		   houses/footer that was reported. Always in front reads fine: a rising balloon
-		   in front of the town scene is the natural look anyway. */
-		z-index: 46;
+		/* Constant, not animated (see history below on why a step was removed). Now lives
+		   INSIDE .main-content (same stacking context as Navigation's z-50), so this value
+		   is directly comparable to the nav: above every other page element, below the
+		   fixed nav bar specifically. */
+		z-index: 45;
 		pointer-events: auto;
 		/* rise animates `top`; sway animates `transform` — different properties so they
 		   don't fight (same trick the drone uses for fly vs wobble). */
@@ -214,7 +210,7 @@
 	}
 
 	/* confetti explosion where the balloon popped (same look as the confetti cloud) */
-	.balloon-pop { position: absolute; width: 0; height: 0; z-index: 47; pointer-events: none; }
+	.balloon-pop { position: absolute; width: 0; height: 0; z-index: 46; pointer-events: none; }
 	.balloon-pop .bp {
 		position: absolute;
 		left: 0;

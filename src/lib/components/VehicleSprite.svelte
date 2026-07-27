@@ -176,28 +176,32 @@
 	.sprite.rtl .poof-fx {
 		left: 74%;
 	}
+	/* Round glowing embers/dust, not confetti squares — car-2's own warm gold/amber
+	   palette (matches its body paint, not a rainbow) so it reads as "turned to dust",
+	   not "exploded into a party favor". */
 	.poof-fx span {
 		position: absolute;
 		left: 0;
 		top: 0;
-		width: 7px;
-		height: 7px;
-		border-radius: 2px;
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
 		opacity: 0;
+		box-shadow: 0 0 4px currentColor;
 		animation: confetti-burst 0.8s ease-out 0.34s forwards;
 	}
-	.poof-fx span:nth-child(1)  { background: #ff2a6d; --dx: 46px;  --dy: -34px; }
-	.poof-fx span:nth-child(2)  { background: #ff8a00; --dx: -42px; --dy: -30px; }
-	.poof-fx span:nth-child(3)  { background: #ffe600; --dx: 30px;  --dy: -52px; }
-	.poof-fx span:nth-child(4)  { background: #00f5a0; --dx: -28px; --dy: -50px; }
-	.poof-fx span:nth-child(5)  { background: #00d4ff; --dx: 54px;  --dy: -8px;  }
-	.poof-fx span:nth-child(6)  { background: #7b61ff; --dx: -54px; --dy: -6px;  }
-	.poof-fx span:nth-child(7)  { background: #ff2ad4; --dx: 14px;  --dy: -58px; }
-	.poof-fx span:nth-child(8)  { background: #ffe600; --dx: -16px; --dy: -44px; }
-	.poof-fx span:nth-child(9)  { background: #ff2a6d; --dx: 38px;  --dy: -22px; }
-	.poof-fx span:nth-child(10) { background: #00d4ff; --dx: -38px; --dy: -18px; }
-	.poof-fx span:nth-child(11) { background: #ff8a00; --dx: 8px;   --dy: -40px; }
-	.poof-fx span:nth-child(12) { background: #00f5a0; --dx: -8px;  --dy: -36px; }
+	.poof-fx span:nth-child(1)  { background: #ffd86a; color: #ffd86a; --dx: 46px;  --dy: -34px; }
+	.poof-fx span:nth-child(2)  { background: #ffb347; color: #ffb347; --dx: -42px; --dy: -30px; }
+	.poof-fx span:nth-child(3)  { background: #fff2b3; color: #fff2b3; --dx: 30px;  --dy: -52px; }
+	.poof-fx span:nth-child(4)  { background: #ffe88a; color: #ffe88a; --dx: -28px; --dy: -50px; }
+	.poof-fx span:nth-child(5)  { background: #ff3b3b; color: #ff3b3b; --dx: 54px;  --dy: -8px;  }
+	.poof-fx span:nth-child(6)  { background: #ffd86a; color: #ffd86a; --dx: -54px; --dy: -6px;  }
+	.poof-fx span:nth-child(7)  { background: #ffb347; color: #ffb347; --dx: 14px;  --dy: -58px; }
+	.poof-fx span:nth-child(8)  { background: #fff2b3; color: #fff2b3; --dx: -16px; --dy: -44px; }
+	.poof-fx span:nth-child(9)  { background: #ffe88a; color: #ffe88a; --dx: 38px;  --dy: -22px; }
+	.poof-fx span:nth-child(10) { background: #ffd86a; color: #ffd86a; --dx: -38px; --dy: -18px; }
+	.poof-fx span:nth-child(11) { background: #ffb347; color: #ffb347; --dx: 8px;   --dy: -40px; }
+	.poof-fx span:nth-child(12) { background: #ff3b3b; color: #ff3b3b; --dx: -8px;  --dy: -36px; }
 
 	.smoke {
 		position: absolute;
