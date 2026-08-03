@@ -12,6 +12,7 @@
 	let showCharging = $state(false); // Visual charging state (reactive)
 	let laserTimeout: ReturnType<typeof setTimeout> | null = null;
 	let isCheese = $state(false);
+	let lastTapTime = 0; // For detecting double-tap on touch devices
 
 	function handleMouseDown(e: MouseEvent | TouchEvent) {
 		// Prevent double-firing from touch + mouse events
@@ -797,7 +798,14 @@
 	onmouseleave={handleMouseLeave}
 	ondblclick={handleMoonDoubleClick}
 	ontouchstart={(e) => { e.preventDefault(); handleMouseDown(e); }}
-	ontouchend={(e) => { e.preventDefault(); handleMouseUp(e); }}
+	ontouchend={(e) => {
+		e.preventDefault();
+		// Double-tap toggles cheese (dblclick never fires on touch)
+		const now = Date.now();
+		if (now - lastTapTime < 300) isCheese = !isCheese;
+		lastTapTime = now;
+		handleMouseUp(e);
+	}}
 	ontouchcancel={handleTouchCancel}
 	aria-label="Moon (click to zap, hold 10s for destruction)"
 >
