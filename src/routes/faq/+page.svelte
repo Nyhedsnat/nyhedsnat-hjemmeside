@@ -72,6 +72,21 @@ Seniordeltagere kan blive bedt om selv at medbringe kostume.`
 Nogle seniorer er udvalgt på forhånd til at planlægge hændelser. Andre seniorer får roller tildelt på dagen og indgår i hændelsesafviklingen.
 
 Seniorerne leger andre mennesker – og væbnere og seniorvæbnere leger journalister.`
+				},
+				{
+					question:
+						'Skal seniorer tilmelde sig både selve arrangementet og planlægningsweekenden – eller dækker planlægningsweekenden begge dele?',
+					answer: `Man skal tilmelde sig begge dele. Arrangøruddannelse & planlægningsweekend for seniorer og selve Nyhedsnat er to separate tilmeldinger.
+
+Prisen for planlægningsweekenden er høj, fordi det både er et kursus og en workshop.
+
+I skal desuden vælge, om kredsen betaler, eller om senioren selv betaler. Hvis kredsen betaler, kan I søge kommunen om "kursustilskud", ligesom man i nogle kommuner gør ved andre kurser – og på den måde få dækket det meste af beløbet.`
+				},
+				{
+					question: 'Skal der være en leder med til planlægningsweekenden?',
+					answer: `Nej. Seniorerne kan sagtens deltage i Arrangøruddannelse & planlægningsweekend for seniorer uden en leder.
+
+Ledere er selvfølgelig velkomne, hvis I gerne vil have en med, men det er ikke et krav.`
 				}
 			]
 		},
