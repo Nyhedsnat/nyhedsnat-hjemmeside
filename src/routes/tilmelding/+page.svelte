@@ -25,6 +25,7 @@
 	const signupOpensText = '1. juli 2026';
 	const nyhedsnatSignupDeadline = '25. oktober 2026';
 	const planningSignupDeadlineText = '20. september 2026';
+	const planningLocation = 'Damtoften 20, 8260 Viby J';
 </script>
 
 <div class="min-h-screen px-4 py-12">
@@ -76,7 +77,8 @@
 			</div>
 
 			<p class="text-star-white/70 mb-4">Arrangøruddannelse & planlægningsweekend for seniorer er for seniorer, der vil planlægge hændelser.</p>
-			<p class="text-star-white/70 mb-6">Her deltager man i planlægningen og er med til at udvikle hændelser.</p>
+			<p class="text-star-white/70 mb-4">Her deltager man i planlægningen og er med til at udvikle hændelser.</p>
+			<p class="text-star-white/65 mb-6">Sted: {planningLocation}</p>
 
 			{#if planningSignupOpen}
 				{#if signupOpen}
