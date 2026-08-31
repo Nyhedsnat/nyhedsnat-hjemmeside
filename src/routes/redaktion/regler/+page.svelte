@@ -25,15 +25,67 @@
 </svelte:head>
 
 <div class="space-y-8">
+	<div class="border-b border-gold-500/20 pb-6">
+		<p class="mb-2 text-sm font-semibold tracking-wider text-gold-400/80 uppercase">Lav avis</p>
+		<h1 class="mb-3 text-3xl font-semibold tracking-tight text-star-white md:text-4xl">
+			Regler for aviser
+		</h1>
+		<p class="max-w-2xl text-lg text-star-white/60">Krav til indhold og aflevering</p>
+	</div>
+
+	<!-- AI -->
+	<section class="rounded-2xl border-2 border-gold-500/40 bg-gradient-to-br from-gold-500/10 to-night-700/30 p-8">
+		<div class="mb-5 flex items-start gap-4">
+			<span class="text-4xl">🤖</span>
+			<div>
+				<h2 class="text-2xl font-bold text-star-white">Robotter skriver ikke jeres avis</h2>
+				<p class="text-star-white/60">Kort om AI – læs lige den her først</p>
+			</div>
+		</div>
+
+		<p class="mb-6 text-star-white/75">
+			Vi forventer, at I skriver jeres tekst selv. Det er jeres oplevelser, jeres vinkler og jeres
+			humor, der gør avisen værd at læse – og det kan en maskine ikke gøre for jer.
+		</p>
+
+		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+			<div class="rounded-xl border border-gold-500/20 bg-night-700/40 p-5">
+				<p class="mb-3 flex items-center gap-2 font-bold text-star-white">
+					<span class="text-xl">✅</span> Det må I gerne
+				</p>
+				<ul class="space-y-2 text-star-white/75">
+					<li>• Bruge stavekontrol</li>
+					<li>• Få rettet kommafejl og slåfejl</li>
+				</ul>
+			</div>
+			<div class="rounded-xl border border-red-400/30 bg-red-500/5 p-5">
+				<p class="mb-3 flex items-center gap-2 font-bold text-star-white">
+					<span class="text-xl">🚫</span> Det må I ikke
+				</p>
+				<ul class="space-y-2 text-star-white/75">
+					<li>• Få AI til at skrive jeres artikler</li>
+					<li>• Få AI til at finde på rubrikker eller afsnit</li>
+				</ul>
+			</div>
+		</div>
+
+		<h3 class="mb-3 flex items-center gap-3 text-lg font-bold text-star-white">
+			<span class="text-2xl">📷</span>
+			Og så lige om billeder
+		</h3>
+		<p class="mb-4 text-star-white/75">
+			Et pressefoto er et bevis på, at nogen rent faktisk stod der. Derfor tager I selv billederne fra
+			hændelserne, det er også dem, der kan vinde bedste pressefoto. Disse billeder må ikke redigeres
+			eller forbedres med AI værktøjer.
+		</p>
+		<p class="text-star-white/75">
+			AI billeder må gerne bruges i avisen, på steder hvor de ikke bruges om hændelser. Det kan fx være
+			til illustrationer, baggrunde, quizzer eller lignende.
+		</p>
+	</section>
+
 	<!-- Avisen -->
 	<section class="card-dark rounded-2xl p-8">
-		<div class="mb-8 border-b border-gold-500/20 pb-6">
-			<p class="mb-2 text-sm font-semibold tracking-wider text-gold-400/80 uppercase">Lav avis</p>
-			<h1 class="mb-3 text-3xl font-semibold tracking-tight text-star-white md:text-4xl">
-				Regler for aviser
-			</h1>
-			<p class="max-w-2xl text-lg text-star-white/60">Krav til indhold og aflevering</p>
-		</div>
 		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
 			<span class="text-3xl">📰</span>
 			Avisen
@@ -113,7 +165,7 @@
 					</svg>
 				</div>
 				<span class="text-star-white/80"
-					>Avisen skal indeholde et <strong class="text-star-white">portræt/interview</strong> af en valgfri
+					>Avisen skal indeholde <strong class="text-star-white"> mindst et portræt, eller et interview</strong> af en valgfri
 					person</span
 				>
 			</li>
@@ -167,7 +219,7 @@
 				</div>
 				<span class="text-star-white/80"
 					>Avisen skal indeholde mindst ét <strong class="text-star-white">sjovt element</strong> (fx
-					en quiz, test eller lignende)</span
+					en quiz, et horoskop, en kryds og tværs eller lignende)</span
 				>
 			</li>
 		</ul>

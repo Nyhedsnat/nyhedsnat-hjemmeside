@@ -1,8 +1,13 @@
 <script lang="ts">
 	import JoinButton from '$lib/components/JoinButton.svelte';
-	import { title } from 'process';
 
-	const faqSections = [
+	type FaqItem = {
+		question: string;
+		answer: string;
+		link?: { href: string; label: string };
+	};
+
+	const faqSections: { title: string; items: FaqItem[] }[] = [
 		{
 			title: 'Om arrangementet',
 			items: [
@@ -105,6 +110,17 @@ En redaktion:
 Som redaktion oplever man hændelser, stiller spørgsmål og arbejder sammen om at lave en avis frem mod deadline næste morgen. Kun halvdelen af redaktionen er ude ad gangen, mens resten arbejder videre hjemme på basen.
 
 Kredse kan slå sig sammen, hvis man ikke selv har deltagere nok til en hel redaktion.`
+				},
+				{
+					question: 'Hvad mener vi med en avis?',
+					answer: `Ikke en tung avis med lange artikler.
+
+Aviserne er digitale og består af korte, klikbare nyheder – fyldt med horoskoper, quizzer, billeder, videoer og andet kreativt indhold.
+
+Det handler ikke om tung journalistik, men om at lave noget, det er sjovt at klikke sig igennem.
+
+Se et eksempel på en avis her:`,
+					link: { href: 'https://demo.avismaskinen.dk/', label: 'demo.avismaskinen.dk' }
 				},
 				{
 					question: 'Skal man være god til at skrive for at deltage?',
@@ -265,6 +281,17 @@ Så lederne har god tid til andre ting end at sidde bag et rat.`
 											<p class="leading-relaxed whitespace-pre-line text-star-white/70">
 												{faq.answer}
 											</p>
+											{#if faq.link}
+												<a
+													href={faq.link.href}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="mt-4 inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10"
+												>
+													<span aria-hidden="true">🗞️</span>
+													{faq.link.label}
+												</a>
+											{/if}
 										</div>
 									</div>
 								{/if}
