@@ -116,7 +116,8 @@
 					{#each [
 						'Kun halvdelen af redaktionen kører ud ad gangen',
 						'To redaktioner kører sammen',
-						'Ledere kører kun ca. til hver anden hændelse'
+						'Ledere kører kun ca. til hver anden hændelse',
+						'Forvent at køre 50-100 km pr. redaktion under selve arrangementet'
 					] as item}
 						<li class="flex items-center gap-3 text-star-white/80">
 							<span class="text-gold-400">•</span>

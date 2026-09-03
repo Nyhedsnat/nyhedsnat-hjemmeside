@@ -162,6 +162,18 @@ Man skiftes i redaktionen, så ikke alle er ude samtidig, og der er lagt pauser 
 Hvornår man går i seng, er op til den enkelte redaktion (læs: mest lederne).`
 				},
 				{
+					question: 'Hvad skal vi selv lægge oveni prisen?',
+					answer: `Indbydelsen er en skabelon, hvor I selv sætter prisen og et mødested.
+
+Deltagergebyret er 125 kr. Oveni lægger I kredsens egne udgifter:
+
+• Kørsel til og fra arrangementet
+• Kørsel under arrangementet – forvent 50-100 km pr. redaktion
+• Aftensmad, hvis I spiser sammen i kredsen. I kan selv vælge, om I spiser inden I kører hjemmefra, eller når I kommer hjem igen
+
+Derfor er det lettest at tilmelde samlet i kredsen, så I kan lægge det hele sammen til én pris.`
+				},
+				{
 					question: 'Skal lederne være "på" hele natten?',
 					answer: `Nej. Arrangementet er tilrettelagt, så lederne ikke skal være aktive hele tiden.
 
@@ -174,6 +186,14 @@ Så lederne har god tid til andre ting end at sidde bag et rat.`
 		{
 			title: 'Praktik og logistik',
 			items: [
+				{
+					question: 'Hvad koster det at deltage?',
+					answer: `Det koster 125 kr. pr. deltager – både for væbnere, seniorvæbnere og seniorer. Tilmelding foregår kredsvis.
+
+I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
+
+Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem sætter kredsen selv ind i indbydelsen.`
+				},
 				{
 					question: 'Hvordan foregår transporten til hændelser?',
 					answer: `Transporten foregår via et fælles kortagekørselssystem.

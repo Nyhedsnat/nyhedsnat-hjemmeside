@@ -26,6 +26,7 @@
 	const nyhedsnatSignupDeadline = '25. oktober 2026';
 	const planningSignupDeadlineText = '20. september 2026';
 	const planningLocation = 'Damtoften 20, 8260 Viby J';
+	const pricePerParticipant = '125 kr.';
 </script>
 
 <div class="min-h-screen px-4 py-12">
@@ -43,6 +44,13 @@
 			<h2 class="text-2xl font-bold text-star-white mb-4">Tilmelding til NyhedsNat</h2>
 			<p class="text-star-white/70 mb-5">
 				Seniorer deltager enten som planlæggere eller som deltagere. Seniordeltagere tilmeldes her sammen med redaktioner.
+			</p>
+			<p class="text-star-white/70 mb-5">
+				<span class="font-semibold text-star-white">Pris: {pricePerParticipant} pr. deltager.</span>
+				Tilmelding foregår kredsvis, og I kan tilmelde ad så mange omgange, I har lyst til.
+			</p>
+			<p class="text-star-white/70 mb-5">
+				I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
 			</p>
 			{#if signupOpen}
 				<JoinButton href={nyhedsnatSignupUrl} className="mb-4">Tilmeld NyhedsNat</JoinButton>
@@ -63,6 +71,10 @@
 						<span aria-hidden="true">📄</span> Seniorer (PDF)
 					</a>
 				</div>
+				<p class="mt-4 text-sm text-star-white/50">
+					Indbydelsen er en skabelon. I skal selv skrive jeres samlede pris og et mødested ind, inden I
+					sender den videre i kredsen.
+				</p>
 			</div>
 		</section>
 
