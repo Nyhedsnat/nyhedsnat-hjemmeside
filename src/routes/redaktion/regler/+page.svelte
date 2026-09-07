@@ -5,23 +5,17 @@
 		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/regler" />
-	<meta property="og:site_name" content="NyhedsNat" />
-	<meta property="og:locale" content="da_DK" />
-	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/regler" />
 	<meta property="og:title" content="Regler – NyhedsNat i Landsdel 4" />
 	<meta
 		property="og:description"
 		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
 	/>
-	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
-	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="Regler – NyhedsNat i Landsdel 4" />
 	<meta
 		name="twitter:description"
 		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
 	/>
-	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="space-y-8">

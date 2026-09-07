@@ -17,6 +17,17 @@
 <svelte:head>
 	<link rel="icon" href="/svg/logo.svg" type="image/svg+xml" />
 	<meta name="theme-color" content="#030712" />
+	<!-- Site-wide social defaults. Each page adds only its own title/description/canonical/url and
+	     og:title/og:description; the invariants (name, locale, type, the generic share image and the
+	     card type) live here once so they cannot drift page to page. -->
+	<meta property="og:site_name" content="NyhedsNat" />
+	<meta property="og:locale" content="da_DK" />
+	<meta property="og:type" content="website" />
+	<meta property="og:image" content="https://nyhedsnat.dk/images/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content="https://nyhedsnat.dk/images/og-image.png" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />

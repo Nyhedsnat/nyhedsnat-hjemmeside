@@ -230,23 +230,17 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/faq" />
-	<meta property="og:site_name" content="NyhedsNat" />
-	<meta property="og:locale" content="da_DK" />
-	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://nyhedsnat.dk/faq" />
 	<meta property="og:title" content="FAQ – NyhedsNat i Landsdel 4" />
 	<meta
 		property="og:description"
 		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
-	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
-	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="FAQ – NyhedsNat i Landsdel 4" />
 	<meta
 		name="twitter:description"
 		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
-	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">

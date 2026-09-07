@@ -43,6 +43,14 @@
 					<a href="/faq" class="text-star-white/60 hover:text-gold-400 transition-colors text-sm">
 						FAQ
 					</a>
+					<a
+						href="https://avismaskinen.dk"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-star-white/60 hover:text-gold-400 transition-colors text-sm"
+					>
+						Aviserne på Avismaskinen
+					</a>
 				</nav>
 			</div>
 

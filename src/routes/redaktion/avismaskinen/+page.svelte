@@ -2,10 +2,29 @@
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
 	const demoUrl = 'https://demo.avismaskinen.dk';
+	const kioskUrl = 'https://avismaskinen.dk';
 </script>
 
 <svelte:head>
 	<title>Avismaskinen – NyhedsNat</title>
+	<meta
+		name="description"
+		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
+	/>
+	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/avismaskinen" />
+	<!-- Open Graph -->
+	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/avismaskinen" />
+	<meta property="og:title" content="Avismaskinen – NyhedsNat" />
+	<meta
+		property="og:description"
+		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
+	/>
+	<!-- Twitter Card -->
+	<meta name="twitter:title" content="Avismaskinen – NyhedsNat" />
+	<meta
+		name="twitter:description"
+		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
+	/>
 </svelte:head>
 
 <div class="space-y-8">
@@ -20,9 +39,14 @@
 			Det behøver ikke være tung journalistik – det skal være sjovt at klikke sig igennem.
 		</p>
 
-		<JoinButton href={demoUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
-			Se demoavisen
-		</JoinButton>
+		<div class="flex flex-wrap gap-3">
+			<JoinButton href={demoUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
+				Se demoavisen
+			</JoinButton>
+			<JoinButton href={kioskUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
+				Alle aviserne på Avismaskinen
+			</JoinButton>
+		</div>
 	</section>
 
 	<section class="card-dark rounded-2xl border border-gold-500/20 p-6 md:p-8">

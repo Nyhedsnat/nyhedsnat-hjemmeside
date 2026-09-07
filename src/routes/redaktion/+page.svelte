@@ -1,5 +1,23 @@
 <svelte:head>
 	<title>Lav jeres avis – NyhedsNat</title>
+	<meta
+		name="description"
+		content="Alt I skal bruge for at lave jeres avis under NyhedsNat – Avismaskinen, værktøjer til tekst, billeder og video, og reglerne. Samlet ét sted."
+	/>
+	<link rel="canonical" href="https://nyhedsnat.dk/redaktion" />
+	<!-- Open Graph -->
+	<meta property="og:url" content="https://nyhedsnat.dk/redaktion" />
+	<meta property="og:title" content="Lav jeres avis – NyhedsNat" />
+	<meta
+		property="og:description"
+		content="Alt I skal bruge for at lave jeres avis under NyhedsNat – Avismaskinen, værktøjer til tekst, billeder og video, og reglerne. Samlet ét sted."
+	/>
+	<!-- Twitter Card -->
+	<meta name="twitter:title" content="Lav jeres avis – NyhedsNat" />
+	<meta
+		name="twitter:description"
+		content="Alt I skal bruge for at lave jeres avis under NyhedsNat – Avismaskinen, værktøjer til tekst, billeder og video, og reglerne. Samlet ét sted."
+	/>
 </svelte:head>
 
 <div class="mb-8 space-y-4 text-star-white/75">

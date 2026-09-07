@@ -10,24 +10,18 @@
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/" />
 	<!-- Open Graph -->
-	<meta property="og:site_name" content="NyhedsNat" />
-	<meta property="og:locale" content="da_DK" />
-	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://nyhedsnat.dk/" />
 	<meta property="og:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
 	<meta
 		property="og:description"
 		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
 	/>
-	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
 	<!-- Twitter Card -->
-	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
 	<meta
 		name="twitter:description"
 		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
 	/>
-	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 	<!-- JSON-LD Event -->
 	{@html `<script type="application/ld+json">${JSON.stringify({
 		'@context': 'https://schema.org',
@@ -39,7 +33,25 @@
 		endDate: '2026-11-07T10:00:00+01:00',
 		eventStatus: 'https://schema.org/EventScheduled',
 		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-		organizer: { '@type': 'Organization', name: 'FDF Landsdel 4', url: 'https://nyhedsnat.dk' },
+		image: 'https://nyhedsnat.dk/images/og-image.png',
+		// Coarse-but-true until the venue is announced (it rotates yearly and is handed out at
+		// arrival). Region-level clears Google's required `location` without fabricating an
+		// address — swap in the real venue name + street/postal/city once it is known.
+		location: {
+			'@type': 'Place',
+			name: 'Østjylland',
+			address: {
+				'@type': 'PostalAddress',
+				addressRegion: 'Østjylland',
+				addressCountry: 'DK'
+			}
+		},
+		organizer: {
+			'@type': 'Organization',
+			name: 'FDF Landsdel 4',
+			url: 'https://nyhedsnat.dk',
+			sameAs: ['https://fdf.dk/landsdel4/']
+		},
 		url: 'https://nyhedsnat.dk'
 	})}<\/script>`}
 </svelte:head>

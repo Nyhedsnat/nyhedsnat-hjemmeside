@@ -1,5 +1,23 @@
 <svelte:head>
 	<title>Anbefalede værktøjer – NyhedsNat</title>
+	<meta
+		name="description"
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+	/>
+	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/vaerktojer" />
+	<!-- Open Graph -->
+	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/vaerktojer" />
+	<meta property="og:title" content="Anbefalede værktøjer – NyhedsNat" />
+	<meta
+		property="og:description"
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+	/>
+	<!-- Twitter Card -->
+	<meta name="twitter:title" content="Anbefalede værktøjer – NyhedsNat" />
+	<meta
+		name="twitter:description"
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+	/>
 </svelte:head>
 
 <div class="space-y-10 text-star-white/80">

@@ -2,17 +2,11 @@
 	<title>Tilmelding & indbydelse – NyhedsNat i Landsdel 4</title>
 	<meta name="description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4." />
 	<link rel="canonical" href="https://nyhedsnat.dk/tilmelding" />
-	<meta property="og:site_name" content="NyhedsNat" />
-	<meta property="og:locale" content="da_DK" />
-	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://nyhedsnat.dk/tilmelding" />
 	<meta property="og:title" content="Tilmelding & indbydelse – NyhedsNat i Landsdel 4" />
 	<meta property="og:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4." />
-	<meta property="og:image" content="https://nyhedsnat.dk/images/logo.png" />
-	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="Tilmelding & indbydelse – NyhedsNat i Landsdel 4" />
 	<meta name="twitter:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4." />
-	<meta name="twitter:image" content="https://nyhedsnat.dk/images/logo.png" />
 </svelte:head>
 
 <script lang="ts">
