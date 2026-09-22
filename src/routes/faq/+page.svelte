@@ -213,12 +213,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 				},
 				{
 					question: 'Hvad hvis noget går galt teknisk?',
-					answer: `Udvalget har sørget for, at der er IT-kyndige frivillige til stede hele natten, som kan hjælpe med:
-
-• Computere
-• Video
-• Links
-• Uploads`
+					answer: `Udvalget har sørget for, at der er IT-kyndige frivillige til stede hele natten, som kan hjælpe med det hele.`
 				}
 			]
 		}

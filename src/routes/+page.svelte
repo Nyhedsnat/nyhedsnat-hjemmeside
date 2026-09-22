@@ -73,14 +73,12 @@
 			<span class="text-3xl text-star-white md:text-4xl lg:text-5xl">i Landsdel 4</span>
 		</h1>
 
-		<!-- Date + venue badges -->
-		<div class="mb-8 flex flex-wrap items-center justify-center gap-3">
+		<!-- Date badge, with the venue as a smaller line under it -->
+		<div class="mb-8 flex flex-col items-center gap-3">
 			<div class="inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
 				<span class="text-xl font-bold text-gold-400 md:text-2xl">6.-7. november 2026</span>
 			</div>
-			<div class="inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
-				<span class="text-xl font-bold text-gold-400 md:text-2xl">📍 Beder Skole</span>
-			</div>
+			<p class="text-base font-medium text-star-white/60">📍 Beder Skole, 8330 Beder</p>
 		</div>
 
 		<!-- Subtitle -->
