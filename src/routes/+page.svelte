@@ -3,24 +3,24 @@
 </script>
 
 <svelte:head>
-	<title>NyhedsNat i Landsdel 4 – 6.–7. november 2026</title>
+	<title>NyhedsNat i Landsdel 4 – Beder Skole 6.–7. november 2026</title>
 	<meta
 		name="description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår på Beder Skole 6.–7. november 2026, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/" />
 	<!-- Open Graph -->
 	<meta property="og:url" content="https://nyhedsnat.dk/" />
-	<meta property="og:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
+	<meta property="og:title" content="NyhedsNat i Landsdel 4 – Beder Skole 6.–7. november 2026" />
 	<meta
 		property="og:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår på Beder Skole 6.–7. november 2026, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- Twitter Card -->
-	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – 6.–7. november 2026" />
+	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – Beder Skole 6.–7. november 2026" />
 	<meta
 		name="twitter:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår på Beder Skole 6.–7. november 2026, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- JSON-LD Event -->
 	{@html `<script type="application/ld+json">${JSON.stringify({
@@ -28,20 +28,20 @@
 		'@type': 'Event',
 		name: 'NyhedsNat i Landsdel 4',
 		description:
-			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Over en nat samles deltagere i redaktioner, oplever hændelser og laver aviser.',
+			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår på Beder Skole 6.–7. november 2026, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser.',
 		startDate: '2026-11-06T18:00:00+01:00',
 		endDate: '2026-11-07T10:00:00+01:00',
 		eventStatus: 'https://schema.org/EventScheduled',
 		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
 		image: 'https://nyhedsnat.dk/images/og-image.png',
-		// Coarse-but-true until the venue is announced (it rotates yearly and is handed out at
-		// arrival). Region-level clears Google's required `location` without fabricating an
-		// address — swap in the real venue name + street/postal/city once it is known.
 		location: {
 			'@type': 'Place',
-			name: 'Østjylland',
+			name: 'Beder Skole',
 			address: {
 				'@type': 'PostalAddress',
+				streetAddress: 'Skoleparken 6',
+				postalCode: '8330',
+				addressLocality: 'Beder',
 				addressRegion: 'Østjylland',
 				addressCountry: 'DK'
 			}
@@ -73,9 +73,14 @@
 			<span class="text-3xl text-star-white md:text-4xl lg:text-5xl">i Landsdel 4</span>
 		</h1>
 
-		<!-- Date badge -->
-		<div class="mb-8 inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
-			<span class="text-xl font-bold text-gold-400 md:text-2xl">6.-7. november 2026</span>
+		<!-- Date + venue badges -->
+		<div class="mb-8 flex flex-wrap items-center justify-center gap-3">
+			<div class="inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
+				<span class="text-xl font-bold text-gold-400 md:text-2xl">6.-7. november 2026</span>
+			</div>
+			<div class="inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
+				<span class="text-xl font-bold text-gold-400 md:text-2xl">📍 Beder Skole</span>
+			</div>
 		</div>
 
 		<!-- Subtitle -->
@@ -105,8 +110,9 @@
 				</p>
 
 				<p>
-					Arrangementet foregår indendørs med fælles base, overnatning i gymnastiksal og afslutning
-					næste morgen.
+					Hele arrangementet foregår på <span class="font-semibold text-gold-300">Beder Skole</span>,
+					Skoleparken 6, 8330 Beder. Det er indendørs med fælles base, overnatning i skolens
+					gymnastiksal og afslutning næste morgen.
 				</p>
 			</div>
 		</div>
