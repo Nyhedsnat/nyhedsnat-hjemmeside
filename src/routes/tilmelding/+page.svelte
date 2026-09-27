@@ -13,7 +13,7 @@
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
 	const signupOpen = true;
-	const planningSignupOpen = true;
+	const planningSignupOpen = false;
 	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
 	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
 	const signupOpensText = '1. juli 2026';
