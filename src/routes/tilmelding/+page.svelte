@@ -13,6 +13,7 @@
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
 	const signupOpen = true;
+	const nyhedsnatSignupOpen = true;
 	const planningSignupOpen = false;
 	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
 	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
@@ -35,8 +36,15 @@
 			</p>
 		</div>
 
-		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10">
-			<h2 class="text-2xl font-bold text-star-white mb-4">Tilmelding til NyhedsNat</h2>
+		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10 {nyhedsnatSignupOpen ? '' : 'border-red-400/40'}">
+			<div class="flex items-start justify-between gap-4 mb-4">
+				<h2 class="text-2xl font-bold text-star-white">Tilmelding til NyhedsNat</h2>
+				{#if !nyhedsnatSignupOpen}
+					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
+						<span>🔒</span> Tilmeldingen er lukket
+					</span>
+				{/if}
+			</div>
 			<p class="text-star-white/70 mb-5">
 				<span class="font-semibold text-star-white">Sted: {nyhedsnatLocation}.</span>
 				Datoen er 6.–7. november 2026.
@@ -51,14 +59,21 @@
 			<p class="text-star-white/70 mb-5">
 				I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
 			</p>
-			{#if signupOpen}
-				<JoinButton href={nyhedsnatSignupUrl} className="mb-4">Tilmeld NyhedsNat</JoinButton>
+			{#if !nyhedsnatSignupOpen}
+				<div class="rounded-xl border-2 border-red-400/60 bg-red-500/10 p-5 mb-6">
+					<p class="text-red-300 font-bold text-lg">Tilmeldingen til NyhedsNat er lukket.</p>
+					<p class="text-red-200/80 text-sm mt-1">Kontakt udvalget, hvis du har spørgsmål.</p>
+				</div>
 			{:else}
-				<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
-					Tilmeldingen åbner {signupOpensText}
-				</p>
+				{#if signupOpen}
+					<JoinButton href={nyhedsnatSignupUrl} className="mb-4">Tilmeld NyhedsNat</JoinButton>
+				{:else}
+					<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
+						Tilmeldingen åbner {signupOpensText}
+					</p>
+				{/if}
+				<p class="text-star-white/65 mb-6">Tilmeldingsfrist: {nyhedsnatSignupDeadline}</p>
 			{/if}
-			<p class="text-star-white/65 mb-6">Tilmeldingsfrist: {nyhedsnatSignupDeadline}</p>
 
 			<div class="border-t border-star-white/10 pt-6">
 				<p class="text-sm font-semibold uppercase tracking-wide text-star-white/40 mb-3">Indbydelser</p>
@@ -83,7 +98,7 @@
 				<h2 class="text-2xl font-bold text-star-white">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
 				{#if !planningSignupOpen}
 					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
-						<span>🔒</span> Lukket
+						<span>🔒</span> Tilmeldingen er lukket
 					</span>
 				{/if}
 			</div>
