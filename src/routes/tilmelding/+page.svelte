@@ -53,7 +53,7 @@
 				Datoen er 6.–7. november 2026.
 			</p>
 			<p class="text-star-white/70 mb-5">
-				Seniorer deltager enten som planlæggere eller som deltagere. Seniordeltagere tilmeldes her sammen med redaktioner.
+				Seniorer deltager enten som planlæggere eller som seniordeltagere. Seniordeltagere får en rolle på dagen og er med til at afvikle hændelserne. De tilmeldes her sammen med redaktionerne.
 			</p>
 			<p class="text-star-white/70 mb-5">
 				<span class="font-semibold text-star-white">Pris: {pricePerParticipant} pr. deltager.</span>
