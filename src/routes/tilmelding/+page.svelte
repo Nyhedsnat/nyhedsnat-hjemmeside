@@ -11,10 +11,9 @@
 
 <script lang="ts">
 	import JoinButton from '$lib/components/JoinButton.svelte';
+	import { planningState, type SignupState } from '$lib';
 
-	const signupOpen = true;
-	const nyhedsnatSignupOpen = true;
-	const planningSignupOpen = false;
+	const nyhedsnatState = 'open' as SignupState;
 	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
 	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
 	const signupOpensText = '1. juli 2026';
@@ -36,12 +35,16 @@
 			</p>
 		</div>
 
-		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10 {nyhedsnatSignupOpen ? '' : 'border-red-400/40'}">
+		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10 {nyhedsnatState === 'closed' ? 'border-red-400/40' : ''}">
 			<div class="flex items-start justify-between gap-4 mb-4">
 				<h2 class="text-2xl font-bold text-star-white">Tilmelding til NyhedsNat</h2>
-				{#if !nyhedsnatSignupOpen}
+				{#if nyhedsnatState === 'closed'}
 					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<span>🔒</span> Tilmeldingen er lukket
+					</span>
+				{:else if nyhedsnatState === 'held'}
+					<span class="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
+						<span>✅</span> Afholdt
 					</span>
 				{/if}
 			</div>
@@ -59,13 +62,18 @@
 			<p class="text-star-white/70 mb-5">
 				I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
 			</p>
-			{#if !nyhedsnatSignupOpen}
+			{#if nyhedsnatState === 'closed'}
 				<div class="rounded-xl border-2 border-red-400/60 bg-red-500/10 p-5 mb-6">
 					<p class="text-red-300 font-bold text-lg">Tilmeldingen til NyhedsNat er lukket.</p>
 					<p class="text-red-200/80 text-sm mt-1">Kontakt udvalget, hvis du har spørgsmål.</p>
 				</div>
+			{:else if nyhedsnatState === 'held'}
+				<div class="rounded-xl border-2 border-gold-400/50 bg-gold-500/10 p-5">
+					<p class="text-gold-300 font-bold text-lg">NyhedsNat er afholdt for i år.</p>
+					<p class="text-star-white/70 text-sm mt-1">Ny dato meldes ud snarest.</p>
+				</div>
 			{:else}
-				{#if signupOpen}
+				{#if nyhedsnatState === 'open'}
 					<JoinButton href={nyhedsnatSignupUrl} className="mb-4">Tilmeld NyhedsNat</JoinButton>
 				{:else}
 					<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
@@ -75,7 +83,7 @@
 				<p class="text-star-white/65 mb-6">Tilmeldingsfrist: {nyhedsnatSignupDeadline}</p>
 			{/if}
 
-			<div class="border-t border-star-white/10 pt-6">
+			<div class="border-t{nyhedsnatState === 'held' ? ' hidden' : ''} border-star-white/10 pt-6">
 				<p class="text-sm font-semibold uppercase tracking-wide text-star-white/40 mb-3">Indbydelser</p>
 				<div class="flex flex-wrap gap-3">
 					<a href="/files/Indbydelse_svæb_væb.pdf" download class="inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10">
@@ -93,12 +101,16 @@
 			</div>
 		</section>
 
-		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningSignupOpen ? '' : 'border-red-400/40'}">
+		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningState === 'closed' ? 'border-red-400/40' : ''}">
 			<div class="flex items-start justify-between gap-4 mb-4">
 				<h2 class="text-2xl font-bold text-star-white">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
-				{#if !planningSignupOpen}
+				{#if planningState === 'closed'}
 					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<span>🔒</span> Tilmeldingen er lukket
+					</span>
+				{:else if planningState === 'held'}
+					<span class="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
+						<span>✅</span> Afholdt
 					</span>
 				{/if}
 			</div>
@@ -107,8 +119,8 @@
 			<p class="text-star-white/70 mb-4">Her deltager man i planlægningen og er med til at udvikle hændelser.</p>
 			<p class="text-star-white/65 mb-6">Sted: {planningLocation}</p>
 
-			{#if planningSignupOpen}
-				{#if signupOpen}
+			{#if planningState === 'upcoming' || planningState === 'open'}
+				{#if planningState === 'open'}
 					<JoinButton href={planningSignupUrl} variant="secondary" className="mb-4">Tilmeld dig Arrangøruddannelse & planlægningsweekend for seniorer</JoinButton>
 				{:else}
 					<p class="inline-flex items-center rounded-full border border-gold-400/40 bg-gold-500/10 px-4 py-2 text-gold-300 font-bold mb-4">
@@ -123,10 +135,15 @@
 						<span aria-hidden="true">📄</span> Arrangøruddannelse & planlægningsweekend (PDF)
 					</a>
 				</div>
-			{:else}
+			{:else if planningState === 'closed'}
 				<div class="rounded-xl border-2 border-red-400/60 bg-red-500/10 p-5">
 					<p class="text-red-300 font-bold text-lg">Tilmeldingen til Arrangøruddannelse & planlægningsweekend for seniorer er lukket.</p>
 					<p class="text-red-200/80 text-sm mt-1">Kontakt udvalget, hvis du har spørgsmål.</p>
+				</div>
+			{:else}
+				<div class="rounded-xl border-2 border-gold-400/50 bg-gold-500/10 p-5">
+					<p class="text-gold-300 font-bold text-lg">Arrangøruddannelse & planlægningsweekend for seniorer er afholdt for i år.</p>
+					<p class="text-star-white/70 text-sm mt-1">Ny dato meldes ud snarest.</p>
 				</div>
 			{/if}
 		</section>

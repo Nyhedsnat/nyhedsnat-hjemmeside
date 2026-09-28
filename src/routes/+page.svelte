@@ -1,5 +1,6 @@
 <script lang="ts">
 	import JoinButton from '$lib/components/JoinButton.svelte';
+	import { planningState } from '$lib';
 </script>
 
 <svelte:head>
@@ -126,15 +127,34 @@
 			</h2>
 			<div class="mb-7 space-y-4 text-lg leading-relaxed text-star-white/70">
 				<p>Alle hændelser planlægges af seniorer.</p>
-				<p>
-					Vil du være med til at skabe oplevelsen, kan du deltage i Arrangøruddannelse & planlægningsweekend for seniorer den
-					25.–27. september.
-				</p>
-				<p>
-					Weekenden er både et kursus og en workshop, hvor vi udvikler hændelser, arbejder med
-					roller og tester idéer.
-				</p>
+				{#if planningState === 'held'}
+					<p>
+						Arrangøruddannelse & planlægningsweekend for seniorer er afholdt for i år. Ny dato meldes ud snarest.
+					</p>
+					<p>
+						Du kan stadig være med som senior på selve NyhedsNat, hvor du får en rolle og er med til at afvikle hændelserne.
+					</p>
+				{:else}
+					<p>
+						Vil du være med til at skabe oplevelsen, kan du deltage i Arrangøruddannelse & planlægningsweekend for seniorer den
+						25.–27. september.
+					</p>
+					<p>
+						Weekenden er både et kursus og en workshop, hvor vi udvikler hændelser, arbejder med
+						roller og tester idéer.
+					</p>
+					{#if planningState === 'upcoming'}
+						<p class="font-semibold text-gold-300">Tilmeldingen er ikke åben endnu.</p>
+					{:else if planningState === 'open'}
+						<p class="font-semibold text-gold-300">Tilmeldingen er åben.</p>
+					{:else}
+						<p class="font-semibold text-red-300">🔒 Tilmeldingen er lukket.</p>
+					{/if}
+				{/if}
 			</div>
+			{#if planningState === 'open'}
+				<JoinButton href="/tilmelding" className="mb-4 mr-3">Tilmeld dig weekenden</JoinButton>
+			{/if}
 			<JoinButton href="/faq" variant="secondary">Læs mere om at være senior</JoinButton>
 		</div>
 	</div>
