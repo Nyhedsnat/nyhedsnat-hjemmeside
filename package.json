@@ -42,5 +42,10 @@
 		"vite": "^7.3.6",
 		"vite-plugin-devtools-json": "^1.0.0",
 		"wrangler": "^4.0.0"
+	},
+	"dependenciesMeta": {
+		"sharp": {
+			"built": false
+		}
 	}
 }
