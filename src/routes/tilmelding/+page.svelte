@@ -36,14 +36,14 @@
 		</div>
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10 {nyhedsnatState === 'closed' ? 'border-red-400/40' : ''}">
-			<div class="flex items-start justify-between gap-4 mb-4">
-				<h2 class="text-2xl font-bold text-star-white">Tilmelding til NyhedsNat</h2>
+			<div class="flex flex-col-reverse items-start gap-3 mb-4 sm:flex-row sm:justify-between sm:gap-4">
+				<h2 class="min-w-0 text-2xl font-bold text-star-white hyphens-auto">Tilmelding til NyhedsNat</h2>
 				{#if nyhedsnatState === 'closed'}
-					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
+					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<span>🔒</span> Tilmeldingen er lukket
 					</span>
 				{:else if nyhedsnatState === 'held'}
-					<span class="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
+					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
 						<span>✅</span> Afholdt
 					</span>
 				{/if}
@@ -102,14 +102,14 @@
 		</section>
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningState === 'closed' ? 'border-red-400/40' : ''}">
-			<div class="flex items-start justify-between gap-4 mb-4">
-				<h2 class="text-2xl font-bold text-star-white">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
+			<div class="flex flex-col-reverse items-start gap-3 mb-4 sm:flex-row sm:justify-between sm:gap-4">
+				<h2 class="min-w-0 text-2xl font-bold text-star-white hyphens-auto">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
 				{#if planningState === 'closed'}
-					<span class="inline-flex items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
+					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<span>🔒</span> Tilmeldingen er lukket
 					</span>
 				{:else if planningState === 'held'}
-					<span class="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
+					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-sm font-semibold text-gold-300">
 						<span>✅</span> Afholdt
 					</span>
 				{/if}
