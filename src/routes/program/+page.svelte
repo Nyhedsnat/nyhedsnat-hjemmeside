@@ -35,7 +35,7 @@
 				{#each [
 					{ time: '18:30–19:15', title: 'Deltagerankomst', icon: '🚗' },
 					{ time: '19:30', title: 'Fælles Velkomst', icon: '👋' },
-					{ time: '20:30–01:00', title: 'Hændelser', icon: '💥' },
+					{ time: '20:00–01:00', title: 'Hændelser', icon: '💥' },
 					{ time: '01:00', title: 'Natmad', icon: '🍕' },
 					{ time: '', title: 'Sove eller arbejde på aviser', icon: '😴' },
 					{ time: '04:00', title: 'Deadline for Aflevering af aviser, reel og pressefoto', icon: '📰' },
