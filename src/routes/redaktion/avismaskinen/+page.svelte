@@ -3,29 +3,29 @@
 
 	const demoUrl = 'https://demo.avismaskinen.dk';
 	const kioskUrl = 'https://avismaskinen.dk';
+	const description =
+		'Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Sådan opretter I jeres avis ved skranken og logger ind med holdkoden.';
 </script>
 
 <svelte:head>
 	<title>Avismaskinen – NyhedsNat</title>
-	<meta
-		name="description"
-		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
-	/>
+	<meta name="description" content={description} />
 	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/avismaskinen" />
 	<!-- Open Graph -->
 	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/avismaskinen" />
 	<meta property="og:title" content="Avismaskinen – NyhedsNat" />
-	<meta
-		property="og:description"
-		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
-	/>
+	<meta property="og:description" content={description} />
 	<!-- Twitter Card -->
 	<meta name="twitter:title" content="Avismaskinen – NyhedsNat" />
-	<meta
-		name="twitter:description"
-		content="Avismaskinen er det digitale værktøj, redaktionerne bygger deres avis i til NyhedsNat. Se demoavisen og alle aviserne på avismaskinen.dk."
-	/>
+	<meta name="twitter:description" content={description} />
 </svelte:head>
+
+{#snippet step(n: number)}
+	<span
+		class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-sm font-bold text-gold-300"
+		>{n}</span
+	>
+{/snippet}
 
 <div class="space-y-8">
 	<section class="space-y-4 text-star-white/75">
@@ -56,12 +56,13 @@
 		</h2>
 		<div class="space-y-4 text-star-white/75">
 			<p>
-				Hver redaktion har sin egen avis, som er oprettet på forhånd – inden NyhedsNat går i gang.
+				Når I kommer, går I op til skranken og skriver jeres redaktion ind. Så opretter I jeres avis
+				på stedet, og der står en voksen klar til at hjælpe.
 			</p>
 			<p>
-				Jeres avis har sin egen adresse på avismaskinen.dk, fx
-				<span class="font-semibold text-gold-300">cykelbud.avismaskinen.dk</span>. Adressen får I
-				udleveret, når I ankommer.
+				Jeres avis får sin egen adresse, fx
+				<span class="font-semibold text-gold-300">cykelbud.avismaskinen.dk</span>. Ved skranken får
+				I også en QR-kode, som fører lige til login.
 			</p>
 		</div>
 	</section>
@@ -71,32 +72,62 @@
 			<span class="text-3xl">🔑</span>
 			Sådan logger I ind
 		</h2>
+		<p class="mb-6 text-star-white/75">
+			I skal ikke huske et brugernavn eller en adgangskode. Hele holdet deler én
+			<span class="font-semibold text-star-white">holdkode</span> – fire bogstaver og to tal, fx
+			<span class="font-semibold text-gold-300">HEST-42</span>. Jeres leder får koden på SMS, så
+			snart avisen er oprettet.
+		</p>
 		<ol class="space-y-4 text-star-white/75">
 			<li class="flex gap-4">
+				{@render step(1)}
 				<span
-					class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-sm font-bold text-gold-300"
-					>1</span
+					>Gå til <a
+						href={kioskUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="font-semibold text-gold-300 underline-offset-2 hover:underline">avismaskinen.dk</a
+					>, og tryk på jeres avis.</span
 				>
-				<span>Gå til jeres avis' forside, fx cykelbud.avismaskinen.dk</span>
 			</li>
 			<li class="flex gap-4">
+				{@render step(2)}
 				<span
-					class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-sm font-bold text-gold-300"
-					>2</span
+					>Tryk på <span class="font-semibold text-star-white">"Log ind"</span> øverst til
+					venstre.</span
 				>
-				<span>Tryk på <span class="font-semibold text-star-white">"Log ind"</span> øverst på siden</span>
 			</li>
 			<li class="flex gap-4">
+				{@render step(3)}
+				<span>Skriv holdkoden. Jeres leder har den.</span>
+			</li>
+			<li class="flex gap-4">
+				{@render step(4)}
+				<span>Tryk på dit eget navn.</span>
+			</li>
+			<li class="flex gap-4">
+				{@render step(5)}
 				<span
-					class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-sm font-bold text-gold-300"
-					>3</span
+					>Tryk på <span class="font-semibold text-star-white">"Gå til redaktionen"</span>.</span
 				>
-				<span>Log ind med det brugernavn og den adgangskode, I fik udleveret ved ankomst</span>
 			</li>
 		</ol>
-		<p class="mt-6 text-star-white/60">
-			Derefter kan I redigere avisen direkte – lave forsiden, tilføje artikler og gøre avisen klar
-			til aflevering.
-		</p>
+		<div class="mt-6 space-y-4 text-star-white/60">
+			<p>
+				Har I QR-koden fra skranken, kan I også bare scanne den. Så kommer I lige til login.
+			</p>
+			<p>
+				I logger ind én gang på hver telefon eller computer, og så holder det hele NyhedsNat. Deler
+				I en computer, husker den holdkoden. Den næste skal bare trykke på sit eget navn.
+			</p>
+			<p>
+				Har I glemt koden? Spørg jeres leder eller en fra holdet. Ved skranken kan de også sende den
+				igen.
+			</p>
+			<p>
+				Når I er logget ind, redigerer I avisen direkte – laver forsiden, skriver artikler, lægger
+				billeder og video ind og gør avisen klar til aflevering.
+			</p>
+		</div>
 	</section>
 </div>
