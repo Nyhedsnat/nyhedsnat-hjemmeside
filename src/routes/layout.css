@@ -165,8 +165,8 @@ body {
 
 /* Kort (designguide): kortblå, runde hjørner, ingen kant. Let gennemsigtig så stjernehimlen anes. */
 .card-dark {
-	background: rgba(26, 42, 79, 0.55);
-	backdrop-filter: blur(10px);
+	background: rgba(26, 42, 79, 0.25);
+	backdrop-filter: blur(2px);
 }
 
 /* Det vigtigste kort på siden: guldkant 3 pt */

@@ -105,5 +105,22 @@
 				<a href="https://www.vlognow.me" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Åbn VN Video Editor</a>
 			</div>
 		</div>
+
+		<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
+			<h3 class="text-star-white font-extrabold italic">Guide: Fjern sangen fra musikken med Ultimate Vocal Remover</h3>
+			<p class="mt-1 text-sm">
+				Vil I have musik under jeres reel, men uden sang, så I kan tale ovenpå? Eller vil I kun have
+				sangen? Ultimate Vocal Remover deler en sang op i sang, trommer, bas og resten. Det er gratis,
+				kræver ingen konto og kører på computeren (Mac og Windows).
+			</p>
+			<ol class="mt-3 list-decimal space-y-1 pl-5 text-sm">
+				<li>Få en voksen til at hente og installere programmet. Gør det hjemmefra, det er en stor fil.</li>
+				<li>Åbn programmet, og træk jeres sang ind i vinduet.</li>
+				<li>Vælg <span class="font-semibold text-star-white">Demucs</span> under "Choose Process Method".</li>
+				<li>Vælg en mappe under "Select Output", og tryk <span class="font-semibold text-star-white">Start Processing</span>.</li>
+				<li>Efter et par minutter ligger sangen delt op i filer i mappen. Træk den, I skal bruge, ind i CapCut.</li>
+			</ol>
+			<a href="https://ultimatevocalremover.com" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Hent Ultimate Vocal Remover</a>
+		</div>
 	</section>
 </div>

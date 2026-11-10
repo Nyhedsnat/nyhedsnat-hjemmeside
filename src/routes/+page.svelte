@@ -85,7 +85,7 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-4">
+<section class="relative flex items-center justify-center overflow-hidden px-4 pt-16 pb-4 md:pt-24">
 	<!-- Decorative elements -->
 	<div class="absolute inset-0 flex items-center justify-center opacity-10">
 		<div
@@ -107,20 +107,32 @@
 			<p class="text-base font-medium text-star-white/60"><MapPin class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> Skole annonceres i uge 40</p>
 		</div>
 
-		<!-- Subtitle -->
-		<p class="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-star-white/80 md:text-xl">
-			NyhedsNat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i Landsdel 4. Over
-			en nat samles deltagere i redaktioner, oplever hændelser og laver aviser i en fælles
-			legeramme.
-		</p>
-
-		<!-- CTA Button -->
+		<!-- CTA-KNAP: slået fra uden for sæsonen. Fjern kommentaren, når tilmeldingen åbner igen.
 		<JoinButton href="/tilmelding">Tilmeld jer Nyhedsnat</JoinButton>
+		-->
+	</div>
+</section>
+
+<!-- NyhedsNat 2026: tak-video + avisarkiv -->
+<section class="px-4 pt-8 pb-12">
+	<div class="mx-auto max-w-4xl">
+		<div class="card-dark rounded-3xl p-8 md:p-12">
+			<h2 class="mb-4 text-2xl font-extrabold text-gold-500 uppercase italic md:text-3xl">Tak for NyhedsNat 2026</h2>
+			<p class="mb-8 text-lg leading-relaxed text-star-white/70">
+				Se hvad deltagerne lavede. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>, hvis du er nysgerrig på, hvordan en avis ser ud.
+			</p>
+
+			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026', 'dW8_goBJ4y8')}</div>
+
+			<JoinButton href={archiveUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
+				<Newspaper class="size-5 shrink-0" aria-hidden="true" /> Se aviserne fra 2026
+			</JoinButton>
+		</div>
 	</div>
 </section>
 
 <!-- About Section -->
-<section class="px-4 pt-8 pb-12">
+<section class="px-4 py-12">
 	<div class="mx-auto max-w-4xl">
 		<div class="card-dark rounded-3xl p-8 md:p-12">
 			<h2 class="mb-6 text-2xl md:text-3xl font-extrabold italic uppercase text-gold-500">
@@ -128,6 +140,12 @@
 			</h2>
 
 			<div class="space-y-6 text-lg leading-relaxed text-star-white/70">
+				<p>
+					NyhedsNat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i Landsdel 4. Over
+					en nat samles deltagere i redaktioner, oplever hændelser og laver aviser i en fælles
+					legeramme.
+				</p>
+
 				<p>
 					Seniorer skaber og spiller hændelserne. Væbnere og seniorvæbnere er indelt i redaktioner oplever dem og fortæller
 					historien videre i deres aviser.
@@ -142,24 +160,6 @@
 			<!-- KONCEPTVIDEO: skjult indtil videoen er klar. Fjern kommentaren for at vise den.
 			<div class="mt-8">{@render videoSlot('Sådan fungerer NyhedsNat')}</div>
 			-->
-		</div>
-	</div>
-</section>
-
-<!-- NyhedsNat 2026: tak-video + avisarkiv -->
-<section class="px-4 py-12">
-	<div class="mx-auto max-w-4xl">
-		<div class="card-dark rounded-3xl p-8 md:p-12">
-			<h2 class="mb-4 text-2xl font-extrabold text-gold-500 uppercase italic md:text-3xl">Tak for NyhedsNat 2026</h2>
-			<p class="mb-8 text-lg leading-relaxed text-star-white/70">
-				Se hvad deltagerne lavede. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>, hvis du er nysgerrig på, hvordan en avis ser ud.
-			</p>
-
-			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026', 'dW8_goBJ4y8')}</div>
-
-			<JoinButton href={archiveUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
-				<Newspaper class="size-5 shrink-0" aria-hidden="true" /> Se aviserne fra 2026
-			</JoinButton>
 		</div>
 	</div>
 </section>
