@@ -15,7 +15,7 @@
 
 	function getHeader(pathname: string) {
 		if (pathname === '/redaktion') {
-			return { title: 'Lav jeres avis', subtitle: 'Alt I skal bruge for at lave jeres avis' };
+			return { title: 'Lav jeres avis', subtitle: '' };
 		}
 		if (pathname.startsWith('/redaktion/avismaskinen')) {
 			return { title: 'Avismaskinen', subtitle: 'Her bygger I jeres avis' };
@@ -76,7 +76,7 @@
 					<div class="mb-8">
 						<p class="mb-2 text-sm font-semibold uppercase tracking-wider text-gold-400/80">Lav avis</p>
 						<h1 class="mb-3 text-3xl text-star-white md:text-4xl font-black italic">{header.title}</h1>
-						<p class="max-w-2xl text-lg text-star-white/60">{header.subtitle}</p>
+						{#if header.subtitle}<p class="max-w-2xl text-lg text-star-white/60">{header.subtitle}</p>{/if}
 					</div>
 					<slot />
 				</main>
