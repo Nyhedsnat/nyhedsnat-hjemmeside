@@ -112,6 +112,31 @@
 			</div>
 		</div>
 
+		<!-- ponytail: listen bygger på hvad redaktionerne faktisk brugte i 2026-arkivet -->
+		<div class="grid gap-4 sm:grid-cols-2">
+			<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
+				<h3 class="text-star-white font-extrabold italic">Det kan I gøre i CapCut</h3>
+				<p class="mt-1 text-sm">Det brugte redaktionerne i 2026:</p>
+				<ul class="mt-3 list-disc space-y-2 pl-5 text-sm">
+					<li><span class="font-semibold text-star-white">Automatiske undertekster.</span> CapCut skriver det, der bliver sagt, som tekst. Så kan man følge med uden lyd.</li>
+					<li><span class="font-semibold text-star-white">Store ord og effekter.</span> Sæt et vigtigt ord stort ind på skærmen, eller tilføj en effekt, fx en eksplosion.</li>
+					<li><span class="font-semibold text-star-white">Fjern baggrund.</span> Klip reporteren ud, og sæt en ny baggrund bag.</li>
+					<li><span class="font-semibold text-star-white">Billede i billede.</span> Vis et lille klip fra hændelsen, mens reporteren fortæller.</li>
+					<li><span class="font-semibold text-star-white">Slutbillede med jeres avis.</span> Slut af med "Læs mere" og adressen på jeres avis.</li>
+				</ul>
+			</div>
+			<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
+				<h3 class="text-star-white font-extrabold italic">Gode råd, når I filmer</h3>
+				<ul class="mt-3 list-disc space-y-2 pl-5 text-sm">
+					<li><span class="font-semibold text-star-white">Hold telefonen lodret.</span> Et reel skal være højt og smalt.</li>
+					<li><span class="font-semibold text-star-white">Brug lys.</span> Det er mørkt om natten. En lommelygte eller en anden telefons lys gør en stor forskel.</li>
+					<li><span class="font-semibold text-star-white">Optag skærmen, i stedet for at filme den.</span> Skal I vise noget fra en computer eller telefon, så brug skærmoptagelse.</li>
+					<li><span class="font-semibold text-star-white">Klip det kedelige væk.</span> Korte klip er sjovere at se end én lang optagelse.</li>
+					<li><span class="font-semibold text-star-white">Slå CapCut-slutskiltet fra.</span> Ellers kommer CapCuts logo på til sidst. Det slår I fra i CapCuts indstillinger.</li>
+				</ul>
+			</div>
+		</div>
+
 		<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
 			<h3 class="text-star-white font-extrabold italic">Ultimate Vocal Remover</h3>
 			<p class="mt-1 text-sm">God hvis I vil: gøre tale tydelig, når der er larm eller musik i baggrunden.</p>

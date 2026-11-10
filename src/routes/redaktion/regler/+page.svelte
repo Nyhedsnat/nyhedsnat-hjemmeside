@@ -56,9 +56,9 @@
 		<ul class="space-y-4">
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -73,9 +73,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -91,9 +91,9 @@
 
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -111,9 +111,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -129,9 +129,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -147,9 +147,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -164,9 +164,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<svg class="h-3 w-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-3 w-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -212,9 +212,9 @@
 		<ul class="space-y-4">
 			<li class="flex items-start gap-4">
 				<div
-					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<Scale class="size-4 text-gold-500" aria-hidden="true" />
+					<Scale class="size-4 text-star-white" aria-hidden="true" />
 				</div>
 				<div class="text-star-white/80">
 					<strong class="text-star-white">Bedste avis</strong> kåres udelukkende af en juryen
@@ -222,9 +222,9 @@
 			</li>
 			<li class="flex items-start gap-4">
 				<div
-					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
+					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-band-red"
 				>
-					<Vote class="size-4 text-gold-500" aria-hidden="true" />
+					<Vote class="size-4 text-star-white" aria-hidden="true" />
 				</div>
 				<div class="text-star-white/80">
 				

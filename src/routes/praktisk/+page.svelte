@@ -71,11 +71,12 @@
 						'FDF-skjorte',
 						'Lommelygte',
 						'Notesblok og skriveredskaber',
-						'Mobiltelefon'
+						'Mobiltelefon',
+						'Slik og snolder til at holde sig vågen'
 					] as item}
 						<li class="flex items-center gap-3 text-star-white/80">
-							<div class="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0">
-								<svg class="w-3 h-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div class="w-6 h-6 rounded-full bg-band-red flex items-center justify-center flex-shrink-0">
+								<svg class="w-3 h-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 								</svg>
 							</div>
@@ -94,8 +95,8 @@
 				<p class="text-star-white/70 mb-6">Hver redaktion skal opfylde følgende krav:</p>
 				<ul class="space-y-4">
 					<li class="flex items-start gap-4">
-						<div class="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-							<span class="text-gold-400 font-bold">1</span>
+						<div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+							<span class="text-night-900 font-black italic">1</span>
 						</div>
 						<div>
 							<span class="text-star-white font-medium">4-7 deltagere</span>
@@ -103,14 +104,14 @@
 						</div>
 					</li>
 					<li class="flex items-start gap-4">
-						<div class="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-							<span class="text-gold-400 font-bold">2</span>
+						<div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+							<span class="text-night-900 font-black italic">2</span>
 						</div>
 						<span class="text-star-white/80">Minimum én leder og en bil pr 2 redaktioner</span>
 					</li>
 					<li class="flex items-start gap-4">
-						<div class="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-							<span class="text-gold-400 font-bold">3</span>
+						<div class="w-8 h-8 rounded-full bg-gold-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+							<span class="text-night-900 font-black italic">3</span>
 						</div>
 						<span class="text-star-white/80">Minimum to computere (gerne flere)</span>
 					</li>
@@ -161,8 +162,8 @@
 						'At være med i legen'
 					] as item}
 						<li class="flex items-center gap-3 text-star-white/80">
-							<div class="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0">
-								<svg class="w-3 h-3 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<div class="w-6 h-6 rounded-full bg-band-red flex items-center justify-center flex-shrink-0">
+								<svg class="w-3 h-3 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
 								</svg>
 							</div>
