@@ -4,4 +4,4 @@
 export type SignupState = 'upcoming' | 'open' | 'closed' | 'held';
 
 // Arrangøruddannelse & planlægningsweekend — styrer både forsidens senior-sektion og tilmeldingssiden.
-export const planningState = 'held' as SignupState;
+export const planningState = 'upcoming' as SignupState;

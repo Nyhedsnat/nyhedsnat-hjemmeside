@@ -188,9 +188,9 @@ Så lederne har god tid til andre ting end at sidde bag et rat.`
 			items: [
 				{
 					question: 'Hvor foregår Nyhedsnat?',
-					answer: `Nyhedsnat foregår på Beder Skole, Skoleparken 6, 8330 Beder.
+					answer: `Nyhedsnat foregår på en skole, som annonceres i uge 40.
 
-Både ankomst, fælles base, overnatning i gymnastiksalen og afslutningen lørdag formiddag er på skolen. Hændelserne foregår rundt i området omkring Beder, og redaktionerne kører derud via kortagekørselssystemet.
+Både ankomst, fælles base, overnatning i gymnastiksalen og afslutningen lørdag formiddag er på skolen. Hændelserne foregår rundt i området omkring skolen, og redaktionerne kører derud via kortagekørselssystemet.
 
 Bemærk: Arrangøruddannelse & planlægningsweekend for seniorer ligger et andet sted – se tilmeldingssiden.`
 				},
@@ -230,19 +230,19 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 	<title>FAQ – NyhedsNat i Landsdel 4</title>
 	<meta
 		name="description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat på Beder Skole, Skoleparken 6, 8330 Beder – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/faq" />
 	<meta property="og:url" content="https://nyhedsnat.dk/faq" />
 	<meta property="og:title" content="FAQ – NyhedsNat i Landsdel 4" />
 	<meta
 		property="og:description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat på Beder Skole, Skoleparken 6, 8330 Beder – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 	<meta name="twitter:title" content="FAQ – NyhedsNat i Landsdel 4" />
 	<meta
 		name="twitter:description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat på Beder Skole, Skoleparken 6, 8330 Beder – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 </svelte:head>
 

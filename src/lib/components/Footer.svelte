@@ -23,8 +23,8 @@
 					Nyhedsnat er et arrangement i FDF Landsdel 4.
 				</p>
 				<p class="text-star-white/50 text-sm mt-3">
-					6.–7. november 2026<br />
-					Beder Skole, Skoleparken 6, 8330 Beder
+					12.–13. november 2027<br />
+					Skole annonceres i uge 40
 				</p>
 			</div>
 

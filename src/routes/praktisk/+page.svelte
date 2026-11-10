@@ -1,12 +1,12 @@
 <svelte:head>
 	<title>Praktisk info – NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 på Beder Skole, Skoleparken 6, 8330 Beder – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
 	<link rel="canonical" href="https://nyhedsnat.dk/praktisk" />
 	<meta property="og:url" content="https://nyhedsnat.dk/praktisk" />
 	<meta property="og:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
-	<meta property="og:description" content="Praktisk information til NyhedsNat i Landsdel 4 på Beder Skole, Skoleparken 6, 8330 Beder – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta property="og:description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
 	<meta name="twitter:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
-	<meta name="twitter:description" content="Praktisk information til NyhedsNat i Landsdel 4 på Beder Skole, Skoleparken 6, 8330 Beder – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta name="twitter:description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">
@@ -17,7 +17,7 @@
 				<span class="text-gradient-gold">Praktisk info</span>
 			</h1>
 			<p class="text-xl text-star-white/60 max-w-2xl mx-auto">
-				For deltagere og ledere · Beder Skole, Skoleparken 6, 8330 Beder
+				For deltagere og ledere
 			</p>
 		</div>
 
@@ -30,10 +30,10 @@
 					Sted
 				</h2>
 				<p class="text-star-white/70 leading-relaxed">
-					NyhedsNat foregår på <span class="font-semibold text-gold-300">Beder Skole</span>, Skoleparken 6, 8330 Beder.
+					NyhedsNat foregår på en skole, som annonceres i uge 40.
 				</p>
 				<p class="text-star-white/50 text-sm mt-3">
-					Både ankomst, base, overnatning og afslutning er på skolen. Hændelserne foregår rundt i området omkring Beder.
+					Både ankomst, base, overnatning og afslutning er på skolen. Hændelserne foregår rundt i området omkring skolen.
 				</p>
 			</section>
 
@@ -44,7 +44,7 @@
 					Overnatning
 				</h2>
 				<p class="text-star-white/70 leading-relaxed">
-					Nyhedsnat er et indendørs arrangement med overnatning på gulv i gymnastiksalen på Beder Skole.
+					Nyhedsnat er et indendørs arrangement med overnatning på gulv i gymnastiksalen på skolen.
 				</p>
 			</section>
 
