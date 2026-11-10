@@ -75,7 +75,7 @@
 				<main class="card-dark rounded-2xl p-8 md:p-10">
 					<div class="mb-8">
 						<p class="mb-2 text-sm font-semibold uppercase tracking-wider text-gold-400/80">Lav avis</p>
-						<h1 class="mb-3 text-3xl font-semibold tracking-tight text-star-white md:text-4xl">{header.title}</h1>
+						<h1 class="mb-3 text-3xl text-star-white md:text-4xl font-black italic">{header.title}</h1>
 						<p class="max-w-2xl text-lg text-star-white/60">{header.subtitle}</p>
 					</div>
 					<slot />

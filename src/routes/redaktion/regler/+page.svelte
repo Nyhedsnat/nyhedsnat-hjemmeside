@@ -1,3 +1,19 @@
+<script lang="ts">
+	import Ban from '@lucide/svelte/icons/ban';
+	import Bot from '@lucide/svelte/icons/bot';
+	import Camera from '@lucide/svelte/icons/camera';
+	import CircleCheck from '@lucide/svelte/icons/circle-check';
+	import Drama from '@lucide/svelte/icons/drama';
+	import Medal from '@lucide/svelte/icons/medal';
+	import Megaphone from '@lucide/svelte/icons/megaphone';
+	import Newspaper from '@lucide/svelte/icons/newspaper';
+	import Palette from '@lucide/svelte/icons/palette';
+	import PenLine from '@lucide/svelte/icons/pen-line';
+	import Scale from '@lucide/svelte/icons/scale';
+	import Trophy from '@lucide/svelte/icons/trophy';
+	import Vote from '@lucide/svelte/icons/vote';
+</script>
+
 <svelte:head>
 	<title>Regler – NyhedsNat i Landsdel 4</title>
 	<meta
@@ -23,20 +39,20 @@
 	<section class="card-dark rounded-2xl p-8">
 		<div class="mb-8 border-b border-gold-500/20 pb-6">
 			<p class="mb-2 text-sm font-semibold tracking-wider text-gold-400/80 uppercase">Lav avis</p>
-			<h1 class="mb-3 text-3xl font-semibold tracking-tight text-star-white md:text-4xl">
+			<h1 class="mb-3 text-3xl text-star-white md:text-4xl font-black italic">
 				Regler for aviser
 			</h1>
 			<p class="max-w-2xl text-lg text-star-white/60">Krav til indhold og aflevering</p>
 		</div>
-		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
-			<span class="text-3xl">📰</span>
+		<h2 class="mb-4 flex items-center gap-3 text-2xl font-extrabold italic uppercase text-gold-500">
+			<Newspaper class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Avisen
 		</h2>
 		<p class="mb-6 text-star-white/60 italic">
 			Inden aflevering anbefales det at gennemgå denne liste.
 		</p>
 
-		<h3 class="mb-4 text-lg font-bold text-star-white">Krav til avisen:</h3>
+		<h3 class="mb-4 text-lg text-star-white font-semibold">Krav til avisen:</h3>
 		<ul class="space-y-4">
 			<li class="flex items-start gap-4">
 				<div
@@ -169,16 +185,16 @@
 
 	<!-- Bedømmelse -->
 	<section class="card-dark rounded-2xl p-8">
-		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
-			<span class="text-3xl">🏆</span>
+		<h2 class="mb-4 flex items-center gap-3 text-2xl font-extrabold italic uppercase text-gold-500">
+			<Trophy class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Bedømmelse af aviser
 		</h2>
 		<p class="mb-6 text-star-white/70">Aviserne bedømmes af 3–4 uvildige personer ud fra:</p>
 
 		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-			{#each [{ title: 'Mest gennemførte visuelle identitet', icon: '🎨' }, { title: 'Avisen med det bedste clickbait', icon: '🪝' }, { title: 'Det sjoveste usæriøse indhold', icon: '😹' }, { title: 'Bedste historier og indhold.', icon: '🖊️' }] as category}
+			{#each [{ title: 'Mest gennemførte visuelle identitet', icon: Palette }, { title: 'Avisen med det bedste clickbait', icon: Megaphone }, { title: 'Det sjoveste usæriøse indhold', icon: Drama }, { title: 'Bedste historier og indhold.', icon: PenLine }] as category}
 				<div class="flex items-center gap-3 rounded-xl bg-night-700/30 p-4">
-					<span class="text-2xl">{category.icon}</span>
+					<category.icon class="size-7 shrink-0 text-gold-500" aria-hidden="true" />
 					<span class="text-star-white/80">{category.title}</span>
 				</div>
 			{/each}
@@ -189,8 +205,8 @@
 
 	<!-- Priser -->
 	<section class="card-dark rounded-2xl border-gold-500/30 p-8">
-		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
-			<span class="text-3xl">🥇</span>
+		<h2 class="mb-4 flex items-center gap-3 text-2xl font-extrabold italic uppercase text-gold-500">
+			<Medal class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Hvem kårer vinderne?
 		</h2>
 		<ul class="space-y-4">
@@ -198,7 +214,7 @@
 				<div
 					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
 				>
-					<span class="text-gold-400">👨‍⚖️</span>
+					<Scale class="size-4 text-gold-500" aria-hidden="true" />
 				</div>
 				<div class="text-star-white/80">
 					<strong class="text-star-white">Bedste avis</strong> kåres udelukkende af en juryen
@@ -208,7 +224,7 @@
 				<div
 					class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20"
 				>
-					<span class="text-gold-400">🗳️</span>
+					<Vote class="size-4 text-gold-500" aria-hidden="true" />
 				</div>
 				<div class="text-star-white/80">
 				
@@ -219,11 +235,11 @@
 		</ul>
 	</section>
 	<!-- AI -->
-	<section class="rounded-2xl border-2 border-gold-500/40 bg-gradient-to-br from-gold-500/10 to-night-700/30 p-8">
+	<section class="rounded-2xl border-2 border-gold-500/40 bg-gold-500/10 p-8">
 		<div class="mb-5 flex items-start gap-4">
-			<span class="text-4xl">🤖</span>
+			<Bot class="size-10 shrink-0 text-gold-500" aria-hidden="true" />
 			<div>
-				<h2 class="text-2xl font-bold text-star-white">Brug af AI i aviserne</h2>
+				<h2 class="text-2xl font-extrabold italic uppercase text-gold-500">Brug af AI i aviserne</h2>
 			</div>
 		</div>
 
@@ -235,7 +251,7 @@
 		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 			<div class="rounded-xl border border-gold-500/20 bg-night-700/40 p-5">
 				<p class="mb-3 flex items-center gap-2 font-bold text-star-white">
-					<span class="text-xl">✅</span> Det må I gerne
+					<CircleCheck class="size-5 shrink-0 text-gold-500" aria-hidden="true" /> Det må I gerne
 				</p>
 				<ul class="space-y-2 text-star-white/75">
 					<li>• Bruge AI til stavekontrol</li>
@@ -244,7 +260,7 @@
 			</div>
 			<div class="rounded-xl border border-red-400/30 bg-red-500/5 p-5">
 				<p class="mb-3 flex items-center gap-2 font-bold text-star-white">
-					<span class="text-xl">🚫</span> Det må I ikke
+					<Ban class="size-5 shrink-0 text-red-300" aria-hidden="true" /> Det må I ikke
 				</p>
 				<ul class="space-y-2 text-star-white/75">
 					<li>• Få AI til at skrive jeres artikler</li>
@@ -253,8 +269,8 @@
 			</div>
 		</div>
 
-		<h3 class="mb-3 flex items-center gap-3 text-lg font-bold text-star-white">
-			<span class="text-2xl">📷</span>
+		<h3 class="mb-3 flex items-center gap-3 text-lg text-star-white font-semibold">
+			<Camera class="size-7 shrink-0 text-gold-500" aria-hidden="true" />
 			Og så lige om billeder
 		</h3>
 		<p class="mb-4 text-star-white/75">

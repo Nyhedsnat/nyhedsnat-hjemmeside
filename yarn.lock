@@ -916,6 +916,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lucide/svelte@npm:^1.70.0":
+  version: 1.70.0
+  resolution: "@lucide/svelte@npm:1.70.0"
+  peerDependencies:
+    svelte: ^5
+  checksum: 10c0/4e5295921b97db15095d954c961b16dbab7cc204c0967696f0ab7a15ba90e7240415cee48a5200d8fbbf5a0f2d6cbc18d1bc929aa77de59603b2322c23b2e684
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^1.1.0":
   version: 1.1.1
   resolution: "@napi-rs/wasm-runtime@npm:1.1.1"
@@ -3039,6 +3048,7 @@ __metadata:
   dependencies:
     "@eslint/compat": "npm:^2.0.1"
     "@eslint/js": "npm:^9.39.2"
+    "@lucide/svelte": "npm:^1.70.0"
     "@sveltejs/adapter-cloudflare": "npm:^7.2.6"
     "@sveltejs/kit": "npm:^2.68.0"
     "@sveltejs/vite-plugin-svelte": "npm:^6.2.4"

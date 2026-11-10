@@ -13,7 +13,7 @@
 	<div class="max-w-4xl mx-auto">
 		<!-- Page Header -->
 		<div class="text-center mb-16">
-			<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-star-white mb-6">
+			<h1 class="text-4xl md:text-5xl lg:text-6xl text-star-white mb-6 font-black italic">
 				<span class="text-gradient-gold">Kontakt os</span>
 			</h1>
 			<p class="text-xl text-star-white/60 max-w-2xl mx-auto">
@@ -35,7 +35,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-xl font-bold text-star-white mb-2">Email</h3>
+				<h3 class="text-xl text-star-white mb-2 font-extrabold italic">Email</h3>
 				<p class="text-star-white/60 mb-4">Send os en mail</p>
 				<a
 					href="mailto:info@nyhedsnat.dk"
@@ -57,7 +57,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="text-xl font-bold text-star-white mb-2">Udvalget</h3>
+				<h3 class="text-xl text-star-white mb-2 font-extrabold italic">Udvalget</h3>
 				<p class="text-star-white/60">
 					Nyhedsnat planlægges og afvikles af et udvalg i Landsdel 4
 				</p>
@@ -67,7 +67,7 @@
 		<!-- Main Contact Section -->
 		<div class="card-dark rounded-3xl p-8 md:p-12 mb-12">
 			<div class="text-center">
-				<h2 class="text-2xl md:text-3xl font-bold text-star-white mb-4">
+				<h2 class="text-2xl md:text-3xl mb-4 font-extrabold italic uppercase text-gold-500">
 					Udvalget bag <span class="text-gradient-gold">Nyhedsnat</span>
 				</h2>
 				<p class="text-star-white/70 text-lg mb-8 max-w-2xl mx-auto">

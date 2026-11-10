@@ -1,7 +1,27 @@
 <script lang="ts">
+	import Lock from '@lucide/svelte/icons/lock';
+	import MapPin from '@lucide/svelte/icons/map-pin';
+	import Newspaper from '@lucide/svelte/icons/newspaper';
+	import Play from '@lucide/svelte/icons/play';
 	import JoinButton from '$lib/components/JoinButton.svelte';
 	import { planningState } from '$lib';
+
+	const archiveUrl = 'https://arkiv.avismaskinen.dk';
 </script>
+
+<!-- 16:9 videoplads. ponytail: pladsholder til godkendelse. Når videoen er klar: skift indholdet ud med
+     <iframe src="…" title={title} class="h-full w-full" allow="fullscreen" loading="lazy"></iframe> -->
+{#snippet videoSlot(title: string)}
+	<div class="relative aspect-video w-full overflow-hidden rounded-2xl bg-night-900/60">
+		<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+			<span class="flex size-16 items-center justify-center rounded-full bg-gold-500">
+				<Play class="ml-1 size-7 fill-current text-night-900" aria-hidden="true" />
+			</span>
+			<p class="font-extrabold text-star-white italic">{title}</p>
+			<p class="text-sm text-star-white/60">Video kommer snart</p>
+		</div>
+	</div>
+{/snippet}
 
 <svelte:head>
 	<title>NyhedsNat i Landsdel 4 – 12.–13. november 2027</title>
@@ -65,18 +85,16 @@
 
 	<div class="relative z-10 mx-auto max-w-4xl text-center">
 		<!-- Main heading -->
-		<h1 class="mb-4 text-4xl font-bold md:text-6xl lg:text-7xl">
-			<span class="text-gradient-gold">NyhedsNat</span>
+		<h1 class="mb-6 text-5xl md:text-7xl lg:text-8xl font-black italic">
+			<span class="text-gradient-gold">Nyheds</span><span class="text-star-white">Nat</span>
 			<br />
-			<span class="text-3xl text-star-white md:text-4xl lg:text-5xl">i Landsdel 4</span>
+			<span class="text-3xl font-extrabold text-star-white md:text-4xl lg:text-5xl">i Landsdel 4</span>
 		</h1>
 
 		<!-- Date badge, with the venue as a smaller line under it -->
 		<div class="mb-8 flex flex-col items-center gap-3">
-			<div class="inline-block rounded-full border border-gold-500/40 bg-gold-500/20 px-6 py-3">
-				<span class="text-xl font-bold text-gold-400 md:text-2xl">12.–13. november 2027</span>
-			</div>
-			<p class="text-base font-medium text-star-white/60">📍 Skole annonceres i uge 40</p>
+			<span class="band text-xl md:text-2xl">12.–13. november 2027</span>
+			<p class="text-base font-medium text-star-white/60"><MapPin class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> Skole annonceres i uge 40</p>
 		</div>
 
 		<!-- Subtitle -->
@@ -95,7 +113,7 @@
 <section class="px-4 pt-8 pb-12">
 	<div class="mx-auto max-w-4xl">
 		<div class="card-dark rounded-3xl p-8 md:p-12">
-			<h2 class="mb-6 text-2xl font-bold text-star-white md:text-3xl">
+			<h2 class="mb-6 text-2xl md:text-3xl font-extrabold italic uppercase text-gold-500">
 				Hvad er <span class="text-gradient-gold">Nyhedsnat</span>?
 			</h2>
 
@@ -110,6 +128,30 @@
 					gymnastiksal og afslutning næste morgen.
 				</p>
 			</div>
+
+			<!-- KONCEPTVIDEO: skjult indtil videoen er klar. Fjern kommentaren for at vise den.
+			<div class="mt-8">{@render videoSlot('Sådan fungerer NyhedsNat')}</div>
+			-->
+		</div>
+	</div>
+</section>
+
+<!-- NyhedsNat 2026: tak-video + avisarkiv -->
+<section class="px-4 py-12">
+	<div class="mx-auto max-w-4xl">
+		<div class="card-dark rounded-3xl p-8 md:p-12">
+			<h2 class="mb-4 text-2xl font-extrabold text-gold-500 uppercase italic md:text-3xl">Tak for NyhedsNat 2026</h2>
+			<p class="mb-8 text-lg leading-relaxed text-star-white/70">
+				Se hvad deltagerne lavede. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>, hvis du er nysgerrig på, hvordan en avis ser ud.
+			</p>
+
+			<!-- TAK-VIDEO 2026: skjult indtil videoen er klar. Fjern kommentaren for at vise den.
+			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026')}</div>
+			-->
+
+			<JoinButton href={archiveUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
+				<Newspaper class="size-5 shrink-0" aria-hidden="true" /> Se aviserne fra 2026
+			</JoinButton>
 		</div>
 	</div>
 </section>
@@ -118,7 +160,7 @@
 <section class="px-4 py-12">
 	<div class="mx-auto max-w-4xl">
 		<div class="card-dark rounded-3xl p-8 md:p-10">
-			<h2 class="mb-4 text-2xl font-bold text-star-white md:text-3xl">
+			<h2 class="mb-4 text-2xl md:text-3xl font-extrabold italic uppercase text-gold-500">
 				Planlæg <span class="text-gradient-gold">NyhedsNat</span> som senior
 			</h2>
 			<div class="mb-7 space-y-4 text-lg leading-relaxed text-star-white/70">
@@ -144,7 +186,7 @@
 					{:else if planningState === 'open'}
 						<p class="font-semibold text-gold-300">Tilmeldingen er åben.</p>
 					{:else}
-						<p class="font-semibold text-red-300">🔒 Tilmeldingen er lukket.</p>
+						<p class="font-semibold text-red-300"><Lock class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> Tilmeldingen er lukket.</p>
 					{/if}
 				{/if}
 			</div>
@@ -163,7 +205,7 @@
 			<!-- Feature Card 1 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
 				>
 					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -174,7 +216,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="mb-3 text-xl font-bold text-star-white">Lav avis</h3>
+				<h3 class="mb-3 text-xl text-star-white font-extrabold italic">Lav avis</h3>
 				<p class="text-star-white/60">
 					Redaktionerne skaber aviser med artikler, billeder, videoer og kreativt indhold gennem
 					hele natten.
@@ -184,7 +226,7 @@
 			<!-- Feature Card 2 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
 				>
 					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -195,7 +237,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="mb-3 text-xl font-bold text-star-white">Oplev hændelser</h3>
+				<h3 class="mb-3 text-xl text-star-white font-extrabold italic">Oplev hændelser</h3>
 				<p class="text-star-white/60">
 					Seniorerne skaber spændende, dramatiske og sjove hændelser, som redaktionerne skal dække.
 				</p>
@@ -204,7 +246,7 @@
 			<!-- Feature Card 3 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/20 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
 				>
 					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
@@ -215,7 +257,7 @@
 						/>
 					</svg>
 				</div>
-				<h3 class="mb-3 text-xl font-bold text-star-white">Fællesskab</h3>
+				<h3 class="mb-3 text-xl text-star-white font-extrabold italic">Fællesskab</h3>
 				<p class="text-star-white/60">
 					En nat med leg, fantasi og fælles oplevelser sammen med andre fra Landsdel 4.
 				</p>
@@ -227,8 +269,8 @@
 <!-- CTA Section -->
 <section class="px-4 py-12">
 	<div class="mx-auto max-w-4xl text-center">
-		<div class="card-dark rounded-3xl p-10 md:p-16">
-			<h2 class="mb-6 text-3xl font-bold text-star-white md:text-4xl">Klar til Nyhedsnat?</h2>
+		<div class="card-dark card-featured rounded-3xl p-10 md:p-16">
+			<h2 class="mb-6 text-3xl md:text-4xl font-extrabold italic uppercase text-gold-500">Klar til Nyhedsnat?</h2>
 			<p class="mb-10 text-xl text-star-white/60">
 				Tilmeld jeres redaktion og vær med til årets mest spændende nat.
 			</p>

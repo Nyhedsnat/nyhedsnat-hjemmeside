@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import { page } from '$app/state';
 
 	let mobileMenuOpen = $state(false);
@@ -66,8 +67,10 @@
 				<!-- Large Logo Area (double-click for streamers!) -->
 				<a href="/" class="group flex items-center gap-3" onclick={closeMobileMenu} ondblclick={handleLogoDoubleClick}>
 					<img
-						src="/svg/logo.svg"
-						alt="NyhedsNat Logo"
+						src="/svg/logo-v2.svg"
+						alt="NyhedsNat"
+						width="604"
+						height="160"
 						class="h-14 w-auto drop-shadow-lg transition-transform duration-300 group-hover:scale-105 sm:h-16 md:h-20 lg:h-24"
 					/>
 				</a>
@@ -117,7 +120,7 @@
 		<div class="pointer-events-none absolute inset-y-0 right-10 hidden items-center md:flex lg:right-14">
 			{#each navLinks.filter((link) => link.href === '/redaktion') as link}
 				<a href={link.href} class={`${getDesktopLinkClass(link.href)} pointer-events-auto`}>
-					<span aria-hidden="true">📰</span>
+					<Newspaper class="inline size-4 shrink-0" aria-hidden="true" />
 					{link.label}
 				</a>
 			{/each}
@@ -139,7 +142,7 @@
 				<div class="mt-3 border-t border-gold-500/20 pt-3">
 					{#each navLinks.filter((link) => link.href === '/redaktion') as link}
 						<a href={link.href} onclick={closeMobileMenu} class={getMobileLinkClass(link.href)}>
-							<span class="mr-2" aria-hidden="true">📰</span>
+							<Newspaper class="inline size-4 shrink-0" aria-hidden="true" />
 							{link.label}
 						</a>
 					{/each}

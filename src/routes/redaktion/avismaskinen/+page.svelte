@@ -1,4 +1,6 @@
 <script lang="ts">
+	import KeyRound from '@lucide/svelte/icons/key-round';
+	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
 	const demoUrl = 'https://demo.avismaskinen.dk';
@@ -22,7 +24,7 @@
 
 {#snippet step(n: number)}
 	<span
-		class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 text-sm font-bold text-gold-300"
+		class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-gold-500 text-sm font-black italic text-night-900"
 		>{n}</span
 	>
 {/snippet}
@@ -50,8 +52,8 @@
 	</section>
 
 	<section class="card-dark rounded-2xl border border-gold-500/20 p-6 md:p-8">
-		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
-			<span class="text-3xl">📰</span>
+		<h2 class="mb-4 flex items-center gap-3 text-2xl font-extrabold italic uppercase text-gold-500">
+			<Newspaper class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Jeres egen avis
 		</h2>
 		<div class="space-y-4 text-star-white/75">
@@ -68,8 +70,8 @@
 	</section>
 
 	<section class="card-dark rounded-2xl border border-gold-500/20 p-6 md:p-8">
-		<h2 class="mb-4 flex items-center gap-3 text-2xl font-bold text-star-white">
-			<span class="text-3xl">🔑</span>
+		<h2 class="mb-4 flex items-center gap-3 text-2xl font-extrabold italic uppercase text-gold-500">
+			<KeyRound class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Sådan logger I ind
 		</h2>
 		<p class="mb-6 text-star-white/75">

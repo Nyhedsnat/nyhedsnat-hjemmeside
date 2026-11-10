@@ -1,3 +1,12 @@
+<script lang="ts">
+	import Backpack from '@lucide/svelte/icons/backpack';
+	import Car from '@lucide/svelte/icons/car';
+	import ClipboardList from '@lucide/svelte/icons/clipboard-list';
+	import House from '@lucide/svelte/icons/house';
+	import MapPin from '@lucide/svelte/icons/map-pin';
+	import Presentation from '@lucide/svelte/icons/presentation';
+</script>
+
 <svelte:head>
 	<title>Praktisk info – NyhedsNat i Landsdel 4</title>
 	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
@@ -13,7 +22,7 @@
 	<div class="max-w-4xl mx-auto">
 		<!-- Page Header -->
 		<div class="text-center mb-16">
-			<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-star-white mb-6">
+			<h1 class="text-4xl md:text-5xl lg:text-6xl text-star-white mb-6 font-black italic">
 				<span class="text-gradient-gold">Praktisk info</span>
 			</h1>
 			<p class="text-xl text-star-white/60 max-w-2xl mx-auto">
@@ -25,8 +34,8 @@
 		<div class="space-y-8">
 			<!-- Sted -->
 			<section class="card-dark rounded-2xl p-8 border-gold-500/30">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">📍</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<MapPin class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					Sted
 				</h2>
 				<p class="text-star-white/70 leading-relaxed">
@@ -39,8 +48,8 @@
 
 			<!-- Overnatning -->
 			<section class="card-dark rounded-2xl p-8">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">🏠</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<House class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					Overnatning
 				</h2>
 				<p class="text-star-white/70 leading-relaxed">
@@ -50,8 +59,8 @@
 
 			<!-- Pakkeliste -->
 			<section class="card-dark rounded-2xl p-8">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">🎒</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<Backpack class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					Pakkeliste for deltagere
 				</h2>
 				<p class="text-star-white/70 mb-6">Deltagerne skal medbringe:</p>
@@ -78,8 +87,8 @@
 
 			<!-- Redaktionskrav -->
 			<section class="card-dark rounded-2xl p-8">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">📋</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<ClipboardList class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					Redaktioner – krav for deltagelse
 				</h2>
 				<p class="text-star-white/70 mb-6">Hver redaktion skal opfylde følgende krav:</p>
@@ -113,8 +122,8 @@
 
 			<!-- Transport -->
 			<section class="card-dark rounded-2xl p-8">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">🚗</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<Car class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					Transport og kortagekørsel
 				</h2>
 				<p class="text-star-white/70 mb-6 leading-relaxed">
@@ -140,8 +149,8 @@
 
 			<!-- For ledere -->
 			<section class="card-dark rounded-2xl p-8 border-gold-500/30">
-				<h2 class="text-2xl font-bold text-star-white mb-4 flex items-center gap-3">
-					<span class="text-3xl">👨‍🏫</span>
+				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
+					<Presentation class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 					For ledere
 				</h2>
 				<p class="text-star-white/70 mb-6">Som leder er din rolle:</p>

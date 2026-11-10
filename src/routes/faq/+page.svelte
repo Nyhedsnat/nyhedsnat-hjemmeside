@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import JoinButton from '$lib/components/JoinButton.svelte';
 
 	type FaqItem = {
@@ -121,6 +123,13 @@ Det handler ikke om tung journalistik, men om at lave noget, det er sjovt at kli
 
 Se et eksempel på en avis her:`,
 					link: { href: 'https://demo.avismaskinen.dk/', label: 'demo.avismaskinen.dk' }
+				},
+				{
+					question: 'Kan mine børn finde ud af det?',
+					answer: `Ja. Redaktionerne laver aviserne sammen, og der er altid seniorer og ledere til at hjælpe.
+
+Se selv, hvad væbnere og seniorvæbnere lavede på NyhedsNat 2026. Alle aviserne ligger i arkivet:`,
+					link: { href: 'https://arkiv.avismaskinen.dk', label: 'arkiv.avismaskinen.dk' }
 				},
 				{
 					question: 'Skal man være god til at skrive for at deltage?',
@@ -250,7 +259,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 	<div class="mx-auto max-w-4xl">
 		<!-- Page Header -->
 		<div class="mb-16 text-center">
-			<h1 class="mb-6 text-4xl font-bold text-star-white md:text-5xl lg:text-6xl">
+			<h1 class="mb-6 text-4xl text-star-white md:text-5xl lg:text-6xl font-black italic">
 				<span class="text-gradient-gold">Ofte stillede spørgsmål</span>
 			</h1>
 			<p class="mx-auto max-w-2xl text-xl text-star-white/60">
@@ -262,7 +271,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 		<div class="space-y-10">
 			{#each faqSections as section, sectionIndex}
 				<section>
-					<h2 class="mb-4 text-2xl font-bold text-gold-400">{section.title}</h2>
+					<h2 class="mb-4 text-2xl font-extrabold italic uppercase text-gold-500">{section.title}</h2>
 					<div class="space-y-4">
 						{#each section.items as faq, index}
 							{@const key = `${sectionIndex}-${index}`}
@@ -271,30 +280,16 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 									onclick={() => toggle(key)}
 									class="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-night-700/30"
 								>
-									<h3 class="pr-4 text-lg font-medium text-star-white">{faq.question}</h3>
-									<div
-										class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gold-500/20 transition-transform duration-300"
-										class:rotate-180={openKey === key}
-									>
-										<svg
-											class="h-4 w-4 text-gold-400"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M19 9l-7 7-7-7"
-											/>
-										</svg>
-									</div>
+									<h3 class="pr-4 text-lg text-star-white font-semibold">{faq.question}</h3>
+									<ChevronDown
+										class="size-6 shrink-0 text-gold-500 transition-transform duration-300 {openKey === key ? 'rotate-180' : ''}"
+										aria-hidden="true"
+									/>
 								</button>
 
 								{#if openKey === key}
 									<div class="animate-fadeIn px-6 pb-6">
-										<div class="border-t border-gold-500/20 pt-4">
+										<div class="border-t border-star-white/10 pt-4">
 											<p class="leading-relaxed whitespace-pre-line text-star-white/70">
 												{faq.answer}
 											</p>
@@ -305,7 +300,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 													rel="noopener noreferrer"
 													class="mt-4 inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10"
 												>
-													<span aria-hidden="true">🗞️</span>
+													<Newspaper class="inline size-4 shrink-0" aria-hidden="true" />
 													{faq.link.label}
 												</a>
 											{/if}
@@ -321,7 +316,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 
 		<!-- Contact CTA -->
 		<div class="card-dark mt-16 rounded-2xl p-8 text-center">
-			<h2 class="mb-4 text-2xl font-bold text-star-white">Har du flere spørgsmål?</h2>
+			<h2 class="mb-4 text-2xl font-extrabold italic uppercase text-gold-500">Har du flere spørgsmål?</h2>
 			<p class="mb-6 text-star-white/60">Vi er altid klar til at hjælpe.</p>
 			<JoinButton href="/kontakt">Kontakt os</JoinButton>
 		</div>

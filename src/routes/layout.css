@@ -9,9 +9,14 @@
 	--color-night-700: #111827;
 	--color-night-600: #1f2937;
 
-	--color-gold-400: #fcd34d;
-	--color-gold-500: #f9c11c;
-	--color-gold-600: #d97706;
+	/* Guld fra designguiden: én flad guld (#F5C94E) til tekst, flader og stjerner. 600 er kun til tryk/hover. */
+	--color-gold-400: #f5c94e;
+	--color-gold-500: #f5c94e;
+	--color-gold-600: #d9a82e;
+
+	/* Kortblå og bånd-rød fra designguiden */
+	--color-card-blue: #1a2a4f;
+	--color-band-red: #d33831;
 
 	--color-star-white: #f8fafc;
 	--color-star-blue: #93c5fd;
@@ -27,7 +32,7 @@ body {
 	background: linear-gradient(180deg, #030712 0%, #0a0e1a 50%, #111827 100%);
 	min-height: 100vh;
 	color: #f8fafc;
-	font-family: 'Inter', system-ui, -apple-system, sans-serif;
+	font-family: 'Exo 2', system-ui, sans-serif; /* designguide: Exo 2 til al tekst */
 }
 
 /* Animated starfield background */
@@ -52,20 +57,20 @@ body {
 		radial-gradient(1px 1px at 20px 30px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 40px 70px, #93c5fd, transparent),
 		radial-gradient(1.5px 1.5px at 50px 160px, #f8fafc, transparent),
-		radial-gradient(1px 1px at 90px 40px, #fcd34d, transparent),
+		radial-gradient(1px 1px at 90px 40px, #f5c94e, transparent),
 		radial-gradient(1.5px 1.5px at 130px 80px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 160px 120px, #93c5fd, transparent),
 		radial-gradient(2px 2px at 200px 50px, #f8fafc, transparent),
-		radial-gradient(1px 1px at 220px 150px, #fcd34d, transparent),
+		radial-gradient(1px 1px at 220px 150px, #f5c94e, transparent),
 		radial-gradient(1.5px 1.5px at 280px 90px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 320px 200px, #93c5fd, transparent),
 		radial-gradient(1px 1px at 350px 60px, #f8fafc, transparent),
-		radial-gradient(2px 2px at 400px 180px, #fcd34d, transparent),
+		radial-gradient(2px 2px at 400px 180px, #f5c94e, transparent),
 		radial-gradient(1px 1px at 450px 30px, #f8fafc, transparent),
 		radial-gradient(1.5px 1.5px at 500px 140px, #93c5fd, transparent),
 		radial-gradient(1px 1px at 550px 80px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 600px 200px, #f8fafc, transparent),
-		radial-gradient(2px 2px at 650px 50px, #fcd34d, transparent),
+		radial-gradient(2px 2px at 650px 50px, #f5c94e, transparent),
 		radial-gradient(1px 1px at 700px 130px, #93c5fd, transparent);
 	background-repeat: repeat;
 	background-size: 700px 250px;
@@ -76,15 +81,15 @@ body {
 	background-image:
 		radial-gradient(1px 1px at 25px 80px, #f8fafc, transparent),
 		radial-gradient(1.5px 1.5px at 75px 25px, #93c5fd, transparent),
-		radial-gradient(1px 1px at 125px 180px, #fcd34d, transparent),
+		radial-gradient(1px 1px at 125px 180px, #f5c94e, transparent),
 		radial-gradient(2px 2px at 175px 100px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 225px 40px, #93c5fd, transparent),
 		radial-gradient(1.5px 1.5px at 275px 160px, #f8fafc, transparent),
-		radial-gradient(1px 1px at 325px 90px, #fcd34d, transparent),
+		radial-gradient(1px 1px at 325px 90px, #f5c94e, transparent),
 		radial-gradient(1px 1px at 375px 220px, #f8fafc, transparent),
 		radial-gradient(2px 2px at 425px 70px, #93c5fd, transparent),
 		radial-gradient(1px 1px at 475px 190px, #f8fafc, transparent),
-		radial-gradient(1.5px 1.5px at 525px 120px, #fcd34d, transparent),
+		radial-gradient(1.5px 1.5px at 525px 120px, #f5c94e, transparent),
 		radial-gradient(1px 1px at 575px 50px, #f8fafc, transparent),
 		radial-gradient(1px 1px at 625px 170px, #93c5fd, transparent),
 		radial-gradient(2px 2px at 675px 110px, #f8fafc, transparent);
@@ -103,7 +108,7 @@ body {
 	position: absolute;
 	width: 100px;
 	height: 2px;
-	background: linear-gradient(90deg, #fcd34d, transparent);
+	background: linear-gradient(90deg, #f5c94e, transparent);
 	border-radius: 50%;
 	animation: shoot 12s ease-in-out infinite;
 	opacity: 0;
@@ -144,32 +149,43 @@ body {
 	}
 }
 
-/* Gold gradient text */
+/* Guld tekst. ponytail: klassenavnet beholdt fra gradient-tiden; designguiden siger flad guld. */
 .text-gradient-gold {
-	background: linear-gradient(135deg, #fcd34d 0%, #f9c11c 50%, #d97706 100%);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
+	color: var(--color-gold-500);
 }
 
 /* Glowing effect for buttons */
 .glow-gold {
-	box-shadow: 0 0 20px rgba(249, 193, 28, 0.3), 0 0 40px rgba(249, 193, 28, 0.1);
+	box-shadow: 0 0 20px rgba(245, 201, 78, 0.3), 0 0 40px rgba(245, 201, 78, 0.1);
 }
 
 .glow-gold:hover {
-	box-shadow: 0 0 30px rgba(249, 193, 28, 0.5), 0 0 60px rgba(249, 193, 28, 0.2);
+	box-shadow: 0 0 30px rgba(245, 201, 78, 0.5), 0 0 60px rgba(245, 201, 78, 0.2);
 }
 
-/* Card styling */
+/* Kort (designguide): kortblå, runde hjørner, ingen kant. Let gennemsigtig så stjernehimlen anes. */
 .card-dark {
-	background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(31, 41, 55, 0.6) 100%);
+	background: rgba(26, 42, 79, 0.55);
 	backdrop-filter: blur(10px);
-	border: 1px solid rgba(249, 193, 28, 0.2);
 }
 
-.card-dark:hover {
-	border-color: rgba(249, 193, 28, 0.4);
+/* Det vigtigste kort på siden: guldkant 3 pt */
+.card-featured {
+	border: 3px solid var(--color-gold-500);
+}
+
+/* Nyhedsbånd: skråt rødt bånd, hvid ExtraBold kursiv. I components-laget, så utilities kan skalere det. */
+@layer components {
+	.band {
+		display: inline-block;
+		background: var(--color-band-red);
+		color: #fff;
+		font-weight: 800;
+		font-style: italic;
+		text-transform: uppercase;
+		padding: 0.3em 1.4em;
+		clip-path: polygon(0.6em 0, 100% 0, calc(100% - 0.6em) 100%, 0 100%);
+	}
 }
 
 /* Navigation active link */
@@ -184,7 +200,7 @@ body {
 	left: 0;
 	width: 0;
 	height: 2px;
-	background: linear-gradient(90deg, #fcd34d, #f9c11c);
+	background: var(--color-gold-500);
 	transition: width 0.3s ease;
 }
 
