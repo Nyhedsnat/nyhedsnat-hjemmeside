@@ -9,10 +9,19 @@
 	const archiveUrl = 'https://arkiv.avismaskinen.dk';
 </script>
 
-<!-- 16:9 videoplads. ponytail: pladsholder til godkendelse. Når videoen er klar: skift indholdet ud med
-     <iframe src="…" title={title} class="h-full w-full" allow="fullscreen" loading="lazy"></iframe> -->
-{#snippet videoSlot(title: string)}
+<!-- 16:9 videoplads. Med YouTube-id vises videoen, uden vises pladsholderen. -->
+{#snippet videoSlot(title: string, youtubeId?: string)}
 	<div class="relative aspect-video w-full overflow-hidden rounded-2xl bg-night-900/60">
+		{#if youtubeId}
+			<iframe
+				src="https://www.youtube-nocookie.com/embed/{youtubeId}"
+				{title}
+				class="absolute inset-0 h-full w-full"
+				allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+				referrerpolicy="strict-origin-when-cross-origin"
+				loading="lazy"
+			></iframe>
+		{:else}
 		<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
 			<span class="flex size-16 items-center justify-center rounded-full bg-gold-500">
 				<Play class="ml-1 size-7 fill-current text-night-900" aria-hidden="true" />
@@ -20,6 +29,7 @@
 			<p class="font-extrabold text-star-white italic">{title}</p>
 			<p class="text-sm text-star-white/60">Video kommer snart</p>
 		</div>
+		{/if}
 	</div>
 {/snippet}
 
@@ -145,9 +155,7 @@
 				Se hvad deltagerne lavede. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>, hvis du er nysgerrig på, hvordan en avis ser ud.
 			</p>
 
-			<!-- TAK-VIDEO 2026: skjult indtil videoen er klar. Fjern kommentaren for at vise den.
-			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026')}</div>
-			-->
+			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026', 'dW8_goBJ4y8')}</div>
 
 			<JoinButton href={archiveUrl} variant="secondary" target="_blank" rel="noopener noreferrer">
 				<Newspaper class="size-5 shrink-0" aria-hidden="true" /> Se aviserne fra 2026
