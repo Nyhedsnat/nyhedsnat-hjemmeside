@@ -14,7 +14,7 @@
 
 	// Irregular blob outline so a puddle reads as a real puddle, not a clean ellipse.
 	function blobRadius() {
-		const r = () => 35 + Math.floor(Math.random() * 35); // 35–70%
+		const r = () => 35 + Math.floor(Math.random() * 35); // 35-70%
 		return `${r()}% ${r()}% ${r()}% ${r()}% / ${r()}% ${r()}% ${r()}% ${r()}%`;
 	}
 

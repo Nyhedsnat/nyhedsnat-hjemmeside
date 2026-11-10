@@ -1,12 +1,12 @@
 <svelte:head>
-	<title>Tilmelding & indbydelse – NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.–13. november 2027." />
+	<title>Tilmelding & indbydelse - NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.-13. november 2027." />
 	<link rel="canonical" href="https://nyhedsnat.dk/tilmelding" />
 	<meta property="og:url" content="https://nyhedsnat.dk/tilmelding" />
-	<meta property="og:title" content="Tilmelding & indbydelse – NyhedsNat i Landsdel 4" />
-	<meta property="og:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.–13. november 2027." />
-	<meta name="twitter:title" content="Tilmelding & indbydelse – NyhedsNat i Landsdel 4" />
-	<meta name="twitter:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.–13. november 2027." />
+	<meta property="og:title" content="Tilmelding & indbydelse - NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.-13. november 2027." />
+	<meta name="twitter:title" content="Tilmelding & indbydelse - NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Download indbydelser og tilmeld jeres redaktion til NyhedsNat i Landsdel 4 den 12.-13. november 2027." />
 </svelte:head>
 
 <script lang="ts">
@@ -53,7 +53,7 @@
 			</div>
 			<p class="text-star-white/70 mb-5">
 				<span class="font-semibold text-star-white">Sted: {nyhedsnatLocation}.</span>
-				Datoen er 12.–13. november 2027.
+				Datoen er 12.-13. november 2027.
 			</p>
 			<p class="text-star-white/70 mb-5">
 				Seniorer deltager enten som planlæggere eller som seniordeltagere. Seniordeltagere får en rolle på dagen og er med til at afvikle hændelserne. De tilmeldes her sammen med redaktionerne.

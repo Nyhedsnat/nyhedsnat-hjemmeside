@@ -8,14 +8,14 @@
 </script>
 
 <svelte:head>
-	<title>Praktisk info – NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<title>Praktisk info - NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Praktisk information til NyhedsNat i Landsdel 4 - sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
 	<link rel="canonical" href="https://nyhedsnat.dk/praktisk" />
 	<meta property="og:url" content="https://nyhedsnat.dk/praktisk" />
-	<meta property="og:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
-	<meta property="og:description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
-	<meta name="twitter:title" content="Praktisk info – NyhedsNat i Landsdel 4" />
-	<meta name="twitter:description" content="Praktisk information til NyhedsNat i Landsdel 4 – sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta property="og:title" content="Praktisk info - NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Praktisk information til NyhedsNat i Landsdel 4 - sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
+	<meta name="twitter:title" content="Praktisk info - NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Praktisk information til NyhedsNat i Landsdel 4 - sted, overnatning, transport, udstyr og andre vigtige detaljer for deltagere og ledere." />
 </svelte:head>
 
 <div class="min-h-screen px-4 py-12">
@@ -89,7 +89,7 @@
 			<section class="card-dark rounded-2xl p-8">
 				<h2 class="text-2xl mb-4 flex items-center gap-3 font-extrabold italic uppercase text-gold-500">
 					<ClipboardList class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
-					Redaktioner – krav for deltagelse
+					Redaktioner - krav for deltagelse
 				</h2>
 				<p class="text-star-white/70 mb-6">Hver redaktion skal opfylde følgende krav:</p>
 				<ul class="space-y-4">
@@ -98,7 +98,7 @@
 							<span class="text-gold-400 font-bold">1</span>
 						</div>
 						<div>
-							<span class="text-star-white font-medium">4–7 deltagere</span>
+							<span class="text-star-white font-medium">4-7 deltagere</span>
 							<span class="text-star-white/50"> (færre er ikke muligt)</span>
 						</div>
 					</li>

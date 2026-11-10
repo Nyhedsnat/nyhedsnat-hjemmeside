@@ -78,16 +78,16 @@ Seniordeltagere kan blive bedt om selv at medbringe kostume.`
 
 Nogle seniorer er udvalgt på forhånd til at planlægge hændelser. Andre seniorer får roller tildelt på dagen og indgår i hændelsesafviklingen.
 
-Seniorerne leger andre mennesker – og væbnere og seniorvæbnere leger journalister.`
+Seniorerne leger andre mennesker - og væbnere og seniorvæbnere leger journalister.`
 				},
 				{
 					question:
-						'Skal seniorer tilmelde sig både selve arrangementet og planlægningsweekenden – eller dækker planlægningsweekenden begge dele?',
+						'Skal seniorer tilmelde sig både selve arrangementet og planlægningsweekenden - eller dækker planlægningsweekenden begge dele?',
 					answer: `Man skal tilmelde sig begge dele. Arrangøruddannelse & planlægningsweekend for seniorer og selve Nyhedsnat er to separate tilmeldinger.
 
 Prisen for planlægningsweekenden er høj, fordi det både er et kursus og en workshop.
 
-I skal desuden vælge, om kredsen betaler, eller om senioren selv betaler. Hvis kredsen betaler, kan I søge kommunen om "kursustilskud", ligesom man i nogle kommuner gør ved andre kurser – og på den måde få dækket det meste af beløbet.`
+I skal desuden vælge, om kredsen betaler, eller om senioren selv betaler. Hvis kredsen betaler, kan I søge kommunen om "kursustilskud", ligesom man i nogle kommuner gør ved andre kurser - og på den måde få dækket det meste af beløbet.`
 				},
 				{
 					question: 'Skal der være en leder med til planlægningsweekenden?',
@@ -117,12 +117,12 @@ Kredse kan slå sig sammen, hvis man ikke selv har deltagere nok til en hel reda
 					question: 'Hvad mener vi med en avis?',
 					answer: `Ikke en tung avis med lange artikler.
 
-Aviserne er digitale og består af korte, klikbare nyheder – fyldt med horoskoper, quizzer, billeder, videoer og andet kreativt indhold.
+Aviserne er digitale og består af korte, klikbare nyheder - fyldt med horoskoper, quizzer, billeder, videoer og andet kreativt indhold.
 
 Det handler ikke om tung journalistik, men om at lave noget, det er sjovt at klikke sig igennem.
 
-Se et eksempel på en avis her:`,
-					link: { href: 'https://demo.avismaskinen.dk/', label: 'demo.avismaskinen.dk' }
+Se aviserne fra 2026 her:`,
+					link: { href: 'https://arkiv.avismaskinen.dk/2026/', label: 'arkiv.avismaskinen.dk' }
 				},
 				{
 					question: 'Kan mine børn finde ud af det?',
@@ -155,7 +155,7 @@ Derudover sørger udvalget for, at der er IT-kyndige frivillige til stede hele n
 					question: 'Kan mine væbnere finde ud af det her?',
 					answer: `Ja. Erfaringen er, at væbnere hurtigt finder ind i legen.
 
-Rammerne er tydelige, opgaverne er konkrete, og der er voksne og seniorer omkring dem hele tiden. Det er ikke en konkurrence i at være dygtigst – men i at være kreativ og have det sjovt sammen.`
+Rammerne er tydelige, opgaverne er konkrete, og der er voksne og seniorer omkring dem hele tiden. Det er ikke en konkurrence i at være god til at skrive - men en konkurrence i at lege, man er en journalist.`
 				}
 			]
 		},
@@ -177,7 +177,7 @@ Hvornår man går i seng, er op til den enkelte redaktion (læs: mest lederne).`
 Deltagergebyret er 135 kr. Oveni lægger I kredsens egne udgifter:
 
 • Kørsel til og fra arrangementet
-• Kørsel under arrangementet – forvent 50-100 km pr. redaktion
+• Kørsel under arrangementet - forvent 50-100 km pr. redaktion
 • Aftensmad, hvis I spiser sammen i kredsen. I kan selv vælge, om I spiser inden I kører hjemmefra, eller når I kommer hjem igen
 
 Derfor er det lettest at tilmelde samlet i kredsen, så I kan lægge det hele sammen til én pris.`
@@ -201,11 +201,11 @@ Så lederne har god tid til andre ting end at sidde bag et rat.`
 
 Både ankomst, fælles base, overnatning i gymnastiksalen og afslutningen lørdag formiddag er på skolen. Hændelserne foregår rundt i området omkring skolen, og redaktionerne kører derud via kortagekørselssystemet.
 
-Bemærk: Arrangøruddannelse & planlægningsweekend for seniorer ligger et andet sted – se tilmeldingssiden.`
+Bemærk: Arrangøruddannelse & planlægningsweekend for seniorer ligger et andet sted - se tilmeldingssiden.`
 				},
 				{
 					question: 'Hvad koster det at deltage?',
-					answer: `Det koster 135 kr. pr. deltager – både for væbnere, seniorvæbnere og seniorer. Tilmelding foregår kredsvis.
+					answer: `Det koster 135 kr. pr. deltager - både for væbnere, seniorvæbnere og seniorer. Tilmelding foregår kredsvis.
 
 I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
 
@@ -236,22 +236,22 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 </script>
 
 <svelte:head>
-	<title>FAQ – NyhedsNat i Landsdel 4</title>
+	<title>FAQ - NyhedsNat i Landsdel 4</title>
 	<meta
 		name="description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat - hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/faq" />
 	<meta property="og:url" content="https://nyhedsnat.dk/faq" />
-	<meta property="og:title" content="FAQ – NyhedsNat i Landsdel 4" />
+	<meta property="og:title" content="FAQ - NyhedsNat i Landsdel 4" />
 	<meta
 		property="og:description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat - hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
-	<meta name="twitter:title" content="FAQ – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:title" content="FAQ - NyhedsNat i Landsdel 4" />
 	<meta
 		name="twitter:description"
-		content="Svar på de mest stillede spørgsmål om NyhedsNat – hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
+		content="Svar på de mest stillede spørgsmål om NyhedsNat - hvem planlægger, hvordan man deltager, hvad man skal medbringe og mere."
 	/>
 </svelte:head>
 
@@ -298,7 +298,7 @@ Oveni kommer kredsens egne udgifter til kørsel og eventuel fællesspisning. Dem
 													href={faq.link.href}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="mt-4 inline-flex items-center gap-2 rounded-full border border-gold-500/40 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:border-gold-400 hover:bg-gold-500/10"
+													class="btn btn-outline mt-4 text-sm"
 												>
 													<Newspaper class="inline size-4 shrink-0" aria-hidden="true" />
 													{faq.link.label}

@@ -186,6 +186,39 @@ body {
 		padding: 0.3em 1.4em;
 		clip-path: polygon(0.6em 0, 100% 0, calc(100% - 0.6em) 100%, 0 100%);
 	}
+
+	/* Knapper: afrundede som kortene, ExtraBold kursiv. Bevidst IKKE båndets skrå form,
+	   så de ikke forveksles med mærkater som datobåndet. Størrelse styres med text-*. */
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6em;
+		font-weight: 800;
+		font-style: italic;
+		padding: 0.75em 1.6em;
+		border: 2px solid var(--color-gold-500);
+		border-radius: 0.75rem;
+		transition: background-color 0.2s, color 0.2s, transform 0.2s;
+	}
+	.btn:hover {
+		transform: translateY(-1px);
+	}
+	.btn-gold {
+		background: var(--color-gold-500);
+		color: var(--color-night-900);
+	}
+	.btn-gold:hover {
+		background: var(--color-gold-600);
+		border-color: var(--color-gold-600);
+	}
+	.btn-outline {
+		color: var(--color-gold-500);
+	}
+	.btn-outline:hover {
+		background: var(--color-gold-500);
+		color: var(--color-night-900);
+	}
 }
 
 /* Navigation active link */

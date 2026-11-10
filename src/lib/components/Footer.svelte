@@ -23,7 +23,7 @@
 					Nyhedsnat er et arrangement i FDF Landsdel 4.
 				</p>
 				<p class="text-star-white/50 text-sm mt-3">
-					12.–13. november 2027<br />
+					12.-13. november 2027<br />
 					Skole annonceres i uge 40
 				</p>
 			</div>

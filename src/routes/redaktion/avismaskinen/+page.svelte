@@ -10,15 +10,15 @@
 </script>
 
 <svelte:head>
-	<title>Avismaskinen – NyhedsNat</title>
+	<title>Avismaskinen - NyhedsNat</title>
 	<meta name="description" content={description} />
 	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/avismaskinen" />
 	<!-- Open Graph -->
 	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/avismaskinen" />
-	<meta property="og:title" content="Avismaskinen – NyhedsNat" />
+	<meta property="og:title" content="Avismaskinen - NyhedsNat" />
 	<meta property="og:description" content={description} />
 	<!-- Twitter Card -->
-	<meta name="twitter:title" content="Avismaskinen – NyhedsNat" />
+	<meta name="twitter:title" content="Avismaskinen - NyhedsNat" />
 	<meta name="twitter:description" content={description} />
 </svelte:head>
 
@@ -33,12 +33,12 @@
 	<section class="space-y-4 text-star-white/75">
 		<p>
 			Avismaskinen er det værktøj, I bygger jeres avis i. Avisen er digital, så den er lavet til at
-			blive læst på en telefon – ikke printet ud.
+			blive læst på en telefon - ikke printet ud.
 		</p>
 		<p>
 			En avis består af korte, klikbare nyheder med billeder og video. Der er også plads til alt det
 			andet: horoskoper, quizzer, afstemninger, opskrifter, anmeldelser og hvad I ellers finder på.
-			Det behøver ikke være tung journalistik – det skal være sjovt at klikke sig igennem.
+			Det behøver ikke være tung journalistik - det skal være sjovt at klikke sig igennem.
 		</p>
 
 		<div class="flex flex-wrap gap-3">
@@ -76,7 +76,7 @@
 		</h2>
 		<p class="mb-6 text-star-white/75">
 			I skal ikke huske et brugernavn eller en adgangskode. Hele holdet deler én
-			<span class="font-semibold text-star-white">holdkode</span> – fire bogstaver og to tal, fx
+			<span class="font-semibold text-star-white">holdkode</span> - fire bogstaver og to tal, fx
 			<span class="font-semibold text-gold-300">HEST-42</span>. Jeres leder får koden på SMS, så
 			snart avisen er oprettet.
 		</p>
@@ -127,7 +127,7 @@
 				igen.
 			</p>
 			<p>
-				Når I er logget ind, redigerer I avisen direkte – laver forsiden, skriver artikler, lægger
+				Når I er logget ind, redigerer I avisen direkte - laver forsiden, skriver artikler, lægger
 				billeder og video ind og gør avisen klar til aflevering.
 			</p>
 		</div>

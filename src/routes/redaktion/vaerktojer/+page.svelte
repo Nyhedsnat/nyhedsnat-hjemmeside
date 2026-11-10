@@ -1,24 +1,30 @@
 <svelte:head>
-	<title>Anbefalede værktøjer – NyhedsNat</title>
+	<title>Anbefalede værktøjer - NyhedsNat</title>
 	<meta
 		name="description"
-		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat - billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/vaerktojer" />
 	<!-- Open Graph -->
 	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/vaerktojer" />
-	<meta property="og:title" content="Anbefalede værktøjer – NyhedsNat" />
+	<meta property="og:title" content="Anbefalede værktøjer - NyhedsNat" />
 	<meta
 		property="og:description"
-		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat - billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
 	/>
 	<!-- Twitter Card -->
-	<meta name="twitter:title" content="Anbefalede værktøjer – NyhedsNat" />
+	<meta name="twitter:title" content="Anbefalede værktøjer - NyhedsNat" />
 	<meta
 		name="twitter:description"
-		content="Anbefalede værktøjer til jeres avis under NyhedsNat – billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
+		content="Anbefalede værktøjer til jeres avis under NyhedsNat - billedredigering, layout, logo og video. I er frie i valget; kravet er blot, at avisen laves i Avismaskinen."
 	/>
 </svelte:head>
+
+<script lang="ts">
+	import X from '@lucide/svelte/icons/x';
+
+	let uvrGuide: HTMLDialogElement;
+</script>
 
 <div class="space-y-10 text-star-white/80">
 	<section class="space-y-4">
@@ -107,24 +113,44 @@
 		</div>
 
 		<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
-			<h3 class="text-star-white font-extrabold italic">Guide: Gør tale tydelig med Ultimate Vocal Remover</h3>
-			<p class="mt-1 text-sm">
+			<h3 class="text-star-white font-extrabold italic">Ultimate Vocal Remover</h3>
+			<p class="mt-1 text-sm">God hvis I vil: gøre tale tydelig, når der er larm eller musik i baggrunden.</p>
+			<p class="mt-1 text-sm">Vælg denne hvis: man ikke kan høre, hvad der bliver sagt i jeres klip.</p>
+			<div class="mt-3 flex flex-wrap gap-2">
+				<button type="button" onclick={() => uvrGuide.showModal()} class="rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Se guiden</button>
+				<a href="https://ultimatevocalremover.com" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Hent Ultimate Vocal Remover</a>
+			</div>
+		</div>
+
+		<!-- Native dialog: Esc og klik udenfor lukker den -->
+		<dialog
+			bind:this={uvrGuide}
+			onclick={(e) => e.target === uvrGuide && uvrGuide.close()}
+			class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl bg-card-blue p-6 text-star-white/80 backdrop:bg-night-900/80 backdrop:backdrop-blur-sm"
+		>
+			<div class="flex items-start justify-between gap-4">
+				<h3 class="text-xl text-star-white font-extrabold italic">Gør tale tydelig med Ultimate Vocal Remover</h3>
+				<button type="button" onclick={() => uvrGuide.close()} aria-label="Luk guiden" class="shrink-0 text-gold-400 hover:text-gold-600">
+					<X class="size-6" aria-hidden="true" />
+				</button>
+			</div>
+			<p class="mt-3 text-sm">
 				Kan man ikke høre, hvad der bliver sagt i jeres klip, fordi der er larm, musik eller andre
 				mennesker i baggrunden? Ultimate Vocal Remover kan trække stemmerne ud og skære støjen fra.
 				Det er gratis, kræver ingen konto og kører på computeren (Mac og Windows).
 			</p>
-			<ol class="mt-3 list-decimal space-y-1 pl-5 text-sm">
-				<li>Få en voksen til at hente og installere programmet. Gør det hjemmefra, det er en stor fil.</li>
+			<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm">
+				<li>Hent og installer programmet.</li>
 				<li>Åbn programmet, og træk jeres videoklip ind i vinduet. Almindelige videofiler fra telefonen (.mp4 og .mov) virker.</li>
 				<li>Vælg <span class="font-semibold text-star-white">Demucs</span> under "Choose Process Method".</li>
 				<li>Vælg en mappe under "Select Output", og tryk <span class="font-semibold text-star-white">Start Processing</span>.</li>
 				<li>Efter et par minutter ligger lyden delt op i filer i mappen. Brug filen med <span class="font-semibold text-star-white">Vocals</span> i navnet. Det er stemmerne uden støj.</li>
 				<li>I CapCut: slå lyden fra på jeres klip, og læg Vocals-filen ind under i stedet.</li>
 			</ol>
-			<p class="mt-3 text-sm text-star-white/60">
+			<p class="mt-4 text-sm text-star-white/60">
 				Virker bedst på larm og musik. Folk, der snakker tæt på mikrofonen i baggrunden, kan godt blive hængende.
 			</p>
-			<a href="https://ultimatevocalremover.com" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Hent Ultimate Vocal Remover</a>
-		</div>
+			<a href="https://ultimatevocalremover.com" target="_blank" rel="noopener noreferrer" class="mt-4 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Hent Ultimate Vocal Remover</a>
+		</dialog>
 	</section>
 </div>

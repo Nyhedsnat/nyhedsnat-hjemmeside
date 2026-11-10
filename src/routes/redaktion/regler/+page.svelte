@@ -15,22 +15,22 @@
 </script>
 
 <svelte:head>
-	<title>Regler – NyhedsNat i Landsdel 4</title>
+	<title>Regler - NyhedsNat i Landsdel 4</title>
 	<meta
 		name="description"
-		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
+		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 - krav til indhold, format og deadline."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/redaktion/regler" />
 	<meta property="og:url" content="https://nyhedsnat.dk/redaktion/regler" />
-	<meta property="og:title" content="Regler – NyhedsNat i Landsdel 4" />
+	<meta property="og:title" content="Regler - NyhedsNat i Landsdel 4" />
 	<meta
 		property="og:description"
-		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
+		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 - krav til indhold, format og deadline."
 	/>
-	<meta name="twitter:title" content="Regler – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:title" content="Regler - NyhedsNat i Landsdel 4" />
 	<meta
 		name="twitter:description"
-		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 – krav til indhold, format og deadline."
+		content="Regler for avisen og bedømmelse ved NyhedsNat i Landsdel 4 - krav til indhold, format og deadline."
 	/>
 </svelte:head>
 
@@ -189,7 +189,7 @@
 			<Trophy class="size-8 shrink-0 text-gold-500" aria-hidden="true" />
 			Bedømmelse af aviser
 		</h2>
-		<p class="mb-6 text-star-white/70">Aviserne bedømmes af 3–4 uvildige personer ud fra:</p>
+		<p class="mb-6 text-star-white/70">Aviserne bedømmes af 3-4 uvildige personer ud fra:</p>
 
 		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 			{#each [{ title: 'Mest gennemførte visuelle identitet', icon: Palette }, { title: 'Avisen med det bedste clickbait', icon: Megaphone }, { title: 'Det sjoveste usæriøse indhold', icon: Drama }, { title: 'Bedste historier og indhold.', icon: PenLine }] as category}
@@ -245,7 +245,7 @@
 
 		<p class="mb-6 text-star-white/75">
 			Vi forventer, at I skriver jeres tekst selv. Det er jeres oplevelser, jeres vinkler og jeres
-			humor, der gør avisen værd at læse – og det kan en maskine ikke gøre for jer.
+			humor, der gør avisen værd at læse - og det kan en maskine ikke gøre for jer.
 		</p>
 
 		<div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">

@@ -1,12 +1,12 @@
 <svelte:head>
-	<title>Program – NyhedsNat i Landsdel 4</title>
-	<meta name="description" content="Program for NyhedsNat i Landsdel 4 den 12.–13. november 2027 – se tidsplan for aftenen og natten." />
+	<title>Program - NyhedsNat i Landsdel 4</title>
+	<meta name="description" content="Program for NyhedsNat i Landsdel 4 den 12.-13. november 2027 - se tidsplan for aftenen og natten." />
 	<link rel="canonical" href="https://nyhedsnat.dk/program" />
 	<meta property="og:url" content="https://nyhedsnat.dk/program" />
-	<meta property="og:title" content="Program – NyhedsNat i Landsdel 4" />
-	<meta property="og:description" content="Program for NyhedsNat i Landsdel 4 den 12.–13. november 2027 – se tidsplan for aftenen og natten." />
-	<meta name="twitter:title" content="Program – NyhedsNat i Landsdel 4" />
-	<meta name="twitter:description" content="Program for NyhedsNat i Landsdel 4 den 12.–13. november 2027 – se tidsplan for aftenen og natten." />
+	<meta property="og:title" content="Program - NyhedsNat i Landsdel 4" />
+	<meta property="og:description" content="Program for NyhedsNat i Landsdel 4 den 12.-13. november 2027 - se tidsplan for aftenen og natten." />
+	<meta name="twitter:title" content="Program - NyhedsNat i Landsdel 4" />
+	<meta name="twitter:description" content="Program for NyhedsNat i Landsdel 4 den 12.-13. november 2027 - se tidsplan for aftenen og natten." />
 </svelte:head>
 
 <script lang="ts">
@@ -39,9 +39,9 @@
 
 				<!-- Timeline Items -->
 				{#each [
-					{ time: '18:30–19:15', title: 'Deltagerankomst', icon: Car },
+					{ time: '18:30-19:15', title: 'Deltagerankomst', icon: Car },
 					{ time: '19:30', title: 'Fælles Velkomst', icon: Hand },
-					{ time: '20:00–01:00', title: 'Hændelser', icon: Zap },
+					{ time: '20:00-01:00', title: 'Hændelser', icon: Zap },
 					{ time: '01:00', title: 'Natmad', icon: Pizza },
 					{ time: '', title: 'Sove eller arbejde på aviser', icon: Bed },
 					{ time: '04:00', title: 'Deadline for Aflevering af aviser, reel og pressefoto', icon: Newspaper },

@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Animationstest – NyhedsNat</title>
+	<title>Animationstest - NyhedsNat</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -12,7 +12,7 @@
 		<h1 class="text-2xl text-star-white sm:text-3xl font-black italic">Animationstest</h1>
 		<p class="text-star-white/70">
 			Alle køretøjernes klik-animationer (easter eggs) i ét overblik. Klik på et felt for at
-			afspille animationen – klik igen for at gentage.
+			afspille animationen - klik igen for at gentage.
 		</p>
 	</header>
 

@@ -44,7 +44,7 @@
 				id: uid++,
 				lx,
 				by,
-				d: Math.random() * 2.8 + 5.2, // slow fall (~5–8s)
+				d: Math.random() * 2.8 + 5.2, // slow fall (~5-8s)
 				delay: (i / N) * 12 + Math.random() * 0.5, // spread over ~12s
 				sx: cloudX - (lx / 100) * iw, // px from resting spot back to the cloud emit point
 				sy: cloudY - restY, // px from resting spot up to the cloud emit point (negative)

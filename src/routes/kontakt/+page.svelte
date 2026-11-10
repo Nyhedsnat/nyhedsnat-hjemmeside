@@ -1,11 +1,11 @@
 <svelte:head>
-	<title>Kontakt – NyhedsNat i Landsdel 4</title>
+	<title>Kontakt - NyhedsNat i Landsdel 4</title>
 	<meta name="description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
 	<link rel="canonical" href="https://nyhedsnat.dk/kontakt" />
 	<meta property="og:url" content="https://nyhedsnat.dk/kontakt" />
-	<meta property="og:title" content="Kontakt – NyhedsNat i Landsdel 4" />
+	<meta property="og:title" content="Kontakt - NyhedsNat i Landsdel 4" />
 	<meta property="og:description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
-	<meta name="twitter:title" content="Kontakt – NyhedsNat i Landsdel 4" />
+	<meta name="twitter:title" content="Kontakt - NyhedsNat i Landsdel 4" />
 	<meta name="twitter:description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
 </svelte:head>
 
@@ -25,8 +25,8 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
 			<!-- Email Card -->
 			<div class="card-dark rounded-2xl p-8 text-center hover:scale-105 transition-transform">
-				<div class="w-16 h-16 rounded-full bg-gold-500/20 flex items-center justify-center mx-auto mb-6">
-					<svg class="w-8 h-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="w-16 h-16 rounded-full bg-band-red flex items-center justify-center mx-auto mb-6">
+					<svg class="w-8 h-8 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -47,8 +47,8 @@
 
 			<!-- About Card -->
 			<div class="card-dark rounded-2xl p-8 text-center">
-				<div class="w-16 h-16 rounded-full bg-gold-500/20 flex items-center justify-center mx-auto mb-6">
-					<svg class="w-8 h-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="w-16 h-16 rounded-full bg-band-red flex items-center justify-center mx-auto mb-6">
+					<svg class="w-8 h-8 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"

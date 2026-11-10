@@ -34,24 +34,24 @@
 {/snippet}
 
 <svelte:head>
-	<title>NyhedsNat i Landsdel 4 – 12.–13. november 2027</title>
+	<title>NyhedsNat i Landsdel 4 - 12.-13. november 2027</title>
 	<meta
 		name="description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.–13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/" />
 	<!-- Open Graph -->
 	<meta property="og:url" content="https://nyhedsnat.dk/" />
-	<meta property="og:title" content="NyhedsNat i Landsdel 4 – 12.–13. november 2027" />
+	<meta property="og:title" content="NyhedsNat i Landsdel 4 - 12.-13. november 2027" />
 	<meta
 		property="og:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.–13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- Twitter Card -->
-	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 – 12.–13. november 2027" />
+	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 - 12.-13. november 2027" />
 	<meta
 		name="twitter:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.–13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- JSON-LD Event -->
 	{@html `<script type="application/ld+json">${JSON.stringify({
@@ -59,7 +59,7 @@
 		'@type': 'Event',
 		name: 'NyhedsNat i Landsdel 4',
 		description:
-			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.–13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser.',
+			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser.',
 		startDate: '2027-11-12T18:00:00+01:00',
 		endDate: '2027-11-13T10:00:00+01:00',
 		eventStatus: 'https://schema.org/EventScheduled',
@@ -103,7 +103,7 @@
 
 		<!-- Date badge, with the venue as a smaller line under it -->
 		<div class="mb-8 flex flex-col items-center gap-3">
-			<span class="band text-xl md:text-2xl">12.–13. november 2027</span>
+			<span class="band text-xl md:text-2xl">12.-13. november 2027</span>
 			<p class="text-base font-medium text-star-white/60"><MapPin class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> Skole annonceres i uge 40</p>
 		</div>
 
@@ -213,9 +213,9 @@
 			<!-- Feature Card 1 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-band-red transition-transform group-hover:scale-110"
 				>
-					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-8 w-8 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -234,9 +234,9 @@
 			<!-- Feature Card 2 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-band-red transition-transform group-hover:scale-110"
 				>
-					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-8 w-8 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -254,9 +254,9 @@
 			<!-- Feature Card 3 -->
 			<div class="card-dark group rounded-2xl p-8 transition-all duration-300 hover:scale-105">
 				<div
-					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/15 transition-transform group-hover:scale-110"
+					class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-band-red transition-transform group-hover:scale-110"
 				>
-					<svg class="h-8 w-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="h-8 w-8 text-star-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
