@@ -22,7 +22,7 @@
 	const planningSignupDeadlineText: string | null = null;
 	const nyhedsnatLocation = 'Skole annonceres i uge 40';
 	const planningLocation = 'Annonceres senere';
-	const pricePerParticipant = '125 kr.';
+	const pricePerParticipant = '135 kr.';
 </script>
 
 <div class="min-h-screen px-4 py-12">

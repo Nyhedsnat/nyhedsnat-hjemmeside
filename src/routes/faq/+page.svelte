@@ -165,7 +165,7 @@ Hvornår man går i seng, er op til den enkelte redaktion (læs: mest lederne).`
 					question: 'Hvad skal vi selv lægge oveni prisen?',
 					answer: `Indbydelsen er en skabelon, hvor I selv sætter prisen og et mødested.
 
-Deltagergebyret er 125 kr. Oveni lægger I kredsens egne udgifter:
+Deltagergebyret er 135 kr. Oveni lægger I kredsens egne udgifter:
 
 • Kørsel til og fra arrangementet
 • Kørsel under arrangementet – forvent 50-100 km pr. redaktion
@@ -196,7 +196,7 @@ Bemærk: Arrangøruddannelse & planlægningsweekend for seniorer ligger et andet
 				},
 				{
 					question: 'Hvad koster det at deltage?',
-					answer: `Det koster 125 kr. pr. deltager – både for væbnere, seniorvæbnere og seniorer. Tilmelding foregår kredsvis.
+					answer: `Det koster 135 kr. pr. deltager – både for væbnere, seniorvæbnere og seniorer. Tilmelding foregår kredsvis.
 
 I prisen indgår natmad fra fredag til lørdag og morgenmad lørdag morgen.
 
