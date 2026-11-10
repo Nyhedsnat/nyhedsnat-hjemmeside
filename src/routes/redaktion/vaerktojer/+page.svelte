@@ -107,19 +107,23 @@
 		</div>
 
 		<div class="rounded-xl border border-gold-500/20 bg-night-700/30 p-4">
-			<h3 class="text-star-white font-extrabold italic">Guide: Fjern sangen fra musikken med Ultimate Vocal Remover</h3>
+			<h3 class="text-star-white font-extrabold italic">Guide: Gør tale tydelig med Ultimate Vocal Remover</h3>
 			<p class="mt-1 text-sm">
-				Vil I have musik under jeres reel, men uden sang, så I kan tale ovenpå? Eller vil I kun have
-				sangen? Ultimate Vocal Remover deler en sang op i sang, trommer, bas og resten. Det er gratis,
-				kræver ingen konto og kører på computeren (Mac og Windows).
+				Kan man ikke høre, hvad der bliver sagt i jeres klip, fordi der er larm, musik eller andre
+				mennesker i baggrunden? Ultimate Vocal Remover kan trække stemmerne ud og skære støjen fra.
+				Det er gratis, kræver ingen konto og kører på computeren (Mac og Windows).
 			</p>
 			<ol class="mt-3 list-decimal space-y-1 pl-5 text-sm">
 				<li>Få en voksen til at hente og installere programmet. Gør det hjemmefra, det er en stor fil.</li>
-				<li>Åbn programmet, og træk jeres sang ind i vinduet.</li>
+				<li>Åbn programmet, og træk jeres videoklip ind i vinduet. Almindelige videofiler fra telefonen (.mp4 og .mov) virker.</li>
 				<li>Vælg <span class="font-semibold text-star-white">Demucs</span> under "Choose Process Method".</li>
 				<li>Vælg en mappe under "Select Output", og tryk <span class="font-semibold text-star-white">Start Processing</span>.</li>
-				<li>Efter et par minutter ligger sangen delt op i filer i mappen. Træk den, I skal bruge, ind i CapCut.</li>
+				<li>Efter et par minutter ligger lyden delt op i filer i mappen. Brug filen med <span class="font-semibold text-star-white">Vocals</span> i navnet. Det er stemmerne uden støj.</li>
+				<li>I CapCut: slå lyden fra på jeres klip, og læg Vocals-filen ind under i stedet.</li>
 			</ol>
+			<p class="mt-3 text-sm text-star-white/60">
+				Virker bedst på larm og musik. Folk, der snakker tæt på mikrofonen i baggrunden, kan godt blive hængende.
+			</p>
 			<a href="https://ultimatevocalremover.com" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block rounded-lg border border-gold-500/40 px-3 py-2 text-sm font-semibold text-gold-400 hover:bg-gold-500/10">Hent Ultimate Vocal Remover</a>
 		</div>
 	</section>
