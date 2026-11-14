@@ -119,7 +119,7 @@
 		<div class="card-dark rounded-3xl p-8 md:p-12">
 			<h2 class="mb-4 text-2xl font-extrabold text-gold-500 uppercase italic md:text-3xl">Tak for NyhedsNat 2026</h2>
 			<p class="mb-8 text-lg leading-relaxed text-star-white/70">
-				Se hvad deltagerne lavede. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>, hvis du er nysgerrig på, hvordan en avis ser ud.
+				Se hvad deltagerne lavede under NyhedsNat 2026 i videoen herunder. Aviserne fra 2026 ligger i <a href={archiveUrl} target="_blank" rel="noopener noreferrer" class="font-semibold text-gold-500 underline underline-offset-2 hover:text-gold-600">arkivet</a>.
 			</p>
 
 			<div class="mb-8">{@render videoSlot('Tak for NyhedsNat 2026', 'dW8_goBJ4y8')}</div>

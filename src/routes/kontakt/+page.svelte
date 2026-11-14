@@ -1,3 +1,7 @@
+<script lang="ts">
+	import SocialLinks from '$lib/components/SocialLinks.svelte';
+</script>
+
 <svelte:head>
 	<title>Kontakt - NyhedsNat i Landsdel 4</title>
 	<meta name="description" content="Kontakt udvalget bag NyhedsNat i Landsdel 4. Send os en mail eller find os på sociale medier." />
@@ -22,7 +26,7 @@
 		</div>
 
 		<!-- Contact Info -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
 			<!-- Email Card -->
 			<div class="card-dark rounded-2xl p-8 text-center hover:scale-105 transition-transform">
 				<div class="w-16 h-16 rounded-full bg-band-red flex items-center justify-center mx-auto mb-6">
@@ -61,6 +65,13 @@
 				<p class="text-star-white/60">
 					Nyhedsnat planlægges og afvikles af et udvalg i Landsdel 4
 				</p>
+			</div>
+
+			<!-- Social Card -->
+			<div class="card-dark rounded-2xl p-8 text-center">
+				<div class="mb-6 flex justify-center"><SocialLinks size="lg" /></div>
+				<h3 class="text-xl text-star-white mb-2 font-extrabold italic">Følg os</h3>
+				<p class="text-star-white/60">Billeder og nyheder fra NyhedsNat på Instagram og Facebook</p>
 			</div>
 		</div>
 

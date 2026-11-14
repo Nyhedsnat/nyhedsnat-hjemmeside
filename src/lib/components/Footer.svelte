@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SocialLinks from './SocialLinks.svelte';
 	const currentYear = new Date().getFullYear();
 </script>
 
@@ -70,6 +71,8 @@
 				<p class="text-star-white/50 text-sm mt-4">
 					Nyhedsnat planlægges og afvikles af et udvalg i FDF Landsdel 4.
 				</p>
+				<h4 class="text-star-white font-bold mt-6 mb-3">Følg os</h4>
+				<SocialLinks />
 			</div>
 		</div>
 
