@@ -3,7 +3,7 @@
 	// ponytail: Lucide 1.x har ingen brand-ikoner, så de to logoer er inline SVG.
 	const box = size === 'lg' ? 'h-14 w-14' : 'h-10 w-10';
 	const icon = size === 'lg' ? 'h-7 w-7' : 'h-5 w-5';
-	const cls = `${box} flex items-center justify-center rounded-full bg-band-red text-star-white transition-colors hover:bg-gold-500 hover:text-night-900`;
+	const cls = `${box} flex items-center justify-center rounded-full border-2 border-gold-500 text-gold-500 transition-colors hover:bg-gold-500 hover:text-night-900`;
 </script>
 
 <div class="flex items-center gap-3">

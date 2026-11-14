@@ -71,7 +71,7 @@
 			<div class="card-dark rounded-2xl p-8 text-center">
 				<div class="mb-6 flex justify-center"><SocialLinks size="lg" /></div>
 				<h3 class="text-xl text-star-white mb-2 font-extrabold italic">Følg os</h3>
-				<p class="text-star-white/60">Billeder og nyheder fra NyhedsNat på Instagram og Facebook</p>
+				<p class="text-star-white/60">Følg med i, hvad vi laver på Instagram og Facebook</p>
 			</div>
 		</div>
 
