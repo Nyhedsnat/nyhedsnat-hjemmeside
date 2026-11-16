@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
-	import { fleetRef } from '$lib/stores/vehicleFleet';
-	import { vehicleTypes, OFFSCREEN_MARGIN_PX } from '$lib/vehicles';
-	import type { CloudProps } from '$lib/clouds';
+	import { snowFreeze, snowPuddles } from '#lib/stores/snow.js';
+	import { fleetRef } from '#lib/stores/vehicleFleet.js';
+	import { vehicleTypes, OFFSCREEN_MARGIN_PX } from '#lib/vehicles.js';
+	import type { CloudProps } from '#lib/clouds.js';
 	import './clouds/cloudBase.css';
 
 	// Self-contained "snow cloud → snowstorm → 12-car pile-up" easter egg, a member of

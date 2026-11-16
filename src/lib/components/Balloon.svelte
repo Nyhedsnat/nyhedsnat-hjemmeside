@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { confettiPresent } from '$lib/stores/rogueBalloon';
+	import { confettiPresent } from '#lib/stores/rogueBalloon.js';
 
 	// Big rogue balloons — rise roughly a screen's height, anchored to the PAGE (document
 	// coordinates), not the viewport — so they scroll with the content like everything

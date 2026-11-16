@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Vehicles from '$lib/components/Vehicles.svelte';
+	import Vehicles from '#lib/components/Vehicles.svelte';
 </script>
 
 <svelte:head>

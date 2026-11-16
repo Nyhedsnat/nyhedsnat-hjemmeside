@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { trafficMode } from '$lib/stores/traffic';
-	import type { CloudProps } from '$lib/clouds';
+	import { trafficMode } from '#lib/stores/traffic.js';
+	import type { CloudProps } from '#lib/clouds.js';
 
 	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
 

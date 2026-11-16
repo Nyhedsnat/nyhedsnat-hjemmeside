@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { trafficPulse, trafficMode } from '$lib/stores/traffic';
-	import { confettiPresent } from '$lib/stores/rogueBalloon';
-	import type { CloudProps } from '$lib/clouds';
+	import { trafficPulse, trafficMode } from '#lib/stores/traffic.js';
+	import { confettiPresent } from '#lib/stores/rogueBalloon.js';
+	import type { CloudProps } from '#lib/clouds.js';
 
 	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
 

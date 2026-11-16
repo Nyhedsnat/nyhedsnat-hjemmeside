@@ -1,7 +1,7 @@
 <script lang="ts">
 	import KeyRound from '@lucide/svelte/icons/key-round';
 	import Newspaper from '@lucide/svelte/icons/newspaper';
-	import JoinButton from '$lib/components/JoinButton.svelte';
+	import JoinButton from '#lib/components/JoinButton.svelte';
 
 	const demoUrl = 'https://demo.avismaskinen.dk';
 	const kioskUrl = 'https://avismaskinen.dk';

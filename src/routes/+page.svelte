@@ -3,8 +3,8 @@
 	import MapPin from '@lucide/svelte/icons/map-pin';
 	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import Play from '@lucide/svelte/icons/play';
-	import JoinButton from '$lib/components/JoinButton.svelte';
-	import { planningState } from '$lib';
+	import JoinButton from '#lib/components/JoinButton.svelte';
+	import { planningState, nyhedsnatState } from '#lib';
 
 	const archiveUrl = 'https://arkiv.avismaskinen.dk';
 </script>
@@ -147,7 +147,7 @@
 				</p>
 
 				<p>
-					Seniorer skaber og spiller hændelserne. Væbnere og seniorvæbnere er indelt i redaktioner oplever dem og fortæller
+					Seniorer skaber og spiller hændelserne. Væbnere og seniorvæbnere er indelt i redaktioner, som oplever dem og fortæller
 					historien videre i deres aviser.
 				</p>
 
@@ -283,7 +283,7 @@
 				Tilmeld jeres redaktion og vær med til årets mest spændende nat.
 			</p>
 			<div class="flex flex-col justify-center gap-4 sm:flex-row">
-				<JoinButton href="/tilmelding">Tilmeld jer nu</JoinButton>
+				<JoinButton href="/tilmelding">{nyhedsnatState === 'open' ? 'Tilmeld jer nu' : 'Se indbydelser'}</JoinButton>
 				<JoinButton href="/praktisk" variant="secondary">Læs mere</JoinButton>
 			</div>
 		</div>

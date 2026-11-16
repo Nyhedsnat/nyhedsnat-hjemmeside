@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { env } from '$env/dynamic/public';
-	import { pickCloud, cloudTypes, type CloudType, type CloudConfig } from '$lib/clouds';
-	import { cloudComponents } from '$lib/components/clouds/registry';
+	import { PUBLIC_DEBUG_TRAFFIC } from '$app/env/public';
+	import { pickCloud, cloudTypes, type CloudType, type CloudConfig } from '#lib/clouds.js';
+	import { cloudComponents } from '#lib/components/clouds/registry.js';
 	import './clouds/cloudBase.css';
 
 	// Thin scheduler. One weather cloud drifts across at a time; when it reports `ondone`
 	// the next is picked (weighted by clouds.ts). Each cloud type is its own component in
 	// clouds/ (see registry). Debug shows one static cloud of every type at once.
-	// `$env/dynamic/public` — import.meta.env doesn't expose PUBLIC_* to the client.
-	const debug = env.PUBLIC_DEBUG_TRAFFIC === 'true';
+	// `$app/env/public` — import.meta.env doesn't expose PUBLIC_* to the client.
+	const debug = PUBLIC_DEBUG_TRAFFIC === 'true';
 
 	let current = $state<{ cfg: CloudConfig; direction: 'ltr' | 'rtl'; drift: number } | null>(null);
 	let nextTimer: ReturnType<typeof setTimeout> | undefined;

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import { env } from '$env/dynamic/public';
-	import { fleetRef, type MotionOverride, type ClickOverride, type SpawnOpts } from '$lib/stores/vehicleFleet';
-	import { triggerConvoy } from '$lib/stores/convoy';
-	import { rushHourTrigger } from '$lib/stores/rushHour';
-	import { snowFreeze, snowPuddles } from '$lib/stores/snow';
-	import { trafficMode, trafficPulse, abductBeam, abductCaught, abductRelease } from '$lib/stores/traffic';
-	import { vehicleTypes, eggFor, OFFSCREEN_MARGIN_PX, type EffectName, type VehicleType, type MotionOp, type Egg } from '$lib/vehicles';
-	import { getMotionAnimation } from '$lib/vehicleMotion';
-	import { jaggedPath } from '$lib/lightning';
-	import VehicleSprite from '$lib/components/VehicleSprite.svelte';
+	import { PUBLIC_DEBUG_TRAFFIC } from '$app/env/public';
+	import { fleetRef, type MotionOverride, type ClickOverride, type SpawnOpts } from '#lib/stores/vehicleFleet.js';
+	import { triggerConvoy } from '#lib/stores/convoy.js';
+	import { rushHourTrigger } from '#lib/stores/rushHour.js';
+	import { snowFreeze, snowPuddles } from '#lib/stores/snow.js';
+	import { trafficMode, trafficPulse, abductBeam, abductCaught, abductRelease } from '#lib/stores/traffic.js';
+	import { vehicleTypes, eggFor, OFFSCREEN_MARGIN_PX, type EffectName, type VehicleType, type MotionOp, type Egg } from '#lib/vehicles.js';
+	import { getMotionAnimation } from '#lib/vehicleMotion.js';
+	import { jaggedPath } from '#lib/lightning.js';
+	import VehicleSprite from '#lib/components/VehicleSprite.svelte';
 
 
 	// When `grid` is true (used by /animation-test) the component renders one
@@ -31,7 +31,7 @@
 	}
 
 	// Strategy-pattern overrides: motion, click behaviour, egg, speed and decoration are
-	// all swappable per vehicle, independent of its type — see $lib/stores/vehicleFleet
+	// all swappable per vehicle, independent of its type — see #lib/stores/vehicleFleet
 	// for the shared shapes (other components spawn/control fleet cars through fleetRef).
 	// motionOverride replaces the standard drive-ltr/rtl crossing with a custom WAAPI
 	// sequence on the car's own element (same technique as the UFO beam's pin/rise/
@@ -69,9 +69,9 @@
 	const totalWeight = vehicleTypes.reduce((sum, v) => sum + v.weight, 0);
 	const minSpawnInterval = 5000;
 	const maxSpawnInterval = 15000;
-	// `$env/dynamic/public`, not `import.meta.env` — SvelteKit doesn't expose PUBLIC_*
+	// `$app/env/public`, not `import.meta.env` — SvelteKit doesn't expose PUBLIC_*
 	// to the client via import.meta.env, so the old check was always false in browser.
-	const debugTrafficEnabled = env.PUBLIC_DEBUG_TRAFFIC === 'true';
+	const debugTrafficEnabled = PUBLIC_DEBUG_TRAFFIC === 'true';
 	const spawnRateMultiplier = debugTrafficEnabled ? 5 : 1;
 
 	let vehicleIdCounter = 0;
@@ -442,7 +442,7 @@
 
 	// Sustained mode (rain/fog/autumn crawl): ease the whole fleet to `rate` and
 	// flag the per-car visuals. null = back to normal driving.
-	function applyMode(m: import('$lib/stores/traffic').TrafficMode | null) {
+	function applyMode(m: import('#lib/stores/traffic.js').TrafficMode | null) {
 		const newRate = m ? m.rate : 1;
 		wet = !!m?.spray;
 		leafy = !!m?.leaves;

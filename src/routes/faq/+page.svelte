@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Newspaper from '@lucide/svelte/icons/newspaper';
-	import JoinButton from '$lib/components/JoinButton.svelte';
+	import JoinButton from '#lib/components/JoinButton.svelte';
 
 	type FaqItem = {
 		question: string;

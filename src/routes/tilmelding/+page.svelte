@@ -12,10 +12,9 @@
 <script lang="ts">
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Lock from '@lucide/svelte/icons/lock';
-	import JoinButton from '$lib/components/JoinButton.svelte';
-	import { planningState, type SignupState } from '$lib';
+	import JoinButton from '#lib/components/JoinButton.svelte';
+	import { planningState, nyhedsnatState } from '#lib';
 
-	const nyhedsnatState = 'upcoming' as SignupState;
 	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
 	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
 	// ponytail: null = dato ikke kendt endnu → generisk tekst, frist skjules
@@ -40,7 +39,7 @@
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-10 {nyhedsnatState === 'closed' ? 'border-red-400/40' : ''} {nyhedsnatState === 'held' ? 'opacity-60 grayscale' : ''}">
 			<div class="flex flex-col-reverse items-start gap-3 mb-4 sm:flex-row sm:justify-between sm:gap-4">
-				<h2 class="min-w-0 text-2xl hyphens-auto font-extrabold italic uppercase text-gold-500">Tilmelding til NyhedsNat</h2>
+				<h2 class="min-w-0 text-2xl font-extrabold italic uppercase text-gold-500">Tilmelding til NyhedsNat</h2>
 				{#if nyhedsnatState === 'closed'}
 					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<Lock class="size-4 shrink-0" aria-hidden="true" /> Tilmeldingen er lukket
@@ -106,7 +105,7 @@
 
 		<section class="card-dark rounded-2xl p-8 md:p-10 mb-12 {planningState === 'closed' ? 'border-red-400/40' : ''} {planningState === 'held' ? 'opacity-60 grayscale' : ''}">
 			<div class="flex flex-col-reverse items-start gap-3 mb-4 sm:flex-row sm:justify-between sm:gap-4">
-				<h2 class="min-w-0 text-2xl hyphens-auto font-extrabold italic uppercase text-gold-500">Tilmelding til Arrangøruddannelse & planlægningsweekend for seniorer</h2>
+				<h2 class="min-w-0 text-2xl font-extrabold italic uppercase text-gold-500">Tilmelding til Arrangør&shy;uddannelse & planlægnings&shy;weekend for seniorer</h2>
 				{#if planningState === 'closed'}
 					<span class="inline-flex shrink-0 items-center gap-2 rounded-full border border-red-400/50 bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300">
 						<Lock class="size-4 shrink-0" aria-hidden="true" /> Tilmeldingen er lukket

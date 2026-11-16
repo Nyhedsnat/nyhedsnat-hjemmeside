@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { abductBeam, abductCaught, abductRelease } from '$lib/stores/traffic';
-	import type { CloudProps } from '$lib/clouds';
+	import { abductBeam, abductCaught, abductRelease } from '#lib/stores/traffic.js';
+	import type { CloudProps } from '#lib/clouds.js';
 
 	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
 

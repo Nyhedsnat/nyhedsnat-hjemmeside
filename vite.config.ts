@@ -1,6 +1,8 @@
 import devtoolsJson from 'vite-plugin-devtools-json';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-cloudflare';
 import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
@@ -22,5 +24,5 @@ export default defineConfig(({ mode }) => {
 		};
 	}
 
-	return { plugins: [tailwindcss(), sveltekit(), devtoolsJson(), debugTrafficWarning()] };
+	return { plugins: [tailwindcss(), sveltekit({ preprocess: vitePreprocess(), adapter: adapter() }), devtoolsJson(), debugTrafficWarning()] };
 });

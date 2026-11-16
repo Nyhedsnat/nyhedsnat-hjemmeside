@@ -30,7 +30,8 @@
 	const isRulesPage = $derived(page.url.pathname.startsWith('/redaktion/regler'));
 </script>
 
-<div class="min-h-screen px-4 py-10 md:py-11">
+<!-- ponytail: ekstra top-luft, så den globale måne (MoonLaser) ikke ligger oven på menuen/kortet -->
+<div class="min-h-screen px-4 pt-24 pb-10 md:pt-44 md:pb-11">
 	<div class="mx-auto max-w-6xl">
 		<div class="grid items-start gap-6 md:grid-cols-[260px_1fr]">
 			<div class="md:hidden">

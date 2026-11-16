@@ -217,7 +217,7 @@
 					<Scale class="size-4 text-star-white" aria-hidden="true" />
 				</div>
 				<div class="text-star-white/80">
-					<strong class="text-star-white">Bedste avis</strong> kåres udelukkende af en juryen
+					<strong class="text-star-white">Bedste avis</strong> kåres udelukkende af juryen
 				</div>
 			</li>
 			<li class="flex items-start gap-4">

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { rushHourTrigger } from '$lib/stores/rushHour';
+	import { rushHourTrigger } from '#lib/stores/rushHour.js';
 
 	let laserActive = $state(false);
 	let moonElement: HTMLButtonElement;

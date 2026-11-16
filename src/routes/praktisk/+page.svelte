@@ -117,7 +117,7 @@
 					</li>
 				</ul>
 				<p class="text-star-white/50 mt-6 text-sm border-t border-gold-500/20 pt-4">
-					Kredse må gerne gå sammen om at stille en redaktion. og vi hjælper i udvalget gerne med at formidle kontakten mellem kredse.
+					Kredse må gerne gå sammen om at stille en redaktion, og vi hjælper i udvalget gerne med at formidle kontakten mellem kredse.
 				</p>
 			</section>
 
@@ -137,8 +137,8 @@
 						'Ledere kører kun ca. til hver anden hændelse',
 						'Forvent at køre 50-100 km pr. redaktion under selve arrangementet'
 					] as item}
-						<li class="flex items-center gap-3 text-star-white/80">
-							<span class="text-gold-400">•</span>
+						<li class="flex items-start gap-3 text-star-white/80">
+							<span class="text-gold-400" aria-hidden="true">•</span>
 							{item}
 						</li>
 					{/each}

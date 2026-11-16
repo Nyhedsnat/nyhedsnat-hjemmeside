@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { snowPuddles } from '$lib/stores/snow';
+	import { snowPuddles } from '#lib/stores/snow.js';
 
 	// Permanent meltwater marks left by melted snowmen. Mounted for the whole page
 	// session inside .houses-container (so it shares the town's coordinate space), it

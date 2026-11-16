@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { trafficPulse } from '$lib/stores/traffic';
-	import { jaggedPath } from '$lib/lightning';
-	import type { CloudProps } from '$lib/clouds';
+	import { trafficPulse } from '#lib/stores/traffic.js';
+	import { jaggedPath } from '#lib/lightning.js';
+	import type { CloudProps } from '#lib/clouds.js';
 
 	let { mode = 'drift', direction = 'ltr', drift = 45, left = '0%', ondone }: CloudProps = $props();
 

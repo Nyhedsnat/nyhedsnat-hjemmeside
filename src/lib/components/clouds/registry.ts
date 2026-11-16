@@ -1,5 +1,5 @@
 import type { Component } from 'svelte';
-import type { CloudType, CloudProps } from '$lib/clouds';
+import type { CloudType, CloudProps } from '#lib/clouds.js';
 import RainCloud from './RainCloud.svelte';
 import ConfettiCloud from './ConfettiCloud.svelte';
 import ThunderCloud from './ThunderCloud.svelte';

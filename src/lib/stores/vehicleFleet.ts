@@ -1,5 +1,5 @@
 import type { Snippet } from 'svelte';
-import type { Egg } from '$lib/vehicles';
+import type { Egg } from '#lib/vehicles.js';
 
 // Bridge for other components (SnowCrash's pile-up, anything future) to spawn and
 // control REAL fleet vehicles in Vehicles.svelte, instead of building a bespoke

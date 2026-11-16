@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { SIZE, type SizeCategory, type EffectName } from '$lib/vehicles';
+	import { SIZE, type SizeCategory, type EffectName } from '#lib/vehicles.js';
 
 	// Presentational sprite: given an `effect` string it renders the car image plus
 	// that effect's visual (smoke, confetti, meteor, …). No click handling, no

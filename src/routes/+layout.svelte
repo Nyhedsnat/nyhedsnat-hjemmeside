@@ -1,15 +1,15 @@
 <script lang="ts">
 	import './layout.css';
-	import Navigation from '$lib/components/Navigation.svelte';
-	import Footer from '$lib/components/Footer.svelte';
-	import Drone from '$lib/components/Drone.svelte';
-	import Ufo from '$lib/components/Ufo.svelte';
-	import Vehicles from '$lib/components/Vehicles.svelte';
-	import MoonLaser from '$lib/components/MoonLaser.svelte';
-	import Streamers from '$lib/components/Streamers.svelte';
-	import WeatherClouds from '$lib/components/WeatherClouds.svelte';
-	import SnowPuddles from '$lib/components/SnowPuddles.svelte';
-	import Balloon from '$lib/components/Balloon.svelte';
+	import Navigation from '#lib/components/Navigation.svelte';
+	import Footer from '#lib/components/Footer.svelte';
+	import Drone from '#lib/components/Drone.svelte';
+	import Ufo from '#lib/components/Ufo.svelte';
+	import Vehicles from '#lib/components/Vehicles.svelte';
+	import MoonLaser from '#lib/components/MoonLaser.svelte';
+	import Streamers from '#lib/components/Streamers.svelte';
+	import WeatherClouds from '#lib/components/WeatherClouds.svelte';
+	import SnowPuddles from '#lib/components/SnowPuddles.svelte';
+	import Balloon from '#lib/components/Balloon.svelte';
 
 	let { children } = $props();
 </script>

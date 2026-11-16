@@ -19,7 +19,8 @@
 	import Pizza from '@lucide/svelte/icons/pizza';
 	import Trophy from '@lucide/svelte/icons/trophy';
 	import Zap from '@lucide/svelte/icons/zap';
-	import JoinButton from '$lib/components/JoinButton.svelte';
+	import { nyhedsnatState } from '#lib';
+	import JoinButton from '#lib/components/JoinButton.svelte';
 </script>
 
 <div class="min-h-screen px-4 py-12">
@@ -75,7 +76,7 @@
 			<p class="text-star-white/60 mb-6">
 				Fra ankomst fredag aften til kåring lørdag formiddag er der maks gang i den og masser af avisskriveri. Det hele foregår på en skole, som annonceres i uge 40.
 			</p>
-			<JoinButton href="/tilmelding">Tilmeld jer nu</JoinButton>
+			<JoinButton href="/tilmelding">{nyhedsnatState === 'open' ? 'Tilmeld jer nu' : 'Se indbydelser'}</JoinButton>
 		</div>
 
 	</div>
