@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { schoolName } from '#lib';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import JoinButton from '#lib/components/JoinButton.svelte';
@@ -197,7 +198,7 @@ Så lederne har god tid til andre ting end at sidde bag et rat.`
 			items: [
 				{
 					question: 'Hvor foregår Nyhedsnat?',
-					answer: `Nyhedsnat foregår på en skole, som annonceres i uge 40.
+					answer: `${schoolName ? `Nyhedsnat foregår altid på en skole i Aarhus Syd. I år er det ${schoolName}.` : 'Nyhedsnat foregår altid på en skole i Aarhus Syd. Skolen annonceres i uge 40, fordi det først er der, vi kan booke skolerne.'}
 
 Både ankomst, fælles base, overnatning i gymnastiksalen og afslutningen lørdag formiddag er på skolen. Hændelserne foregår rundt i området omkring skolen, og redaktionerne kører derud via kortagekørselssystemet.
 

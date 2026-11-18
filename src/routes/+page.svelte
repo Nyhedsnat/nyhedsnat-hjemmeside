@@ -4,7 +4,7 @@
 	import Newspaper from '@lucide/svelte/icons/newspaper';
 	import Play from '@lucide/svelte/icons/play';
 	import JoinButton from '#lib/components/JoinButton.svelte';
-	import { planningState, nyhedsnatState } from '#lib';
+	import { planningState, nyhedsnatState, venue, venueLabel } from '#lib';
 
 	const archiveUrl = 'https://arkiv.avismaskinen.dk';
 </script>
@@ -37,7 +37,7 @@
 	<title>NyhedsNat i Landsdel 4 - 12.-13. november 2027</title>
 	<meta
 		name="description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 {venue}, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<link rel="canonical" href="https://nyhedsnat.dk/" />
 	<!-- Open Graph -->
@@ -45,13 +45,13 @@
 	<meta property="og:title" content="NyhedsNat i Landsdel 4 - 12.-13. november 2027" />
 	<meta
 		property="og:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 {venue}, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- Twitter Card -->
 	<meta name="twitter:title" content="NyhedsNat i Landsdel 4 - 12.-13. november 2027" />
 	<meta
 		name="twitter:description"
-		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
+		content="Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 {venue}, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser."
 	/>
 	<!-- JSON-LD Event -->
 	{@html `<script type="application/ld+json">${JSON.stringify({
@@ -59,7 +59,7 @@
 		'@type': 'Event',
 		name: 'NyhedsNat i Landsdel 4',
 		description:
-			'Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 på en skole, som annonceres i uge 40, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser.',
+			`Nyhedsnat er et årligt arrangement for væbnere, seniorvæbnere og seniorer i FDF Landsdel 4. Det foregår 12.-13. november 2027 ${venue}, hvor deltagerne over en nat samles i redaktioner, oplever hændelser og laver aviser.`,
 		startDate: '2027-11-12T18:00:00+01:00',
 		endDate: '2027-11-13T10:00:00+01:00',
 		eventStatus: 'https://schema.org/EventScheduled',
@@ -67,7 +67,7 @@
 		image: 'https://nyhedsnat.dk/images/og-image.png',
 		location: {
 			'@type': 'Place',
-			name: 'Skole annonceres i uge 40',
+			name: venueLabel,
 			address: {
 				'@type': 'PostalAddress',
 				addressRegion: 'Østjylland',
@@ -104,7 +104,7 @@
 		<!-- Date badge, with the venue as a smaller line under it -->
 		<div class="mb-8 flex flex-col items-center gap-3">
 			<span class="band text-xl md:text-2xl">12.-13. november 2027</span>
-			<p class="text-base font-medium text-star-white/60"><MapPin class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> Skole annonceres i uge 40</p>
+			<p class="text-base font-medium text-star-white/60"><MapPin class="-mt-0.5 mr-1 inline size-4" aria-hidden="true" /> {venueLabel}</p>
 		</div>
 
 		<!-- CTA-KNAP: slået fra uden for sæsonen. Fjern kommentaren, når tilmeldingen åbner igen.
@@ -152,7 +152,7 @@
 				</p>
 
 				<p>
-					Hele arrangementet foregår på en skole, som annonceres i uge 40. Det er indendørs med fælles base, overnatning i skolens
+					Hele arrangementet foregår {venue}. Det er indendørs med fælles base, overnatning i skolens
 					gymnastiksal og afslutning næste morgen.
 				</p>
 			</div>

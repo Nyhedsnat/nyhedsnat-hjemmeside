@@ -19,7 +19,7 @@
 	import Pizza from '@lucide/svelte/icons/pizza';
 	import Trophy from '@lucide/svelte/icons/trophy';
 	import Zap from '@lucide/svelte/icons/zap';
-	import { nyhedsnatState } from '#lib';
+	import { nyhedsnatState, venue } from '#lib';
 	import JoinButton from '#lib/components/JoinButton.svelte';
 </script>
 
@@ -74,7 +74,7 @@
 		<div class="card-dark rounded-2xl p-8 text-center">
 			<h2 class="text-2xl mb-4 font-extrabold italic uppercase text-gold-500">En hel nat med oplevelser</h2>
 			<p class="text-star-white/60 mb-6">
-				Fra ankomst fredag aften til kåring lørdag formiddag er der maks gang i den og masser af avisskriveri. Det hele foregår på en skole, som annonceres i uge 40.
+				Fra ankomst fredag aften til kåring lørdag formiddag er der maks gang i den og masser af avisskriveri. Det hele foregår {venue}.
 			</p>
 			<JoinButton href="/tilmelding">{nyhedsnatState === 'open' ? 'Tilmeld jer nu' : 'Se indbydelser'}</JoinButton>
 		</div>

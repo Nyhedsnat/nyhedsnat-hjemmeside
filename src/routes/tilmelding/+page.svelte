@@ -13,7 +13,7 @@
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Lock from '@lucide/svelte/icons/lock';
 	import JoinButton from '#lib/components/JoinButton.svelte';
-	import { planningState, nyhedsnatState } from '#lib';
+	import { planningState, nyhedsnatState, venue, venueLabel } from '#lib';
 
 	const nyhedsnatSignupUrl = 'https://medlem.fdf.dk/event/id/7776/register';
 	const planningSignupUrl = 'https://medlem.fdf.dk/event/id/8013/register';
@@ -21,7 +21,7 @@
 	const signupOpensText: string | null = null;
 	const nyhedsnatSignupDeadline: string | null = null;
 	const planningSignupDeadlineText: string | null = null;
-	const nyhedsnatLocation = 'Skole annonceres i uge 40';
+	const nyhedsnatLocation = venueLabel;
 	const planningLocation = 'Annonceres senere';
 	const pricePerParticipant = '135 kr.';
 </script>
@@ -98,7 +98,7 @@
 				</div>
 				<p class="mt-4 text-sm text-star-white/50">
 					Indbydelsen er en skabelon. I skal selv skrive jeres samlede pris og et mødested i kredsen
-					ind, inden I sender den videre. Selve NyhedsNat foregår på en skole, som annonceres i uge 40.
+					ind, inden I sender den videre. Selve NyhedsNat foregår {venue}.
 				</p>
 			</div>
 		</section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { venue } from '#lib';
 	import Backpack from '@lucide/svelte/icons/backpack';
 	import Car from '@lucide/svelte/icons/car';
 	import ClipboardList from '@lucide/svelte/icons/clipboard-list';
@@ -39,7 +40,7 @@
 					Sted
 				</h2>
 				<p class="text-star-white/70 leading-relaxed">
-					NyhedsNat foregår på en skole, som annonceres i uge 40.
+					NyhedsNat foregår {venue}.
 				</p>
 				<p class="text-star-white/50 text-sm mt-3">
 					Både ankomst, base, overnatning og afslutning er på skolen. Hændelserne foregår rundt i området omkring skolen.
