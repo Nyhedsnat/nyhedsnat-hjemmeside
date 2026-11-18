@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href="/svg/logo.svg" type="image/svg+xml" />
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 	<meta name="theme-color" content="#030712" />
 	<!-- Site-wide social defaults. Each page adds only its own title/description/canonical/url and
 	     og:title/og:description; the invariants (name, locale, type, the generic share image and the
