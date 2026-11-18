@@ -67,7 +67,7 @@
 				<!-- Large Logo Area (double-click for streamers!) -->
 				<a href="/" class="group flex items-center gap-3" onclick={closeMobileMenu} ondblclick={handleLogoDoubleClick}>
 					<img
-						src="/svg/logo-v2.svg"
+						src="/svg/logo.svg"
 						alt="NyhedsNat"
 						width="604"
 						height="160"
